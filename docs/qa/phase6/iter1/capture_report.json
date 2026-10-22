@@ -1,0 +1,149 @@
+{
+  "base": "http://localhost:3000",
+  "gpu": "angle-d3d11",
+  "shots": {
+    "01_app_default_hackathon_1200": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=hackathon&time=1200",
+      "ms": 9800,
+      "perf": {
+        "fps": 60.11246848908444,
+        "frameMs": 28.90301204822868,
+        "p95Ms": 34.6000000089407,
+        "drawCalls": 179,
+        "triangles": 247416,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "02_app_hackathon_1600": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=hackathon&time=1600",
+      "ms": 7504,
+      "perf": {
+        "fps": 60.07751937984497,
+        "frameMs": 20.934682080942082,
+        "p95Ms": 34.1000000089407,
+        "drawCalls": 203,
+        "triangles": 253103,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "03_summer_1330_route_presentation": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&route=pois:metro_burj_khalifa,dubai_opera&date=summer&time=1330&view=presentation",
+      "ms": 7491,
+      "perf": {
+        "fps": 60.01936108422072,
+        "frameMs": 21.831515151533214,
+        "p95Ms": 50.20000000298023,
+        "drawCalls": 106,
+        "triangles": 209575,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "04_summer_1330_route_analysis": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&route=pois:metro_burj_khalifa,dubai_opera&date=summer&time=1330&view=analysis",
+      "ms": 7228,
+      "perf": {
+        "fps": 60.12412722936861,
+        "frameMs": 20.395454545505345,
+        "p95Ms": 28.799999997019768,
+        "drawCalls": 110,
+        "triangles": 210719,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "05_low_aerial_hackathon_1600": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=hackathon&time=1600&cam=aerial",
+      "ms": 6151,
+      "perf": {
+        "fps": 59.97600959580419,
+        "frameMs": 19.102500000037253,
+        "p95Ms": 24,
+        "drawCalls": 168,
+        "triangles": 241581,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "06_street_level_hackathon_1600": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=hackathon&time=1600&cam=330,1.7,600,150,60,330,40",
+      "ms": 6187,
+      "perf": {
+        "fps": 60.04261088549087,
+        "frameMs": 19.063580246895185,
+        "p95Ms": 23.899999991059303,
+        "drawCalls": 135,
+        "triangles": 226004,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "07_dusk_hackathon_1830": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=hackathon&time=1830&cam=aerial",
+      "ms": 5924,
+      "perf": {
+        "fps": 59.96131528046421,
+        "frameMs": 20.51477272723886,
+        "p95Ms": 21.399999991059303,
+        "drawCalls": 128,
+        "triangles": 168324,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "08_align_close_hackathon_1200": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=hackathon&time=1200&cam=-60,520,420,-60,0,60,30",
+      "ms": 6339,
+      "perf": {
+        "fps": 59.98800239844763,
+        "frameMs": 18.911656441772642,
+        "p95Ms": 20.799999997019768,
+        "drawCalls": 66,
+        "triangles": 200832,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "09_align_close_hackathon_1600": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=hackathon&time=1600&cam=-60,520,420,-60,0,60,30",
+      "ms": 6494,
+      "perf": {
+        "fps": 59.8571152742521,
+        "frameMs": 19.320624999981373,
+        "p95Ms": 29.299999997019768,
+        "drawCalls": 86,
+        "triangles": 203302,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "10_golden_summer_1830": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&date=summer&time=1830&cam=aerial",
+      "ms": 6265,
+      "perf": {
+        "fps": 60.17080745306808,
+        "frameMs": 19.607643312139874,
+        "p95Ms": 24.299999997019768,
+        "drawCalls": 175,
+        "triangles": 246687,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "logs": [
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.WebGLProgram: Program Info Log: (85,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined value\n(85,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined valu",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+  ]
+}

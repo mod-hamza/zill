@@ -1,0 +1,44 @@
+{
+  "high": {
+    "fps": 114.1,
+    "meanMs": 8.76,
+    "p95Ms": 12.2,
+    "frames": 925,
+    "perf": {
+      "fps": 49.04966278312024,
+      "frameMs": 9.667916666716337,
+      "p95Ms": 12.299999997019768,
+      "drawCalls": 162,
+      "triangles": 178880,
+      "quality": "high"
+    }
+  },
+  "medium": {
+    "fps": 125.4,
+    "meanMs": 7.97,
+    "p95Ms": 11.2,
+    "frames": 1004,
+    "perf": {
+      "fps": 122.48123271362104,
+      "frameMs": 8.509583333320915,
+      "p95Ms": 11.5,
+      "drawCalls": 151,
+      "triangles": 171658,
+      "quality": "medium"
+    }
+  },
+  "low": {
+    "fps": 139.5,
+    "meanMs": 7.17,
+    "p95Ms": 10.1,
+    "frames": 1117,
+    "perf": {
+      "fps": 125.27341419616887,
+      "frameMs": 7.040416666679084,
+      "p95Ms": 9.5,
+      "drawCalls": 135,
+      "triangles": 171642,
+      "quality": "low"
+    }
+  }
+}

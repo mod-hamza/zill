@@ -1,0 +1,37 @@
+{
+  "base": "http://localhost:3000",
+  "gpu": "angle-d3d11",
+  "shots": {
+    "03_summer_1330_route_presentation": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&fixture=1&route=hero&date=summer&time=1330&view=presentation",
+      "ms": 10813,
+      "perf": {
+        "fps": 59.66587112207203,
+        "frameMs": 30.596296296259503,
+        "p95Ms": 42.5,
+        "drawCalls": 95,
+        "triangles": 73359,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    },
+    "04_summer_1330_route_analysis": {
+      "url": "http://localhost:3000/app?qa=1&debug=1&q=high&fixture=1&route=hero&date=summer&time=1330&view=analysis",
+      "ms": 7247,
+      "perf": {
+        "fps": 59.57108816591554,
+        "frameMs": 19.676582278424426,
+        "p95Ms": 39.20000000298023,
+        "drawCalls": 97,
+        "triangles": 73463,
+        "quality": "high"
+      },
+      "renderer": "ANGLE (NVIDIA, NVIDIA GeForce RTX 4070 Laptop GPU (0x00002860) Direct3D11 vs_5_0 ps_5_0, D3D11)"
+    }
+  },
+  "logs": [
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead.",
+    "[warning] THREE.WebGLProgram: Program Info Log: (85,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined value\n(85,12-86): warning X3595: gradient instruction used in a loop with varying iteration; partial derivatives may have undefined valu",
+    "[warning] THREE.Clock: This module has been deprecated. Please use THREE.Timer instead."
+  ]
+}

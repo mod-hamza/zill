@@ -1,0 +1,68 @@
+/* Stage-only styles (SCENE stream). Tokens only: no blur, no heavy shadows. */
+.zill-loading {
+  transition: opacity 900ms var(--zill-ease);
+}
+
+.zill-command {
+  caret-color: var(--zill-brass);
+}
+
+.zill-pin {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  transform: translate(14px, -22px);
+  white-space: nowrap;
+  color: var(--zill-champagne);
+}
+.zill-pin span {
+  font-size: 18px;
+  font-weight: 400;
+}
+.zill-pin em {
+  font-style: normal;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: rgb(244 238 225 / 0.85);
+  background: rgb(26 21 17 / 0.92);
+  border: 1px solid var(--zill-hairline);
+  padding: 1px 6px;
+}
+
+/* hairline range input with a brass thumb */
+.zill-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 14px;
+}
+.zill-range:focus {
+  outline: none;
+}
+.zill-range::-webkit-slider-runnable-track {
+  height: 1px;
+  background: rgb(244 238 225 / 0.22);
+}
+.zill-range::-moz-range-track {
+  height: 1px;
+  background: rgb(244 238 225 / 0.22);
+}
+.zill-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 11px;
+  height: 11px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: var(--zill-brass);
+  border: 0;
+}
+.zill-range::-moz-range-thumb {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--zill-brass);
+  border: 0;
+}
+.zill-range:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgb(200 161 90 / 0.25);
+}

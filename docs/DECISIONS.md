@@ -43,3 +43,9 @@
 - 2026-10-23 data: no curated `ac_links.geojson` needed — OSM tags the Metro Link (way/204267696 `bridge=yes covered=yes`, plus 47517411, 700932968/9, corridor 237251660) and it runs continuously from the station into the Dubai Mall indoor network.
 - 2026-10-23 data: extra POIs = OSM-named hotels / malls (ways only) / rail stations / parks / attractions / cafés in the core bbox, nearest to the origin first, capped per kind (50 POIs total).
 - 2026-10-23 orchestrator: Phase 1 gate 'edges > 10,000' not met — real OSM walk+cycle network for the scene bbox has 7,657 edges after fixing two pipeline losses (split at every shared node, median edge 21 m); accepted as honest data, not padded. All other Phase 1 gate items met.
+- 2026-10-23 scene: AgX tone mapping (not ACES) in the post stack — ACES pushed warm stone to saturated orange/"cardboard"; AgX keeps the restrained palette.
+- 2026-10-23 scene: ground-hugging ribbons (roads/links/routes) get a distance-proportional lift + dynamic camera near plane — 0.15 m above ground is below depth precision from a 2 km aerial.
+- 2026-10-23 scene: routes also draw a faint "x-ray" pass (inverted depth test, 30% opacity) — in Downtown, towers hide most of a street-level route from any 3/4 view.
+- 2026-10-23 scene: hidden-surface street shade is the baked raster only (ground does not receive the real-time shadow map) — the raster is truth; the shadow map decorates buildings/trees.
+- 2026-10-23 scene: QA OD pair for route stills = Burj Khalifa/Dubai Mall Metro -> Dubai Opera (live /api/route), labelled as a QA pair, not a hero scenario; hero journeys come only from hero.json.
+- 2026-10-23 scene: fly-through camera heights authored by raycasting the buildings along the route (roof + 14 m where the route passes under/through a building), indoor/AC-link segments get a mild oasis grade.
