@@ -1,0 +1,86 @@
+{
+  "_note": "Replay-mode intent table: free text is matched to a recorded scenario by keyword hits (each keyword is a word or phrase; all its words must be present). scripts/record_replay.py adds the real origin/destination names of each recorded scenario.",
+  "intents": [
+    {
+      "scenario_id": "tourist_walk",
+      "keywords": [
+        "walk",
+        "walking",
+        "tourist",
+        "visitor",
+        "tired",
+        "heat",
+        "hot",
+        "shade",
+        "shaded",
+        "cool",
+        "coolest",
+        "stroll",
+        "sightseeing",
+        "metro",
+        "opera",
+        "Address Downtown",
+        "Leva Hotel and Suites, Opposite Downtown",
+        "Al Wasl Park 2",
+        "Business Bay Metro Station"
+      ]
+    },
+    {
+      "scenario_id": "rider_cycle",
+      "keywords": [
+        "ride",
+        "riding",
+        "rider",
+        "cycle",
+        "cycling",
+        "bike",
+        "scooter",
+        "delivery",
+        "deliveries",
+        "drop",
+        "courier",
+        "route",
+        "At.Mosphere Burj Khalifa",
+        "Maryland International Hotel"
+      ]
+    },
+    {
+      "scenario_id": "crew_shuttle",
+      "keywords": [
+        "crew",
+        "team",
+        "shift",
+        "workers",
+        "work",
+        "midday",
+        "policy",
+        "site",
+        "move",
+        "tasks",
+        "compliance",
+        "The Waterfall",
+        "Starbucks"
+      ]
+    },
+    {
+      "scenario_id": "replan_demo",
+      "keywords": [
+        "delay",
+        "delayed",
+        "late",
+        "running late",
+        "replan",
+        "re-plan",
+        "autopilot",
+        "change",
+        "closure",
+        "closed",
+        "proactive",
+        "Address Downtown",
+        "Leva Hotel and Suites, Opposite Downtown",
+        "Al Wasl Park 2",
+        "Business Bay Metro Station"
+      ]
+    }
+  ]
+}
