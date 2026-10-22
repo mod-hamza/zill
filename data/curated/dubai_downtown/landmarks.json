@@ -1,0 +1,14 @@
+[
+  {
+    "osm": "way/137153144",
+    "set_name": "Burj Khalifa",
+    "height": 828.0,
+    "note": "OSM models the Burj Khalifa with building:part ways; the tallest part (spire, way/137153144) is tagged height=760 (OSM snapshot 2026-10-22). Official architectural height is 828 m (CTBUH). Override raises only the spire part; all other parts keep their OSM heights.",
+    "verified": false
+  },
+  {
+    "osm": "way/446646206",
+    "set_name": "Burj Khalifa",
+    "note": "Name only (shell way has Arabic name tag only; it is dropped because building:part polygons replace it)."
+  }
+]

@@ -1,0 +1,27 @@
+{
+ "osm3s": {
+  "timestamp_osm_base": "2026-01-01T00:00:00Z"
+ },
+ "elements": [
+  {
+   "type": "node",
+   "id": 401,
+   "lat": 9.9999096,
+   "lon": 20.0000912,
+   "tags": {
+    "name": "Test Tower",
+    "tourism": "attraction"
+   }
+  },
+  {
+   "type": "node",
+   "id": 402,
+   "lat": 9.9993217,
+   "lon": 20.0006841,
+   "tags": {
+    "name": "Test Hotel",
+    "tourism": "hotel"
+   }
+  }
+ ]
+}

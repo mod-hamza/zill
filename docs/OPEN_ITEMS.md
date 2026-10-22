@@ -7,3 +7,15 @@
 - [ ] Fill market-size placeholders with sourced figures; validate pricing hypotheses with mentors
 - [ ] Confirm slot length (15 vs 20 min) with organisers; confirm projector resolution and aspect ratio
 - [ ] Confirm tagline and name
+- [ ] Agent: once `ZILL_LLM_API_KEY` is in `.env`, run `backend/.venv/Scripts/python scripts/record_replay.py --live` to re-record all four sessions with the real model (`live:true`), then re-run `pytest tests/test_replay.py`
+- [ ] Agent: `data/curated/policy_packs/uae_outdoor_work.json` is `verified:false`; confirm the midday-break window/dates and break rules (see Policy pack item above) before presenting
+- [routing/api] Weather: recorded files in `data/weather_cache/` are real Open-Meteo data (archive for winter/spring/summer, forecast for hackathon fetched 2026-10-22). Re-run `python -m zill.weather.record` on 2026-10-23/24 to refresh the hackathon-day forecast. UV for archive dates is a clear-sky estimate (labelled).
+- [routing/api] Dates without a recorded file fall back to a representative profile built from approximate Dubai monthly climatology in `weather/fallback.py` (labelled `synthetic_representative`, not a measurement) [TEAM TO FILL — cite source for the monthly highs/lows/humidity if this profile is ever shown to judges].
+- [routing/api] Router constants are heuristics, not measurements: uv(alt)=clip(sin^0.6), RHL weights (1.0/0.35/0.1), crowd x1.15 indoors, crossing waits, planner break threshold `RHL_BREAK_THRESHOLD=1200` (config.py). Validate with the field test.
+- [ ] [data] Confirm the Dubai Mall Metro Link is enclosed and air-conditioned end-to-end (OSM ways 204267696, 47517411, 700932968, 700932969, 237251660, 1092739433 classed `ac_link` from `covered=yes`/`indoor=yes` tags; 15 edges) — walk it on site
+- [ ] [data] Burj Khalifa height override 828 m (`data/curated/dubai_downtown/landmarks.json`, spire part way/137153144; OSM says 760 m) — `verified:false`; cite CTBUH if shown on screen
+- [ ] [data] Curated entrance node 605023848 (metro station area) was auto-added so the area west of Sheikh Zayed Rd stays reachable on foot — confirm the public pedestrian connection
+- [ ] [data] 27 indoor/outdoor transition nodes accepted as doors because they lie ≤ 3 m from a building wall (no `entrance=*` tag) — spot-check mall doors
+- [ ] [data] Graph has 7,657 edges vs PRD gate 10,000 (real OSM density; see VALIDATION "Data") — accept, or change the gate
+- [ ] [data] 79 % of buildings use fallback heights (no height/levels tag in OSM) — shadows of those towers are approximate; Overture heights are a P2 option
+- [ ] [data] OSM trees are sparse (744 in the caster box, none with crown/height tags) — tree shade is under-estimated

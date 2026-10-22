@@ -1,0 +1,21 @@
+[
+ {"id": "burj_khalifa", "name": "Burj Khalifa", "kind": "landmark", "required": true, "hint": {"lat": 25.1972, "lon": 55.2744}, "match": ["burj khalifa"], "exclude": ["dubai mall", "street", "boulevard", "lake", "park", "metro"], "prefer": {"building": "yes"}},
+ {"id": "dubai_mall", "name": "The Dubai Mall", "kind": "mall", "required": true, "hint": {"lat": 25.1985, "lon": 55.2796}, "match": ["the dubai mall", "dubai mall"], "exclude": ["metro", "burj khalifa/", "link", "parking", "car park", "fashion"], "prefer": {"shop": "mall"}},
+ {"id": "dubai_fountain", "name": "Dubai Fountain", "kind": "water", "required": true, "hint": {"lat": 25.195, "lon": 55.2795}, "match": ["dubai fountain", "the dubai fountain"]},
+ {"id": "dubai_opera", "name": "Dubai Opera", "kind": "landmark", "required": true, "hint": {"lat": 25.1962, "lon": 55.2713}, "match": ["dubai opera"], "exclude": ["garden", "car park", "parking"], "prefer": {"amenity": "theatre"}},
+ {"id": "metro_burj_khalifa", "name": "Burj Khalifa/Dubai Mall Metro Station", "kind": "metro", "required": true, "hint": {"lat": 25.201, "lon": 55.2697}, "match": ["burj khalifa/dubai mall", "burj khalifa / dubai mall", "burj khalifa - dubai mall", "burj khalifa–dubai mall", "burj khalifa-dubai mall"], "prefer": {"railway": "station", "public_transport": "station"}},
+ {"id": "souk_al_bahar", "name": "Souk Al Bahar", "kind": "mall", "required": true, "hint": {"lat": 25.193, "lon": 55.276}, "match": ["souk al bahar"], "prefer": {"shop": "mall"}},
+ {"id": "burj_park", "name": "Burj Park", "kind": "park", "required": true, "hint": {"lat": 25.1925, "lon": 55.2735}, "match": ["burj park"], "prefer": {"leisure": "park"}},
+ {"id": "address_downtown", "name": "Address Downtown", "kind": "hotel", "required": true, "hint": {"lat": 25.1937, "lon": 55.2797}, "match": ["address downtown", "the address downtown", "address - downtown", "the address - downtown dubai"], "exclude": ["boulevard", "sky view", "residences", "restaurant", "dubai mall"], "prefer": {"tourism": "hotel"}},
+ {"id": "armani_hotel", "name": "Armani Hotel Dubai", "kind": "hotel", "required": true, "hint": {"lat": 25.1972, "lon": 55.2744}, "match": ["armani hotel"], "prefer": {"tourism": "hotel"}},
+ {"id": "palace_downtown", "name": "Palace Downtown", "kind": "hotel", "required": true, "hint": {"lat": 25.193, "lon": 55.2748}, "match": ["palace downtown", "the palace downtown", "palace - downtown"], "prefer": {"tourism": "hotel"}},
+ {"id": "boulevard_plaza", "name": "Boulevard Plaza", "kind": "landmark", "required": true, "hint": {"lat": 25.199, "lon": 55.272}, "match": ["boulevard plaza"]},
+ {"id": "vida_downtown", "name": "Vida Downtown", "kind": "hotel", "required": false, "hint": {"lat": 25.1975, "lon": 55.269}, "match": ["vida downtown"], "prefer": {"tourism": "hotel"}},
+ {"id": "emaar_square", "name": "Emaar Square", "kind": "landmark", "required": false, "hint": {"lat": 25.202, "lon": 55.2775}, "match": ["emaar square"]},
+ {"id": "address_boulevard", "name": "Address Boulevard", "kind": "hotel", "required": false, "hint": {"lat": 25.2, "lon": 55.2775}, "match": ["address boulevard"], "prefer": {"tourism": "hotel"}},
+ {"id": "address_sky_view", "name": "Address Sky View", "kind": "hotel", "required": false, "hint": {"lat": 25.2015, "lon": 55.275}, "match": ["address sky view"], "prefer": {"tourism": "hotel"}},
+ {"id": "burj_lake", "name": "Burj Khalifa Lake", "kind": "water", "required": false, "hint": {"lat": 25.1955, "lon": 55.276}, "match": ["burj khalifa lake", "burj lake"], "prefer": {"natural": "water"}},
+ {"id": "dubai_opera_garden", "name": "Dubai Opera Garden", "kind": "park", "required": false, "hint": {"lat": 25.1955, "lon": 55.27}, "match": ["opera garden"]},
+ {"id": "business_bay_metro", "name": "Business Bay Metro Station", "kind": "metro", "required": false, "hint": {"lat": 25.1913, "lon": 55.2603}, "match": ["business bay"], "prefer": {"railway": "station", "public_transport": "station"}},
+ {"id": "dubai_mall_metro_link", "name": "Dubai Mall Metro Link", "kind": "metro", "required": false, "hint": {"lat": 25.2, "lon": 55.273}, "match": ["metro link"]}
+]

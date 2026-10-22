@@ -1,0 +1,485 @@
+{
+ "city_id": "dubai_downtown",
+ "name": "Downtown Dubai",
+ "timezone": "Asia/Dubai",
+ "origin": {
+  "lat": 25.1972,
+  "lon": 55.2744
+ },
+ "bbox_core": {
+  "s": 25.185,
+  "w": 55.26,
+  "n": 25.21,
+  "e": 55.29
+ },
+ "bbox_caster": {
+  "s": 25.176861,
+  "w": 55.251065,
+  "n": 25.218139,
+  "e": 55.298935
+ },
+ "bbox_scene": {
+  "s": 25.184096,
+  "w": 55.259007,
+  "n": 25.210904,
+  "e": 55.290993
+ },
+ "core_grid": {
+  "x0": -1552.0,
+  "z0": -1516.0,
+  "rows": 1483,
+  "cols": 1612,
+  "res_m": 2.0
+ },
+ "caster_grid": {
+  "x0": -2352.0,
+  "z0": -2316.0,
+  "rows": 2283,
+  "cols": 2412,
+  "res_m": 2.0
+ },
+ "counts": {
+  "buildings": 8602,
+  "buildings_scene": 3039,
+  "building_parts": 577,
+  "trees": 744,
+  "nodes": 5455,
+  "edges": 7657,
+  "edges_walk": 7029,
+  "edges_cycle": 4822,
+  "covered_edges": 116,
+  "indoor_edges": 1446,
+  "ac_link_edges": 15,
+  "pois": 50
+ },
+ "height_sources": {
+  "tag": 1098,
+  "levels": 167,
+  "fallback": 6760,
+  "landmark": 1,
+  "part": 576
+ },
+ "dropped_components": {
+  "walk": 40,
+  "cycle": 23
+ },
+ "max_building_height_m": 828.0,
+ "source": {
+  "osm_timestamp": "2026-10-22T19:17:21Z",
+  "fetched_at": "2026-10-22T21:02:25.423952+00:00",
+  "overpass_endpoint": "https://overpass-api.de/api/interpreter"
+ },
+ "attribution": "© OpenStreetMap contributors",
+ "dates": {
+  "winter": "2026-01-15",
+  "spring": "2026-04-15",
+  "summer": "2026-07-15",
+  "hackathon": "2026-10-24"
+ },
+ "build_log": [
+  {
+   "t_ms": 0,
+   "dur_ms": 210,
+   "step": "geocode",
+   "count": 50,
+   "label": "50 places resolved (18/19 gazetteer hits)"
+  },
+  {
+   "t_ms": 211,
+   "dur_ms": 218,
+   "step": "fetch_buildings",
+   "count": 8853,
+   "label": "8853 OSM building elements"
+  },
+  {
+   "t_ms": 430,
+   "dur_ms": 154,
+   "step": "fetch_roads",
+   "count": 4037,
+   "label": "4037 OSM ways (highway/indoor)"
+  },
+  {
+   "t_ms": 584,
+   "dur_ms": 11,
+   "step": "fetch_trees",
+   "count": 744,
+   "label": "744 trees (547 mapped, 197 from rows)"
+  },
+  {
+   "t_ms": 597,
+   "dur_ms": 1545,
+   "step": "heights",
+   "count": 8602,
+   "label": "8602 footprints; max 828 m; 97 shells replaced by parts"
+  },
+  {
+   "t_ms": 2142,
+   "dur_ms": 482,
+   "step": "graph",
+   "count": 7752,
+   "label": "7752 raw edges split at intersections"
+  },
+  {
+   "t_ms": 2625,
+   "dur_ms": 440,
+   "step": "covered_links",
+   "count": 1577,
+   "label": "116 covered, 1446 indoor, 15 AC-link edges"
+  },
+  {
+   "t_ms": 3066,
+   "dur_ms": 4490,
+   "step": "write",
+   "count": 7,
+   "label": "meta, buildings(.json/.glb), trees, graph, links, pois"
+  }
+ ],
+ "diagnostics": {
+  "shells_replaced_by_parts": 97,
+  "shells_kept_partial_parts": [
+   "way/238284905",
+   "way/399874648",
+   "way/399874655",
+   "way/399874815",
+   "way/457667701",
+   "way/1148163194",
+   "way/1526417641",
+   "way/1526438741",
+   "way/1526438745",
+   "way/399874888",
+   "way/399874968",
+   "way/399875015",
+   "way/399896356",
+   "way/399898407",
+   "way/399903152",
+   "way/399903263",
+   "way/399904066",
+   "way/406445073",
+   "way/409272968",
+   "way/409272971",
+   "way/409272972",
+   "way/409860281",
+   "way/532853111",
+   "way/532853112",
+   "way/532853114",
+   "way/532853115",
+   "way/532853117",
+   "way/532853119",
+   "way/799091692",
+   "way/1075959482",
+   "way/1075959486",
+   "way/1075959491",
+   "way/1075959492",
+   "way/1076132531",
+   "way/1076132532",
+   "way/1076132536",
+   "way/1076132571",
+   "way/1076132572",
+   "way/1145554034",
+   "way/1494150422",
+   "way/399900595",
+   "way/399903744",
+   "way/406445080",
+   "way/532853103",
+   "way/532853104",
+   "way/532853105",
+   "way/532853106",
+   "way/532853107",
+   "way/532853110",
+   "way/666647171",
+   "way/666650576",
+   "way/892540609",
+   "way/973030602",
+   "way/1076132551",
+   "way/1076132552",
+   "way/1076132553",
+   "way/1109717448",
+   "way/1109717449",
+   "way/1124227999",
+   "way/1124400925",
+   "way/1153261939",
+   "way/1328787240",
+   "way/1329306856",
+   "way/1329306858",
+   "way/341046659",
+   "way/525130249",
+   "way/698953860",
+   "way/1115973491",
+   "way/532848590",
+   "way/382058685",
+   "way/382096515",
+   "way/399903370",
+   "way/399903682",
+   "way/532848581",
+   "way/666647174",
+   "way/723559991",
+   "way/723559992",
+   "way/1047612083",
+   "way/1230788344",
+   "way/1329000469",
+   "way/47515674",
+   "way/99570312",
+   "way/364038279",
+   "way/382096518",
+   "way/382096520",
+   "way/382096523",
+   "way/382096524",
+   "way/382096526",
+   "way/382096530",
+   "way/382096533",
+   "way/382096538",
+   "way/409858343",
+   "way/409858344",
+   "way/409858346",
+   "way/409858347",
+   "way/409868298",
+   "way/457680262",
+   "way/457680270",
+   "way/457680276",
+   "way/457680278",
+   "way/484397156",
+   "way/723555182",
+   "way/971589052",
+   "way/1126676548",
+   "way/1135144496",
+   "way/1135697350",
+   "way/1529989973",
+   "relation/18195959",
+   "way/260461301",
+   "way/532853094",
+   "way/532853095",
+   "way/532853096",
+   "way/1110706015",
+   "way/1110706081",
+   "way/495448021",
+   "way/47516510",
+   "way/47516511",
+   "way/47516520",
+   "way/382096540",
+   "way/399935565",
+   "way/399935856",
+   "way/455566778",
+   "way/455576114",
+   "way/1094645608",
+   "way/1102711249",
+   "way/382072013",
+   "way/605586686",
+   "way/727330756",
+   "way/125848295",
+   "way/28743901",
+   "way/313372603",
+   "way/1341517739"
+  ],
+  "landmark_overrides": 1,
+  "tree_stats": {
+   "node": 547,
+   "row_ways": 11,
+   "row": 197,
+   "crown_tagged": 0,
+   "height_tagged": 0
+  },
+  "graph_log": {
+   "crossing_from_ways": 5,
+   "clipped_edges": 244,
+   "cls_counts": {
+    "open": 6108,
+    "covered": 132,
+    "ac_link": 17,
+    "indoor": 1495
+   },
+   "entrance_split_nodes": 25,
+   "entrance_wall_curated": 27,
+   "entrance_rejoined_curated": 1,
+   "entrance_rejoined_nodes": [
+    605023848
+   ],
+   "dropped_edges_lcc": 95
+  },
+  "curated_links": [],
+  "curated_entrances_snapped": 0,
+  "poi_resolution": [
+   {
+    "id": "burj_khalifa",
+    "resolved": true,
+    "osm": "way/446646206",
+    "lat": 25.1970352,
+    "lon": 55.2742132,
+    "hint_offset_m": 26.2
+   },
+   {
+    "id": "dubai_mall",
+    "resolved": true,
+    "osm": "relation/18195959",
+    "lat": 25.1970073,
+    "lon": 55.2785741,
+    "hint_offset_m": 194.7
+   },
+   {
+    "id": "dubai_fountain",
+    "resolved": true,
+    "osm": "relation/15670582",
+    "lat": 25.195305,
+    "lon": 55.2756983,
+    "hint_offset_m": 384.4
+   },
+   {
+    "id": "dubai_opera",
+    "resolved": true,
+    "osm": "way/475848632",
+    "lat": 25.1956708,
+    "lon": 55.2719824,
+    "hint_offset_m": 90.3
+   },
+   {
+    "id": "metro_burj_khalifa",
+    "resolved": true,
+    "osm": "node/604304348",
+    "lat": 25.2014367,
+    "lon": 55.2695451,
+    "hint_offset_m": 50.7
+   },
+   {
+    "id": "souk_al_bahar",
+    "resolved": true,
+    "osm": "relation/1715611",
+    "lat": 25.1947737,
+    "lon": 55.2765869,
+    "hint_offset_m": 204.8
+   },
+   {
+    "id": "burj_park",
+    "resolved": true,
+    "osm": "way/169309443",
+    "lat": 25.194182,
+    "lon": 55.2734241,
+    "hint_offset_m": 186.1
+   },
+   {
+    "id": "address_downtown",
+    "resolved": true,
+    "osm": "way/532836513",
+    "lat": 25.1940224,
+    "lon": 55.2788857,
+    "hint_offset_m": 89.4
+   },
+   {
+    "id": "armani_hotel",
+    "resolved": true,
+    "osm": "node/2246385172",
+    "lat": 25.1974593,
+    "lon": 55.2747314,
+    "hint_offset_m": 44.0
+   },
+   {
+    "id": "palace_downtown",
+    "resolved": true,
+    "osm": "way/126601134",
+    "lat": 25.1936649,
+    "lon": 55.2757054,
+    "hint_offset_m": 117.1
+   },
+   {
+    "id": "boulevard_plaza",
+    "resolved": true,
+    "osm": "node/5038415046",
+    "lat": 25.2003955,
+    "lon": 55.2731812,
+    "hint_offset_m": 194.8
+   },
+   {
+    "id": "vida_downtown",
+    "resolved": false,
+    "dropped": true
+   },
+   {
+    "id": "emaar_square",
+    "resolved": true,
+    "osm": "way/382096542",
+    "lat": 25.2009631,
+    "lon": 55.273251,
+    "hint_offset_m": 443.1
+   },
+   {
+    "id": "address_boulevard",
+    "resolved": true,
+    "osm": "way/532836516",
+    "lat": 25.2008753,
+    "lon": 55.276204,
+    "hint_offset_m": 162.5
+   },
+   {
+    "id": "address_sky_view",
+    "resolved": true,
+    "osm": "relation/12623980",
+    "lat": 25.201714,
+    "lon": 55.2710339,
+    "hint_offset_m": 400.2
+   },
+   {
+    "id": "burj_lake",
+    "resolved": true,
+    "osm": "way/175110538",
+    "lat": 25.1939917,
+    "lon": 55.2752811,
+    "hint_offset_m": 181.8
+   },
+   {
+    "id": "dubai_opera_garden",
+    "resolved": true,
+    "osm": "way/1047612071",
+    "lat": 25.1952562,
+    "lon": 55.2734308,
+    "hint_offset_m": 346.6
+   },
+   {
+    "id": "business_bay_metro",
+    "resolved": true,
+    "osm": "node/2418678459",
+    "lat": 25.1913122,
+    "lon": 55.2603981,
+    "hint_offset_m": 10.0
+   },
+   {
+    "id": "dubai_mall_metro_link",
+    "resolved": true,
+    "osm": "way/204267696",
+    "lat": 25.2002782,
+    "lon": 55.2729275,
+    "hint_offset_m": 31.6
+   }
+  ],
+  "poi_snap_warnings": [
+   "dubai_fountain snapped 78 m",
+   "burj_lake snapped 88 m",
+   "bay_avenue_mall snapped 63 m",
+   "bayside_park_5 snapped 127 m"
+  ],
+  "overpass_requests": 0,
+  "overpass_cache_hits": 40,
+  "glb": {
+   "tiles": 152,
+   "tile_size_m": 250.0,
+   "vertices": 112115,
+   "triangles": 61407,
+   "bytes": 4468272,
+   "verify": {
+    "loaded": true,
+    "geometries": 152,
+    "vertices": 112115,
+    "faces": 61407,
+    "bounds": [
+     [
+      -1621.75,
+      0.0,
+      -1803.64
+     ],
+     [
+      1724.05,
+      828.0,
+      1492.43
+     ]
+    ]
+   }
+  }
+ }
+}

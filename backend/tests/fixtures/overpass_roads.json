@@ -1,0 +1,234 @@
+{
+ "osm3s": {
+  "timestamp_osm_base": "2026-01-01T00:00:00Z"
+ },
+ "elements": [
+  {
+   "type": "way",
+   "id": 201,
+   "tags": {
+    "highway": "residential",
+    "name": "Test Street"
+   },
+   "nodes": [
+    101,
+    102,
+    103,
+    104
+   ],
+   "geometry": [
+    {
+     "lat": 10.0002713,
+     "lon": 19.9986317
+    },
+    {
+     "lat": 10.0002713,
+     "lon": 19.9995439
+    },
+    {
+     "lat": 10.0002713,
+     "lon": 20.0004561
+    },
+    {
+     "lat": 10.0002713,
+     "lon": 20.0013683
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 202,
+   "tags": {
+    "highway": "footway"
+   },
+   "nodes": [
+    105,
+    103,
+    106
+   ],
+   "geometry": [
+    {
+     "lat": 10.0009044,
+     "lon": 20.0004561
+    },
+    {
+     "lat": 10.0002713,
+     "lon": 20.0004561
+    },
+    {
+     "lat": 9.9996383,
+     "lon": 20.0004561
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 203,
+   "tags": {
+    "highway": "steps"
+   },
+   "nodes": [
+    106,
+    107
+   ],
+   "geometry": [
+    {
+     "lat": 9.9996383,
+     "lon": 20.0004561
+    },
+    {
+     "lat": 9.9989148,
+     "lon": 20.0004561
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 204,
+   "tags": {
+    "highway": "footway",
+    "covered": "yes"
+   },
+   "nodes": [
+    106,
+    108
+   ],
+   "geometry": [
+    {
+     "lat": 9.9996383,
+     "lon": 20.0004561
+    },
+    {
+     "lat": 9.9996383,
+     "lon": 20.0013683
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 205,
+   "tags": {
+    "highway": "primary",
+    "foot": "no"
+   },
+   "nodes": [
+    104,
+    108
+   ],
+   "geometry": [
+    {
+     "lat": 10.0002713,
+     "lon": 20.0013683
+    },
+    {
+     "lat": 9.9996383,
+     "lon": 20.0013683
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 206,
+   "tags": {
+    "highway": "footway",
+    "indoor": "yes"
+   },
+   "nodes": [
+    102,
+    110
+   ],
+   "geometry": [
+    {
+     "lat": 10.0002713,
+     "lon": 19.9995439
+    },
+    {
+     "lat": 10.0005426,
+     "lon": 19.9995439
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 207,
+   "tags": {
+    "highway": "service",
+    "access": "private"
+   },
+   "nodes": [
+    101,
+    111
+   ],
+   "geometry": [
+    {
+     "lat": 10.0002713,
+     "lon": 19.9986317
+    },
+    {
+     "lat": 9.9996383,
+     "lon": 19.9986317
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 208,
+   "tags": {
+    "highway": "footway"
+   },
+   "nodes": [
+    112,
+    113
+   ],
+   "geometry": [
+    {
+     "lat": 9.9990956,
+     "lon": 19.9986317
+    },
+    {
+     "lat": 9.9990956,
+     "lon": 19.9989054
+    }
+   ]
+  },
+  {
+   "type": "way",
+   "id": 209,
+   "tags": {
+    "highway": "footway"
+   },
+   "nodes": [
+    104,
+    114
+   ],
+   "geometry": [
+    {
+     "lat": 10.0002713,
+     "lon": 20.0013683
+    },
+    {
+     "lat": 10.0003165,
+     "lon": 20.0011402
+    }
+   ]
+  },
+  {
+   "type": "node",
+   "id": 103,
+   "lat": 10.0002713,
+   "lon": 20.0004561,
+   "tags": {
+    "highway": "crossing"
+   }
+  },
+  {
+   "type": "node",
+   "id": 102,
+   "lat": 10.0002713,
+   "lon": 19.9995439,
+   "tags": {
+    "entrance": "main"
+   }
+  }
+ ]
+}
