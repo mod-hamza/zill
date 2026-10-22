@@ -181,8 +181,10 @@ def test_coolest_never_worse_than_fastest(synth_ctx):
 
 # ---- real data (skipped if not baked) ------------------------------------------------------------
 def _real_ctx():
-    if os.environ.get("ZILL_CITIES_DIR"):
-        return None
+    from zill import services
+
+    os.environ.pop("ZILL_CITIES_DIR", None)  # module-scoped synth fixture may still have it set
+    services.clear_cache()
     try:
         from zill.services import get_city
 
@@ -193,7 +195,8 @@ def _real_ctx():
         return None
 
 
-def test_invariants_real_data():
+def test_invariants_real_data(monkeypatch):
+    monkeypatch.setenv("ZILL_CITIES_DIR", "")  # restored on teardown
     ctx = _real_ctx()
     if ctx is None:
         pytest.skip("real city + exposure not baked yet")

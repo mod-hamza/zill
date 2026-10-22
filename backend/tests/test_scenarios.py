@@ -15,7 +15,10 @@ def test_generate_on_synthetic_city(synth_ctx, tmp_path):
     assert out.exists()
     j = json.loads(out.read_text())
     assert j["search"]["attempts"][0]["skipped_dates_no_exposure"] == ["hackathon"]
-    assert j["search"]["procedure"].startswith("PRD 8.6")
+    assert j["search"]["procedure"].startswith("1. Candidate places")
+    pf = j["search"]["place_filter"]
+    assert pf["rejected"].get("kind:cafe") == 1 and "cafe" not in pf["kinds"]
+    assert "rejections_first_failing_filter" in j["search"]["attempts"][0]
     ids = {s["id"] for s in j["scenarios"]}
     assert "tourist_walk" in ids
     t = next(s for s in j["scenarios"] if s["id"] == "tourist_walk")
@@ -82,3 +85,34 @@ def test_select_is_deterministic_and_filters():
     sel = scenarios.select(rows)
     assert sel["tourist_walk"]["origin"] == "c"  # AC route within 80% of the best is preferred
     assert sel["rider_cycle"] is None
+
+
+def test_select_prefers_curated_tier_and_crew_limits():
+    base = {
+        "mode": "walk",
+        "date_id": "summer",
+        "depart": "13:30",
+        "eligible": True,
+        "added_time_s": 5.0,
+        "coolest_indoor_pct": 0,
+        "coolest_covered_pct": 0,
+        "straight_m": 600,
+        "fastest_sun_s": 400,
+        "fastest_duration_s": 500,
+    }
+    rows = [
+        {**base, "origin": "a", "dest": "b", "sun_saved_s": 300.0, "both_curated": False},
+        {**base, "origin": "c", "dest": "d", "sun_saved_s": 120.0, "both_curated": True},
+        {
+            **base,
+            "origin": "e",
+            "dest": "f",
+            "sun_saved_s": 200.0,
+            "both_curated": False,
+            "fastest_duration_s": 900,
+        },
+    ]
+    sel = scenarios.select(rows)
+    assert sel["tourist_walk"]["origin"] == "c"  # curated tier clears the 90 s bar
+    assert sel["crew_shuttle"]["fastest_duration_s"] <= scenarios.CREW_MAX_DURATION_S
+    assert sel["crew_shuttle"]["origin"] != "e"

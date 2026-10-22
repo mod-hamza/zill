@@ -49,3 +49,4 @@
 - 2026-10-23 scene: hidden-surface street shade is the baked raster only (ground does not receive the real-time shadow map) — the raster is truth; the shadow map decorates buildings/trees.
 - 2026-10-23 scene: QA OD pair for route stills = Burj Khalifa/Dubai Mall Metro -> Dubai Opera (live /api/route), labelled as a QA pair, not a hero scenario; hero journeys come only from hero.json.
 - 2026-10-23 scene: fly-through camera heights authored by raycasting the buildings along the route (roof + 14 m where the route passes under/through a building), indoor/AC-link segments get a mild oasis grade.
+- 2026-10-23 app: ActivityFeed 'now' prop is presentational only (emphasises rows within 1.2 s of it, ms since first event); caller controls visibility — keeps the Film deterministic.

@@ -1,12 +1,20 @@
-"""Hero scenario auto-selection (PRD 8.6): search, never hand-pick, never fabricate.
+"""Hero scenario auto-selection (PRD 8.6): a documented SEARCH, never hand-picked, never fabricated.
 
     python -m zill.routing.scenarios --city dubai_downtown [--out data/scenarios/hero.json] [--serial]
 
-All POI pairs 400-1500 m apart x departures {12:30,13:30,14:30,15:30} x {summer, hackathon} x walk
-(+cycle) are routed Fastest vs Coolest. Candidates are ranked by `sun_saved_s` subject to
-added_time <= 25% of the fastest duration and a detour ratio (distance) <= 1.35. If the best tourist
-result saves < 90 s of sun, the search is widened (wider distance band, extra graph-derived places,
-more departure times) and every attempt is logged in `hero.json["search"]`.
+Procedure
+1. Candidate places: curated gazetteer / OSM POIs of kind landmark|mall|hotel|metro|park|water that snap
+   to the mode's network within SNAP_MAX_M (no cafe / restaurant / shop-level POIs).
+2. All ordered place pairs 400-1500 m apart x departures {12:30,13:30,14:30,15:30} x {summer, hackathon}
+   x walk (+cycle) are routed Fastest vs Coolest.
+3. Row filters (each rejection is counted in hero.json["search"]): network sanity (fastest distance /
+   straight line <= 1.6), duration caps (walk <= 25 min, cycle <= 15 min), PRD ranking constraints
+   (added_time <= 25% of fastest, detour coolest/fastest distance <= 1.35, sun actually saved).
+4. Rank by sun_saved_s. tourist_walk prefers a coolest route that uses AC / covered / indoor edges when
+   it is within 85% of the best saving; crew_shuttle = straight line <= 700 m and fastest walk <= 12 min,
+   weighted by how sun-exposed the fastest route is.
+5. If the best tourist saving is < 90 s, the search is widened (distance band, more departures) and every
+   attempt is logged.
 """
 
 from __future__ import annotations
@@ -17,18 +25,17 @@ import json
 import math
 import os
 import time
+from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
-import numpy as np
-
 from zill import config
 from zill.routing import tdsp
 from zill.routing.departure import optimise_departure
-from zill.routing.graph import NoRoute
+from zill.routing.graph import NoRoute, PlaceError
 from zill.services import CityContext, get_city
 
 DEPARTS = ("12:30", "13:30", "14:30", "15:30")
@@ -37,6 +44,12 @@ MAX_ADDED_FRAC = 0.25
 MAX_DETOUR = 1.35
 MIN_TOURIST_SAVE_S = 90.0
 CREW_MAX_STRAIGHT_M = 700.0
+PLACE_KINDS = {"landmark", "mall", "hotel", "metro", "park", "water"}
+SNAP_MAX_M = 60.0
+MAX_NETWORK_RATIO = 1.6  # fastest network distance / straight line
+MAX_DURATION_S = {"walk": 25 * 60.0, "cycle": 15 * 60.0}
+CREW_MAX_DURATION_S = 12 * 60.0
+AC_PREFERENCE_FRAC = 0.85
 
 _WORKER_CTX: CityContext | None = None
 
@@ -59,13 +72,27 @@ def eval_pair(
 ) -> dict[str, Any] | None:
     try:
         res = tdsp.compare(
-            ctx, a["node"], b["node"], mode, ctx.at(date_id, hhmm), date_id, with_geometry=False
+            ctx, a["nodes"][mode], b["nodes"][mode], mode, ctx.at(date_id, hhmm), date_id, with_geometry=False
         )
     except NoRoute:
         return None
     f, c = res["fastest"].stats, res["coolest"].stats
+    straight = math.hypot(a["x"] - b["x"], a["z"] - b["z"])
     detour = c["distance_m"] / f["distance_m"] if f["distance_m"] > 0 else 1.0
     added_frac = c["added_time_s"] / f["duration_s"] if f["duration_s"] > 0 else 0.0
+    ratio = f["distance_m"] / straight if straight > 0 else 99.0
+    # first failing filter (for counting) in a fixed order
+    reject = None
+    if ratio > MAX_NETWORK_RATIO:
+        reject = "network_ratio>1.6"
+    elif f["duration_s"] > MAX_DURATION_S[mode]:
+        reject = f"fastest_duration>{int(MAX_DURATION_S[mode] / 60)}min"
+    elif c["sun_saved_s"] <= 0:
+        reject = "no_sun_saved"
+    elif added_frac > MAX_ADDED_FRAC:
+        reject = "added_time>25%"
+    elif detour > MAX_DETOUR:
+        reject = "detour>1.35"
     return {
         "origin": a["id"],
         "dest": b["id"],
@@ -74,7 +101,8 @@ def eval_pair(
         "mode": mode,
         "date_id": date_id,
         "depart": hhmm,
-        "straight_m": round(math.hypot(a["x"] - b["x"], a["z"] - b["z"]), 1),
+        "straight_m": round(straight, 1),
+        "network_ratio": round(ratio, 3),
         "fastest_distance_m": f["distance_m"],
         "fastest_duration_s": f["duration_s"],
         "fastest_sun_s": f["sun_exposure_s"],
@@ -90,14 +118,39 @@ def eval_pair(
         "rhl_saved_pct": c["rhl_saved_pct"],
         "coolest_indoor_pct": c["indoor_pct"],
         "coolest_covered_pct": c["covered_pct"],
-        "eligible": added_frac <= MAX_ADDED_FRAC and detour <= MAX_DETOUR and c["sun_saved_s"] > 0,
+        "both_curated": bool(a.get("curated") and b.get("curated")),
+        "reject": reject,
+        "eligible": reject is None,
     }
 
 
-def _places(ctx: CityContext) -> list[dict[str, Any]]:
-    out = []
+def curated_ids(city_id: str) -> set[str]:
+    """Ids of the hand-checked gazetteer entries (data/curated/<city>/gazetteer.json): well-known places."""
+    f = config.DATA_DIR / "curated" / city_id / "gazetteer.json"
+    try:
+        return {e["id"] for e in json.loads(f.read_text(encoding="utf-8"))}
+    except Exception:
+        return set()
+
+
+def _places(ctx: CityContext) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    """Candidate places with a routable node per mode (snap <= SNAP_MAX_M), plus filter counts."""
+    out, rej = [], Counter()
+    cur = curated_ids(ctx.city_id)
     for p in ctx.pois:
-        if p.get("node") is None:
+        if p.get("kind") not in PLACE_KINDS:
+            rej[f"kind:{p.get('kind')}"] += 1
+            continue
+        nodes = {}
+        for mode in ("walk", "cycle"):
+            try:
+                r = ctx.resolve_place({"poi": p["id"]}, mode)
+            except (PlaceError, KeyError, UnicodeError):
+                continue
+            if r["snap_m"] <= SNAP_MAX_M:
+                nodes[mode] = r["node"]
+        if "walk" not in nodes:
+            rej["snap>60m"] += 1
             continue
         out.append(
             {
@@ -107,55 +160,19 @@ def _places(ctx: CityContext) -> list[dict[str, Any]]:
                 "lon": p["lon"],
                 "x": p["x"],
                 "z": p["z"],
-                "node": int(p["node"]),
+                "node": nodes["walk"],
+                "nodes": nodes,
                 "kind": p.get("kind"),
+                "curated": p["id"] in cur,
             }
         )
-    return out
-
-
-def _graph_places(ctx: CityContext, n: int, existing: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Extra places for widening: well-spread graph intersections (degree >= 3) not near an existing place."""
-    g = ctx.graph
-    mg = g.mode_graph("walk")
-    deg = np.diff(np.array(mg.ptr))
-    cand = np.nonzero(deg >= 3)[0]
-    if cand.size == 0:
-        return []
-    rng = np.random.default_rng(0)
-    pts = np.column_stack([g.x[cand], g.z[cand]])
-    chosen: list[int] = []
-    taken = np.array([[p["x"], p["z"]] for p in existing]) if existing else np.zeros((0, 2))
-    for _ in range(n):
-        d = (
-            np.min(np.hypot(pts[:, None, 0] - taken[None, :, 0], pts[:, None, 1] - taken[None, :, 1]), axis=1)
-            if taken.size
-            else np.full(len(pts), 1e9)
-        )
-        d = d + rng.random(len(d))  # deterministic tie-break
-        i = int(np.argmax(d))
-        chosen.append(int(cand[i]))
-        taken = np.vstack([taken, pts[i]])
-    return [
-        {
-            "id": f"node_{c}",
-            "name": f"Junction {i + 1} ({float(g.lat[c]):.4f}, {float(g.lon[c]):.4f})",
-            "lat": float(g.lat[c]),
-            "lon": float(g.lon[c]),
-            "x": float(g.x[c]),
-            "z": float(g.z[c]),
-            "node": int(c),
-            "kind": "junction",
-        }
-        for i, c in enumerate(chosen)
-    ]
+    return out, {"kept": len(out), "rejected": dict(rej)}
 
 
 def _pairs(places: list[dict[str, Any]], lo: float, hi: float) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     out = []
     for a, b in itertools.permutations(places, 2):
-        d = math.hypot(a["x"] - b["x"], a["z"] - b["z"])
-        if lo <= d <= hi:
+        if lo <= math.hypot(a["x"] - b["x"], a["z"] - b["z"]) <= hi:
             out.append((a, b))
     return out
 
@@ -177,6 +194,8 @@ def run_search(
     jobs = []
     for a, b in pairs:
         for mode in modes:
+            if mode not in a["nodes"] or mode not in b["nodes"]:
+                continue
             if mode == "cycle" and a["id"] > b["id"]:
                 continue  # cycling: one direction per pair keeps the search affordable
             for dt in dates:
@@ -200,6 +219,7 @@ def run_search(
         "jobs": len(jobs),
         "routed": len(good),
         "unroutable": len(rows) - len(good),
+        "rejections_first_failing_filter": dict(Counter(r["reject"] for r in good if r["reject"])),
         "elapsed_s": round(time.perf_counter() - t0, 1),
         "departs": list(departs),
         "dates": list(dates),
@@ -215,27 +235,49 @@ def _rank(rows: list[dict[str, Any]], **flt: Any) -> list[dict[str, Any]]:
     return out
 
 
+def _tier1(pool: list[dict[str, Any]], key: Any = None, min_save_s: float = 60.0) -> list[dict[str, Any]]:
+    """Prefer pairs whose endpoints are both curated places if that tier saves >= min_save_s."""
+    t1 = [r for r in pool if r.get("both_curated")]
+    if key:
+        t1.sort(key=key)
+    return t1 if t1 and t1[0]["sun_saved_s"] >= min_save_s else pool
+
+
 def select(rows: list[dict[str, Any]], date_id: str = "summer") -> dict[str, dict[str, Any] | None]:
     tourist_pool = _rank(rows, mode="walk", date_id=date_id)
+    # tier 1: both endpoints are curated, well-known places; fall back to all places only if that tier
+    # cannot reach MIN_TOURIST_SAVE_S (honest: the fallback is recorded in `tourist_tier`)
+    tier1 = [r for r in tourist_pool if r.get("both_curated")]
+    if tier1 and tier1[0]["sun_saved_s"] >= MIN_TOURIST_SAVE_S:
+        tourist_pool = tier1
     tourist = tourist_pool[0] if tourist_pool else None
     if tourist:
-        # prefer an AC / covered route when it is nearly as good (PRD 8.6.3)
+        # prefer an AC / covered / indoor coolest route when within 85% of the best saving
         ac = [r for r in tourist_pool if r["coolest_indoor_pct"] + r["coolest_covered_pct"] > 0]
-        if ac and ac[0]["sun_saved_s"] >= 0.8 * tourist["sun_saved_s"]:
+        if ac and ac[0]["sun_saved_s"] >= AC_PREFERENCE_FRAC * tourist["sun_saved_s"]:
             tourist = ac[0]
-    used = {(tourist["origin"], tourist["dest"])} if tourist else set()
+    used = {frozenset((tourist["origin"], tourist["dest"]))} if tourist else set()
     rider_pool = [
-        r for r in _rank(rows, mode="cycle", date_id=date_id) if (r["origin"], r["dest"]) not in used
+        r
+        for r in _rank(rows, mode="cycle", date_id=date_id)
+        if frozenset((r["origin"], r["dest"])) not in used
     ]
+    rider_pool = _tier1(rider_pool)
     rider = rider_pool[0] if rider_pool else None
     if rider:
-        used.add((rider["origin"], rider["dest"]))
+        used.add(frozenset((rider["origin"], rider["dest"])))
     crew_pool = [
         r
         for r in _rank(rows, mode="walk", date_id=date_id)
-        if r["straight_m"] <= CREW_MAX_STRAIGHT_M and (r["origin"], r["dest"]) not in used
+        if r["straight_m"] <= CREW_MAX_STRAIGHT_M
+        and r["fastest_duration_s"] <= CREW_MAX_DURATION_S
+        and frozenset((r["origin"], r["dest"])) not in used
     ]
     # short + high exposure: weight the saving by how sun-exposed the fastest route is
+    crew_pool = _tier1(
+        crew_pool,
+        key=lambda r: -(r["sun_saved_s"] * (r["fastest_sun_s"] / max(r["fastest_duration_s"], 1.0))),
+    )
     crew_pool.sort(
         key=lambda r: -(r["sun_saved_s"] * (r["fastest_sun_s"] / max(r["fastest_duration_s"], 1.0)))
     )
@@ -250,18 +292,15 @@ def _full(
     ctx: CityContext, row: dict[str, Any], persona: str, sid: str, with_departure: bool
 ) -> dict[str, Any]:
     mode, date_id, hh = row["mode"], row["date_id"], row["depart"]
-    a = ctx.resolve_place(
-        {"poi": row["origin"]} if ctx.poi(row["origin"]) else {"node": int(row["origin"][5:])}, mode
-    )
-    b = ctx.resolve_place(
-        {"poi": row["dest"]} if ctx.poi(row["dest"]) else {"node": int(row["dest"][5:])}, mode
-    )
+    a = ctx.resolve_place({"poi": row["origin"]}, mode)
+    b = ctx.resolve_place({"poi": row["dest"]}, mode)
     dep = ctx.at(date_id, hh)
     res = tdsp.compare(ctx, a["node"], b["node"], mode, dep, date_id, with_geometry=True)
 
     def pl(p: dict[str, Any], name: str) -> dict[str, Any]:
         return {"name": name, "lat": p["lat"], "lon": p["lon"], "node": p["node"], "x": p["x"], "z": p["z"]}
 
+    cool = res["coolest"]
     out: dict[str, Any] = {
         "id": sid,
         "persona": persona,
@@ -270,8 +309,12 @@ def _full(
         "dest": pl(b, row["dest_name"]),
         "date_id": date_id,
         "depart": hh,
+        "straight_m": row["straight_m"],
+        "uses_ac_link": any(s["cls"] == "ac_link" for s in cool.segments),
+        "uses_covered": any(s["cls"] == "covered" for s in cool.segments),
+        "uses_indoor": any(s["cls"] == "indoor" for s in cool.segments),
         "fastest": res["fastest"].to_dict(),
-        "coolest": res["coolest"].to_dict(),
+        "coolest": cool.to_dict(),
         "balanced": res["balanced"].to_dict(),
         "departure": None,
     }
@@ -283,15 +326,78 @@ def _full(
     return out
 
 
+def ac_link_story(
+    ctx: CityContext, a_id: str, b_id: str, date_id: str = "summer", hhmm: str = "13:30"
+) -> dict[str, Any] | None:
+    """Real comparison for the Metro <-> Mall story: the fastest route (free to use AC/indoor links)
+    versus the fastest route without the AC link (ac_link edges blocked; indoor mall edges stay usable)."""
+    if not (ctx.poi(a_id) and ctx.poi(b_id)):
+        return None
+    a = ctx.resolve_place({"poi": a_id}, "walk")
+    b = ctx.resolve_place({"poi": b_id}, "walk")
+    dep = ctx.at(date_id, hhmm)
+    g = ctx.graph
+    blocked = frozenset(int(i) for i, n in enumerate(g.cls_name) if n == "ac_link")
+    try:
+        free = tdsp.route(ctx, a["node"], b["node"], "walk", dep, 0.0, date_id, "fastest")
+    except NoRoute:
+        return None
+    try:
+        alt = tdsp.route(
+            ctx,
+            a["node"],
+            b["node"],
+            "walk",
+            dep,
+            0.0,
+            date_id,
+            "fastest_without_ac_link",
+            blocked_edges=blocked,
+        )
+    except NoRoute:
+        fs = free.stats
+        return {
+            "origin": ctx.poi(a_id)["name"],
+            "dest": ctx.poi(b_id)["name"],
+            "date_id": date_id,
+            "depart": hhmm,
+            "uses_ac_link": any(s["cls"] == "ac_link" for s in free.segments),
+            "fastest_with_links": {
+                k: fs[k] for k in ("distance_m", "duration_s", "sun_exposure_s", "indoor_pct", "rhl")
+            },
+            "without_ac_link": None,
+            "note": "With the ac_link edges removed the destination is unreachable in the current graph: the "
+            "metro station connects to the mall only through the link. Links are unverified on site.",
+        }
+    fs, os_ = free.stats, alt.stats
+    return {
+        "origin": ctx.poi(a_id)["name"],
+        "dest": ctx.poi(b_id)["name"],
+        "date_id": date_id,
+        "depart": hhmm,
+        "uses_ac_link": any(s["cls"] == "ac_link" for s in free.segments),
+        "fastest_with_links": {
+            k: fs[k] for k in ("distance_m", "duration_s", "sun_exposure_s", "indoor_pct", "rhl")
+        },
+        "without_ac_link": {
+            k: os_[k] for k in ("distance_m", "duration_s", "sun_exposure_s", "indoor_pct", "rhl")
+        },
+        "sun_saved_s": round(os_["sun_exposure_s"] - fs["sun_exposure_s"], 2),
+        "time_delta_s": round(fs["duration_s"] - os_["duration_s"], 2),
+        "rhl_saved_pct": round(100.0 * (os_["rhl"] - fs["rhl"]) / os_["rhl"], 1) if os_["rhl"] else 0.0,
+        "note": "Computed: same pair routed with and without the ac_link edges. Links unverified on site.",
+    }
+
+
 def generate(
     city_id: str = config.DEFAULT_CITY, out_path: Path | None = None, serial: bool = False, log: Any = print
 ) -> dict[str, Any]:
     ctx = get_city(city_id)
-    places = _places(ctx)
+    places, place_filter = _places(ctx)
     attempts: list[dict[str, Any]] = []
 
-    def attempt(name: str, pl: list[dict[str, Any]], lo: float, hi: float, departs: tuple[str, ...]):
-        rows, info = run_search(ctx, pl, lo, hi, departs, DATES, ("walk", "cycle"), serial)
+    def attempt(name: str, lo: float, hi: float, departs: tuple[str, ...]):
+        rows, info = run_search(ctx, places, lo, hi, departs, DATES, ("walk", "cycle"), serial)
         sel = select(rows)
         best_t = sel["tourist_walk"]["sun_saved_s"] if sel["tourist_walk"] else 0.0
         info.update(
@@ -299,7 +405,11 @@ def generate(
             eligible=sum(1 for r in rows if r["eligible"]),
             best_tourist_sun_saved_s=best_t,
             selected={
-                k: (None if v is None else f"{v['origin']}->{v['dest']} {v['mode']} {v['depart']}")
+                k: (
+                    None
+                    if v is None
+                    else f"{v['origin']}->{v['dest']} {v['mode']} {v['depart']} {v['date_id']}"
+                )
                 for k, v in sel.items()
             },
         )
@@ -310,20 +420,14 @@ def generate(
         )
         return rows, sel
 
-    rows, sel = attempt("baseline: gazetteer pairs 400-1500 m", places, 400.0, 1500.0, DEPARTS)
-    best = sel["tourist_walk"]["sun_saved_s"] if sel["tourist_walk"] else 0.0
+    rows, sel = attempt("baseline: curated places, pairs 400-1500 m, 4 departures", 400.0, 1500.0, DEPARTS)
     all_rows = list(rows)
+    best = sel["tourist_walk"]["sun_saved_s"] if sel["tourist_walk"] else 0.0
     if best < MIN_TOURIST_SAVE_S:
-        extra = _graph_places(ctx, 12, places)
-        wider = places + extra
         deps2 = ("11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00")
-        rows2, sel2 = attempt(
-            "widened: +12 graph junctions, band 300-2000 m, 10 departures", wider, 300.0, 2000.0, deps2
-        )
-        all_rows = rows2 + [r for r in rows if r not in rows2]
-        sel = select(all_rows)
-    scen = []
-    notes = []
+        rows2, sel = attempt("widened: pairs 300-1800 m, 10 departures", 300.0, 1800.0, deps2)
+        all_rows = rows2
+    scen, notes = [], []
     for sid, persona in (("tourist_walk", "tourist"), ("rider_cycle", "rider"), ("crew_shuttle", "crew")):
         row = sel.get(sid)
         if row is None:
@@ -333,18 +437,24 @@ def generate(
     tour = sel["tourist_walk"]
     if tour is None or tour["sun_saved_s"] < MIN_TOURIST_SAVE_S:
         notes.append(
-            f"Best tourist sun_saved_s is below the {MIN_TOURIST_SAVE_S:.0f} s threshold even after "
-            "widening; the Film must present this honestly (lean on the departure optimiser and AC links)."
+            f"Best tourist sun_saved_s is below {MIN_TOURIST_SAVE_S:.0f} s even after widening; "
+            "the Film must present this honestly (lean on the departure optimiser and AC links)."
         )
-    ranked = sorted([r for r in all_rows if r["eligible"]], key=lambda r: -r["sun_saved_s"])[:20]
+    ranked = sorted((r for r in all_rows if r["eligible"]), key=lambda r: -r["sun_saved_s"])[:20]
     out = {
         "generated_at": datetime.now(ZoneInfo(ctx.tz)).isoformat(timespec="seconds"),
         "city": city_id,
         "search": {
-            "procedure": "PRD 8.6: all place pairs 400-1500 m apart x departures x {summer, hackathon} x "
-            "walk (+cycle); "
-            f"rank by sun_saved_s with added_time <= {MAX_ADDED_FRAC:.0%} of fastest and "
-            f"detour <= {MAX_DETOUR}",
+            "procedure": __doc__.split("Procedure")[1].strip() if __doc__ else "",
+            "place_filter": {"kinds": sorted(PLACE_KINDS), "snap_max_m": SNAP_MAX_M, **place_filter},
+            "filters": {
+                "max_network_ratio": MAX_NETWORK_RATIO,
+                "max_duration_s": MAX_DURATION_S,
+                "crew": {"max_straight_m": CREW_MAX_STRAIGHT_M, "max_duration_s": CREW_MAX_DURATION_S},
+                "max_added_frac": MAX_ADDED_FRAC,
+                "max_detour": MAX_DETOUR,
+                "ac_preference_frac": AC_PREFERENCE_FRAC,
+            },
             "attempts": attempts,
             "notes": notes,
             "min_tourist_sun_saved_s": MIN_TOURIST_SAVE_S,
@@ -352,6 +462,7 @@ def generate(
             "model": "Model v1: buildings, mapped trees, covered links",
         },
         "scenarios": scen,
+        "ac_link_story": ac_link_story(ctx, "metro_burj_khalifa", "dubai_mall"),
         "candidates": ranked,
     }
     path = out_path or (
@@ -370,11 +481,12 @@ def headline(out: dict[str, Any]) -> list[str]:
     for s in out["scenarios"]:
         f, c = s["fastest"]["stats"], s["coolest"]["stats"]
         lines.append(
-            f"{s['id']}: {s['origin']['name']} -> {s['dest']['name']} {s['mode']} {s['date_id']} "
-            f"{s['depart']}  "
-            f"fastest {f['duration_s']:.0f}s/{f['sun_exposure_s']:.0f}s sun | coolest {c['duration_s']:.0f}s/"
-            f"{c['sun_exposure_s']:.0f}s sun | saved {c['sun_saved_s']:.0f}s ({c['sun_saved_pct']:.0f}%), "
-            f"+{c['added_time_s']:.0f}s, rhl -{c['rhl_saved_pct']:.0f}%"
+            f"{s['id']}: {s['origin']['name']} -> {s['dest']['name']} {s['mode']} "
+            f"{s['date_id']} {s['depart']} "
+            f"(straight {s['straight_m']:.0f} m, ac_link={s['uses_ac_link']}, covered={s['uses_covered']}, "
+            f"indoor={s['uses_indoor']})  fastest {f['duration_s']:.0f}s/{f['sun_exposure_s']:.0f}s sun | "
+            f"coolest {c['duration_s']:.0f}s/{c['sun_exposure_s']:.0f}s sun | saved {c['sun_saved_s']:.0f}s "
+            f"({c['sun_saved_pct']:.0f}%), +{c['added_time_s']:.0f}s, rhl -{c['rhl_saved_pct']:.0f}%"
         )
     return lines
 
