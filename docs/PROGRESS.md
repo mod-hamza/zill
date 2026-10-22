@@ -33,3 +33,11 @@
 - Counts: 8,602 buildings (3,039 scene), 744 trees, 7,657 edges (7,029 walk), 15 ac_link + 116 covered + 1,446 indoor edges, 50 POIs, Burj 828 m.
 - Tests: 28 green (`test_geo.py`, `test_data_heights.py`, `test_data_synthetic.py`, `test_data_dubai.py`); ruff clean.
 - Known issues: edges below the 10k PRD gate (real OSM density); 79 % fallback heights; sparse trees. graph.json and buildings.json changed after SHADE's first run, so shade and exposure need a re-run.
+
+## 2026-10-23 01:15 · Orchestrator checkpoint (Phases 1–5)
+- Phase 1 data: committed + tagged. 3,039 scene buildings, Burj 828 m, 7,657 edges (gate >10k missed honestly — real OSM, see DECISIONS), Metro↔Dubai Mall AC link from OSM.
+- Phase 2 shade: committed + tagged. 28 tests, 0.72 s/step, 4 presets force re-baked on final footprints. QA previews show correct shadow direction.
+- Phase 3/4 routing+API: code committed, 60 tests. Real route p95 38 ms, departure 19×: 0.27 s. Hero scenario search being refined (POI quality + duration filters) — previous pick was a 59-min walk.
+- Phase 5 agent: committed, 219 backend tests total. 4 SCRIPTED recordings (no LLM key yet), validated against hero.json.
+- In flight: hero refinement + re-record (routing stream), 3D scene + /app (scene stream). Next: Film ch1–7.
+- Known: sub-agents were paused ~1 h by a usage limit (23:40–00:40).
