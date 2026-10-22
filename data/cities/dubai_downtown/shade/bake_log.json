@@ -1,43 +1,43 @@
 {
- "generated_at": "2026-10-22T21:05:19+00:00",
+ "generated_at": "2026-10-22T21:10:10+00:00",
  "build_log": [
   {
    "t_ms": 0,
    "step": "shadow_precompute",
    "count": 1010767,
    "label": "Rasterised 8602 buildings and 744 trees into a 2283x2412 caster grid (2 m)",
-   "duration_ms": 2399
+   "duration_ms": 1795
   },
   {
-   "t_ms": 4205,
+   "t_ms": 3391,
    "step": "shadow_precompute",
    "count": 71,
    "label": "Sun-shadow rasters for winter (2026-01-15): 71 ten-minute steps 0640-1820",
-   "duration_ms": 13,
+   "duration_ms": 54231,
    "date_id": "winter"
   },
   {
-   "t_ms": 4219,
+   "t_ms": 57623,
    "step": "shadow_precompute",
    "count": 83,
    "label": "Sun-shadow rasters for spring (2026-04-15): 83 ten-minute steps 0530-1910",
-   "duration_ms": 14,
+   "duration_ms": 56932,
    "date_id": "spring"
   },
   {
-   "t_ms": 4233,
+   "t_ms": 114556,
    "step": "shadow_precompute",
    "count": 88,
    "label": "Sun-shadow rasters for summer (2026-07-15): 88 ten-minute steps 0510-1940",
-   "duration_ms": 8,
+   "duration_ms": 59999,
    "date_id": "summer"
   },
   {
-   "t_ms": 4242,
+   "t_ms": 174556,
    "step": "shadow_precompute",
    "count": 74,
    "label": "Sun-shadow rasters for hackathon (2026-10-24): 74 ten-minute steps 0600-1810",
-   "duration_ms": 13,
+   "duration_ms": 56210,
    "date_id": "hackathon"
   }
  ],
@@ -65,9 +65,15 @@
     "day_steps": 62,
     "first": "0640",
     "last": "1820",
-    "png_mb": 7.6,
-    "npz_mb": 0.266,
-    "timing": null
+    "png_mb": 7.3,
+    "npz_mb": 0.263,
+    "timing": {
+     "total_s": 54.19,
+     "computed_steps": 62,
+     "step_mean_s": 0.624,
+     "step_max_s": 0.813,
+     "png_write_mean_s": 0.204
+    }
    },
    "spring": {
     "iso": "2026-04-15",
@@ -75,9 +81,15 @@
     "day_steps": 75,
     "first": "0530",
     "last": "1910",
-    "png_mb": 6.94,
-    "npz_mb": 0.256,
-    "timing": null
+    "png_mb": 6.87,
+    "npz_mb": 0.254,
+    "timing": {
+     "total_s": 56.89,
+     "computed_steps": 75,
+     "step_mean_s": 0.527,
+     "step_max_s": 0.716,
+     "png_write_mean_s": 0.194
+    }
    },
    "summer": {
     "iso": "2026-07-15",
@@ -85,9 +97,15 @@
     "day_steps": 78,
     "first": "0510",
     "last": "1940",
-    "png_mb": 7.39,
-    "npz_mb": 0.249,
-    "timing": null
+    "png_mb": 7.35,
+    "npz_mb": 0.247,
+    "timing": {
+     "total_s": 59.96,
+     "computed_steps": 78,
+     "step_mean_s": 0.531,
+     "step_max_s": 0.707,
+     "png_write_mean_s": 0.195
+    }
    },
    "hackathon": {
     "iso": "2026-10-24",
@@ -95,9 +113,15 @@
     "day_steps": 66,
     "first": "0600",
     "last": "1810",
-    "png_mb": 7.61,
-    "npz_mb": 0.269,
-    "timing": null
+    "png_mb": 7.37,
+    "npz_mb": 0.267,
+    "timing": {
+     "total_s": 56.17,
+     "computed_steps": 66,
+     "step_mean_s": 0.6,
+     "step_max_s": 0.776,
+     "png_write_mean_s": 0.209
+    }
    }
   },
   "exposure_sampler": {
@@ -108,8 +132,8 @@
    "left_shaded": 1223
   },
   "n_edges": 7657,
-  "total_png_mb": 29.54,
-  "total_npz_mb": 1.04,
-  "total_s": 4.3
+  "total_png_mb": 28.89,
+  "total_npz_mb": 1.031,
+  "total_s": 230.8
  }
 }
