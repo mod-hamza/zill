@@ -1,0 +1,230 @@
+{
+ "city": "dubai_downtown",
+ "date": "2026-07-15",
+ "lat": 25.1972,
+ "lon": 55.2744,
+ "tz": "Asia/Dubai",
+ "synthetic_representative": false,
+ "source_api": "archive",
+ "source_url": "https://archive-api.open-meteo.com/v1/archive",
+ "fetched_at": "2026-10-22T22:55:37+04:00",
+ "uv_basis": "clear_sky_estimate",
+ "hourly": [
+  {
+   "time": "2026-07-15T00:00",
+   "temperature_2m": 35.0,
+   "apparent_temperature": 41.0,
+   "relative_humidity_2m": 59,
+   "wind_speed_10m": 2.59,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T01:00",
+   "temperature_2m": 34.9,
+   "apparent_temperature": 40.6,
+   "relative_humidity_2m": 57,
+   "wind_speed_10m": 2.2,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T02:00",
+   "temperature_2m": 34.5,
+   "apparent_temperature": 39.3,
+   "relative_humidity_2m": 54,
+   "wind_speed_10m": 2.18,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T03:00",
+   "temperature_2m": 34.3,
+   "apparent_temperature": 38.4,
+   "relative_humidity_2m": 52,
+   "wind_speed_10m": 2.45,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T04:00",
+   "temperature_2m": 33.7,
+   "apparent_temperature": 39.8,
+   "relative_humidity_2m": 69,
+   "wind_speed_10m": 3.81,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T05:00",
+   "temperature_2m": 33.6,
+   "apparent_temperature": 39.2,
+   "relative_humidity_2m": 65,
+   "wind_speed_10m": 3.26,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T06:00",
+   "temperature_2m": 33.7,
+   "apparent_temperature": 38.5,
+   "relative_humidity_2m": 59,
+   "wind_speed_10m": 2.83,
+   "uv_index": 0.02,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T07:00",
+   "temperature_2m": 34.3,
+   "apparent_temperature": 39.5,
+   "relative_humidity_2m": 59,
+   "wind_speed_10m": 2.84,
+   "uv_index": 0.6,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T08:00",
+   "temperature_2m": 36.3,
+   "apparent_temperature": 40.7,
+   "relative_humidity_2m": 51,
+   "wind_speed_10m": 3.5,
+   "uv_index": 2.29,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T09:00",
+   "temperature_2m": 38.6,
+   "apparent_temperature": 42.3,
+   "relative_humidity_2m": 43,
+   "wind_speed_10m": 4.26,
+   "uv_index": 4.98,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T10:00",
+   "temperature_2m": 40.5,
+   "apparent_temperature": 44.7,
+   "relative_humidity_2m": 37,
+   "wind_speed_10m": 3.57,
+   "uv_index": 8.09,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T11:00",
+   "temperature_2m": 42.9,
+   "apparent_temperature": 46.8,
+   "relative_humidity_2m": 27,
+   "wind_speed_10m": 2.85,
+   "uv_index": 10.79,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T12:00",
+   "temperature_2m": 44.2,
+   "apparent_temperature": 48.6,
+   "relative_humidity_2m": 23,
+   "wind_speed_10m": 1.62,
+   "uv_index": 12.29,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T13:00",
+   "temperature_2m": 43.8,
+   "apparent_temperature": 48.9,
+   "relative_humidity_2m": 27,
+   "wind_speed_10m": 2.58,
+   "uv_index": 12.14,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T14:00",
+   "temperature_2m": 42.2,
+   "apparent_temperature": 48.6,
+   "relative_humidity_2m": 39,
+   "wind_speed_10m": 3.91,
+   "uv_index": 10.39,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T15:00",
+   "temperature_2m": 40.7,
+   "apparent_temperature": 47.2,
+   "relative_humidity_2m": 46,
+   "wind_speed_10m": 4.38,
+   "uv_index": 7.56,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T16:00",
+   "temperature_2m": 40.0,
+   "apparent_temperature": 47.0,
+   "relative_humidity_2m": 53,
+   "wind_speed_10m": 4.32,
+   "uv_index": 4.47,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T17:00",
+   "temperature_2m": 40.5,
+   "apparent_temperature": 47.0,
+   "relative_humidity_2m": 49,
+   "wind_speed_10m": 3.56,
+   "uv_index": 1.92,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T18:00",
+   "temperature_2m": 41.2,
+   "apparent_temperature": 45.3,
+   "relative_humidity_2m": 35,
+   "wind_speed_10m": 2.31,
+   "uv_index": 0.43,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T19:00",
+   "temperature_2m": 40.4,
+   "apparent_temperature": 42.5,
+   "relative_humidity_2m": 31,
+   "wind_speed_10m": 3.15,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T20:00",
+   "temperature_2m": 39.7,
+   "apparent_temperature": 41.4,
+   "relative_humidity_2m": 31,
+   "wind_speed_10m": 3.54,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T21:00",
+   "temperature_2m": 38.7,
+   "apparent_temperature": 41.1,
+   "relative_humidity_2m": 35,
+   "wind_speed_10m": 3.08,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T22:00",
+   "temperature_2m": 37.9,
+   "apparent_temperature": 40.4,
+   "relative_humidity_2m": 36,
+   "wind_speed_10m": 2.71,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  },
+  {
+   "time": "2026-07-15T23:00",
+   "temperature_2m": 36.7,
+   "apparent_temperature": 38.9,
+   "relative_humidity_2m": 36,
+   "wind_speed_10m": 2.13,
+   "uv_index": 0.0,
+   "uv_index_clear_sky": null
+  }
+ ]
+}

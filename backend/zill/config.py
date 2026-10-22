@@ -131,3 +131,19 @@ def public_config() -> dict[str, Any]:
 
 
 # --- appended by <stream> --- (append below; keep blocks small and named)
+
+# --- appended by agent stream ---
+RHL_BREAK_THRESHOLD = 1200.0  # rolling-30-min RHL (full-sun-seconds) above which plan_day inserts a cool-down
+COOL_BREAK_MIN = 10.0
+AUTO_APPLY_MAX_DELTA_ARRIVAL_MIN = 10.0  # PRD 11.5 L3
+AUTO_APPLY_MAX_RHL_INCREASE_PCT = 10.0  # PRD 11.5 L3
+MAX_FIX_ROUNDS = 2
+
+# --- appended by routing/api stream ---
+# Multi-stop planner (PRD 8.5): a cool-down break is inserted when the Relative Heat Load accumulated
+# over any rolling RHL_BREAK_WINDOW_MIN minutes exceeds RHL_BREAK_THRESHOLD (1800 = 30 min fully in sun).
+RHL_BREAK_THRESHOLD = 1200.0
+RHL_BREAK_WINDOW_MIN = 30
+COOLDOWN_BREAK_MIN = 10
+PLAN_MAX_PERMUTE_STOPS = 6
+GAZETTEER_ONLINE = os.environ.get("ZILL_NOMINATIM", "1").strip().lower() not in ("0", "false", "no", "off")

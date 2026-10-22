@@ -1,0 +1,74 @@
+{
+ "city_id": "synth",
+ "name": "Synthetic Grid",
+ "timezone": "Asia/Dubai",
+ "origin": {
+  "lat": 25.1972,
+  "lon": 55.2744
+ },
+ "bbox_core": {
+  "s": 25.1951199450142,
+  "w": 55.27191806017396,
+  "n": 25.199008743465914,
+  "e": 55.2772790501982
+ },
+ "bbox_caster": {
+  "s": 25.1951199450142,
+  "w": 55.27191806017396,
+  "n": 25.199008743465914,
+  "e": 55.2772790501982
+ },
+ "bbox_scene": {
+  "s": 25.1951199450142,
+  "w": 55.27191806017396,
+  "n": 25.199008743465914,
+  "e": 55.2772790501982
+ },
+ "core_grid": {
+  "x0": -350.0,
+  "z0": -300.0,
+  "rows": 150,
+  "cols": 175,
+  "res_m": 2.0
+ },
+ "caster_grid": {
+  "x0": -350.0,
+  "z0": -300.0,
+  "rows": 150,
+  "cols": 175,
+  "res_m": 2.0
+ },
+ "counts": {
+  "buildings": 0,
+  "nodes": 31,
+  "edges": 51,
+  "pois": 7
+ },
+ "attribution": "synthetic test fixture",
+ "dates": {
+  "winter": "2026-01-15",
+  "spring": "2026-04-15",
+  "summer": "2026-07-15",
+  "hackathon": "2026-10-24"
+ },
+ "build_log": [
+  {
+   "t_ms": 0,
+   "step": "geocode",
+   "count": 1,
+   "label": "Synthetic"
+  },
+  {
+   "t_ms": 40,
+   "step": "graph",
+   "count": 51,
+   "label": "Graph"
+  },
+  {
+   "t_ms": 80,
+   "step": "ready",
+   "count": 51,
+   "label": "Ready"
+  }
+ ]
+}

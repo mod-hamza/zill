@@ -22,17 +22,9 @@ core = APIRouter(prefix="/api")
 
 @core.get("/health")
 def health() -> dict:
-    return {
-        "ok": True,
-        "service": "zill",
-        "version": VERSION,
-        "replay": config.REPLAY,
-        "llm": {
-            "base_url": config.LLM_BASE_URL,
-            "model": config.MODEL,
-            "key_present": bool(config.LLM_API_KEY),
-        },
-    }
+    from zill.api.routes_misc import health_payload  # api stream: extended health (city, shade, replay, llm)
+
+    return health_payload()
 
 
 @core.get("/config")
@@ -45,10 +37,16 @@ app.include_router(core)
 # Explicit router registration. Streams append their router here, e.g.:
 #   from zill.api import routes_cities
 #   ROUTERS = [routes_cities.router, ...]
+from zill.api import common as _common  # noqa: E402  (api stream: request ids, typed errors)
+from zill.api import routes_agent, routes_cities, routes_misc, routes_route  # noqa: E402
+
+_common.install(app)
+
 ROUTERS: list[APIRouter] = [
-    # routes_cities.router,   # api stream
-    # routes_route.router,    # api stream
-    # routes_agent.router,    # agent stream
+    routes_cities.router,   # api stream
+    routes_route.router,
+    routes_misc.router,
+    routes_agent.router,    # agent stream
 ]
 for _r in ROUTERS:
     app.include_router(_r)
