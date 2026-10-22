@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --zill-ink: #0e0c0a;
+  --zill-umber: #1a1511;
+  --zill-stone: #2a231c;
+  --zill-sand: #d8c7a3;
+  --zill-champagne: #e9dcbc;
+  --zill-ivory: #f4eee1;
+  --zill-bronze: #a06a3b;
+  --zill-brass: #c8a15a;
+  --zill-ember: #d07a35;
+  --zill-clay: #9c4f3b;
+  --zill-shade: #22333a;
+  --zill-oasis: #5e8c7b;
+  --zill-slate: #7c8a94;
+  --zill-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --zill-hairline: rgb(244 238 225 / 0.12);
+}
+
+@theme inline {
+  --color-ink: var(--zill-ink);
+  --color-umber: var(--zill-umber);
+  --color-stone: var(--zill-stone);
+  --color-sand: var(--zill-sand);
+  --color-champagne: var(--zill-champagne);
+  --color-ivory: var(--zill-ivory);
+  --color-bronze: var(--zill-bronze);
+  --color-brass: var(--zill-brass);
+  --color-ember: var(--zill-ember);
+  --color-clay: var(--zill-clay);
+  --color-shade: var(--zill-shade);
+  --color-oasis: var(--zill-oasis);
+  --color-slate: var(--zill-slate);
+  --font-display: var(--font-display);
+  --font-sans: var(--font-ui);
+}
+
+html,
+body {
+  background: var(--zill-ink);
+  color: var(--zill-ivory);
+  font-family: var(--font-ui), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+}
+
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.smallcaps {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}

@@ -1,0 +1,9 @@
+[
+  {
+    "city_id": "dubai_downtown",
+    "name": "Downtown Dubai",
+    "bbox": {"s": 25.1850, "w": 55.2600, "n": 25.2100, "e": 55.2900},
+    "origin": {"lat": 25.1972, "lon": 55.2744},
+    "timezone": "Asia/Dubai"
+  }
+]
