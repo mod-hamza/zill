@@ -1,0 +1,136 @@
+{
+ "generated_at": "2026-10-22T19:27:18+00:00",
+ "build_log": [
+  {
+   "t_ms": 0,
+   "step": "shadow_precompute",
+   "count": 822409,
+   "label": "Rasterised 8460 buildings and 744 trees into a 2283x2412 caster grid (2 m)",
+   "duration_ms": 2355
+  },
+  {
+   "t_ms": 4224,
+   "step": "shadow_precompute",
+   "count": 71,
+   "label": "Sun-shadow rasters for winter (2026-01-15): 71 ten-minute steps 0640-1820",
+   "duration_ms": 119324,
+   "date_id": "winter"
+  },
+  {
+   "t_ms": 123549,
+   "step": "shadow_precompute",
+   "count": 83,
+   "label": "Sun-shadow rasters for spring (2026-04-15): 83 ten-minute steps 0530-1910",
+   "duration_ms": 119776,
+   "date_id": "spring"
+  },
+  {
+   "t_ms": 243326,
+   "step": "shadow_precompute",
+   "count": 88,
+   "label": "Sun-shadow rasters for summer (2026-07-15): 88 ten-minute steps 0510-1940",
+   "duration_ms": 122657,
+   "date_id": "summer"
+  },
+  {
+   "t_ms": 365983,
+   "step": "shadow_precompute",
+   "count": 74,
+   "label": "Sun-shadow rasters for hackathon (2026-10-24): 74 ten-minute steps 0600-1810",
+   "duration_ms": 121486,
+   "date_id": "hackathon"
+  }
+ ],
+ "summary": {
+  "city_id": "dubai_downtown",
+  "core_grid": {
+   "x0": -1552.0,
+   "z0": -1516.0,
+   "rows": 1483,
+   "cols": 1612,
+   "res_m": 2.0
+  },
+  "caster_grid": {
+   "x0": -2352.0,
+   "z0": -2316.0,
+   "rows": 2283,
+   "cols": 2412,
+   "res_m": 2.0
+  },
+  "max_height_m": 828.0,
+  "dates": {
+   "winter": {
+    "iso": "2026-01-15",
+    "steps": 71,
+    "day_steps": 62,
+    "first": "0640",
+    "last": "1820",
+    "png_mb": 7.6,
+    "npz_mb": 0.266,
+    "timing": {
+     "total_s": 119.27,
+     "computed_steps": 62,
+     "step_mean_s": 1.897,
+     "step_max_s": 3.072
+    }
+   },
+   "spring": {
+    "iso": "2026-04-15",
+    "steps": 83,
+    "day_steps": 75,
+    "first": "0530",
+    "last": "1910",
+    "png_mb": 6.94,
+    "npz_mb": 0.256,
+    "timing": {
+     "total_s": 119.73,
+     "computed_steps": 75,
+     "step_mean_s": 1.574,
+     "step_max_s": 2.709
+    }
+   },
+   "summer": {
+    "iso": "2026-07-15",
+    "steps": 88,
+    "day_steps": 78,
+    "first": "0510",
+    "last": "1940",
+    "png_mb": 7.39,
+    "npz_mb": 0.249,
+    "timing": {
+     "total_s": 122.61,
+     "computed_steps": 78,
+     "step_mean_s": 1.55,
+     "step_max_s": 2.263
+    }
+   },
+   "hackathon": {
+    "iso": "2026-10-24",
+    "steps": 74,
+    "day_steps": 66,
+    "first": "0600",
+    "last": "1810",
+    "png_mb": 7.61,
+    "npz_mb": 0.269,
+    "timing": {
+     "total_s": 121.44,
+     "computed_steps": 66,
+     "step_mean_s": 1.815,
+     "step_max_s": 2.816
+    }
+   }
+  },
+  "exposure_sampler": {
+   "samples": 112212,
+   "outside_grid": 25,
+   "in_building": 589,
+   "snapped_to_outdoor": 116,
+   "left_shaded": 473
+  },
+  "total_png_mb": 29.54,
+  "total_npz_mb": 1.04,
+  "total_s": 487.5,
+  "n_edges": 7657
+ },
+ "exposure_refreshed_at": "2026-10-22T21:01:06+00:00"
+}
