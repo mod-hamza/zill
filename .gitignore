@@ -17,3 +17,5 @@ playwright-report/
 # bulky QA iterations (best stills kept in docs/qa/best)
 docs/qa/phase7/
 docs/qa/phase8/
+docs/deck_assets/*.mp4
+docs/deck_assets/*.webm
