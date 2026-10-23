@@ -1,0 +1,9 @@
+[Unit]
+Description=Zill continuous deployment (pull origin/main, build, swap, health-check)
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/home/hamza/zill/deploy/cd.sh
+TimeoutStartSec=1800

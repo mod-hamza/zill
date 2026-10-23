@@ -1,0 +1,21 @@
+# Zill web: Next.js production build (/film, /app, /health, /embed/hotel).
+FROM node:24-slim AS build
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --no-audit --no-fund
+# the prebuild step (sync-film-data) reads ../data, ../backend/replay and ../docs
+COPY data /app/data
+COPY backend/replay /app/backend/replay
+COPY docs/SPEAKER_NOTES.md /app/docs/SPEAKER_NOTES.md
+COPY frontend ./
+# rewrites are compiled into the build: point /api at the API container by name
+ENV ZILL_API_ORIGIN=http://zill-api:8000 NEXT_TELEMETRY_DISABLED=1
+RUN npm run build && npm prune --omit=dev
+
+FROM node:24-slim
+WORKDIR /app/frontend
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 \
+    ZILL_API_ORIGIN=http://zill-api:8000 ZILL_BACKEND_URL=http://zill-api:8000
+COPY --from=build /app/frontend ./
+EXPOSE 3000
+CMD ["npx", "next", "start", "-p", "3000", "-H", "0.0.0.0"]

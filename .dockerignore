@@ -1,0 +1,17 @@
+# keep images small and builds reproducible: only source + committed data go in
+.git
+**/node_modules
+**/.next
+**/.next-dev
+backend/.venv
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+data/raw
+data/cache
+docs/qa
+docs/deck_assets/*.mp4
+docs/deck_assets/*.webm
+frontend/test-results
+frontend/playwright-report
+.env

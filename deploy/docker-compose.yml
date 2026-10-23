@@ -1,0 +1,33 @@
+# Zill on the VM. Joins the existing Caddy network (n8n-stack_default); no host ports are published.
+# ZILL_TAG is the git commit being deployed (set by deploy/cd.sh) so a failed deploy can roll back.
+name: zill
+
+services:
+  zill-api:
+    image: zill-api:${ZILL_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.api
+    container_name: zill-api
+    restart: unless-stopped
+    env_file:
+      - path: ../.env
+        required: false
+    environment:
+      - ZILL_REPLAY=${ZILL_REPLAY:-0}
+    networks: [caddy]
+
+  zill-web:
+    image: zill-web:${ZILL_TAG:-latest}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+    container_name: zill-web
+    restart: unless-stopped
+    depends_on: [zill-api]
+    networks: [caddy]
+
+networks:
+  caddy:
+    name: n8n-stack_default
+    external: true

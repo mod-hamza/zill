@@ -1,0 +1,13 @@
+# Zill — appended to /home/hamza/n8n-stack/Caddyfile
+# /api goes straight to the API container (agent SSE streams unbuffered); everything else to Next.
+zill.itshamza.me, zill.169-58-66-146.sslip.io {
+    handle /api/* {
+        reverse_proxy zill-api:8000 {
+            flush_interval -1
+        }
+    }
+    handle {
+        encode zstd gzip
+        reverse_proxy zill-web:3000
+    }
+}
