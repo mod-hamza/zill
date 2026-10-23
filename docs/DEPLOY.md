@@ -6,7 +6,7 @@ minutes; nothing else is involved (no GitHub Actions, no deploy keys stored anyw
 
 | URL | Notes |
 |---|---|
-| https://zill.itshamza.me | needs the DNS A record `zill` → `169.58.66.146` |
+| https://zill.itshamza.me | primary (DNS A record `zill` → `169.58.66.146` at Namecheap; Let's Encrypt cert via Caddy, auto-renewed) |
 | https://zill.169-58-66-146.sslip.io | works without DNS (sslip.io resolves the embedded IP) |
 
 ## How it works
