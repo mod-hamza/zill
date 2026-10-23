@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Zill task runner (stdlib only, cross-platform). Usage: python scripts/zill.py <command> [args]
 
-Commands: setup, dev, demo, test, bake, record, lint
+Commands: setup, dev, demo, test, bake, record, deck, freshclone, lint
 """
 
 from __future__ import annotations
@@ -253,9 +253,197 @@ def cmd_bake(args: list) -> int:
     return run([VENV_PY, "-m", "zill.data.bake", *args], cwd=BACKEND, check=False)
 
 
-def cmd_record(_args: list) -> int:
-    say("record: not implemented yet")
-    return 0
+DECK_DIR = ROOT / "docs" / "deck_assets"
+
+
+def tsx(script: str, *args: str) -> int:
+    """Run a frontend/scripts/*.ts tool with tsx (Playwright based)."""
+    return run([NPX, "tsx", f"scripts/{script}", *args], cwd=FRONTEND, check=False)
+
+
+class DemoServers:
+    """Context manager: (build and) start FastAPI + Next in production mode; reuse servers that
+    are already answering (and then leave them running); stop only what it started."""
+
+    def __init__(self, build: bool = True) -> None:
+        self.build = build
+        self.procs: list = []
+
+    def __enter__(self) -> "DemoServers":
+        need_venv()
+        api_up = http_ok(f"http://127.0.0.1:{API_PORT}/api/health")
+        web_up = http_ok(f"http://localhost:{WEB_PORT}/film")
+        if api_up and web_up:
+            say("servers already running on :8000/:3000 - reusing them (will not stop them)")
+            return self
+        if api_up or web_up:
+            raise RuntimeError("only one of :8000/:3000 is answering; free the ports and retry")
+        if self.build:
+            say("building frontend")
+            run([NPM, "run", "build"], cwd=FRONTEND)
+        self.procs = [spawn("api", uvicorn_cmd(False), BACKEND), spawn("web", [NPM, "run", "start"], FRONTEND)]
+        deadline = time.time() + 120
+        while time.time() < deadline:
+            if http_ok(f"http://127.0.0.1:{API_PORT}/api/health") and http_ok(f"http://localhost:{WEB_PORT}/film"):
+                say("servers ready")
+                return self
+            for p in self.procs:
+                if p.poll() is not None:
+                    code = p.returncode
+                    self.__exit__(None, None, None)
+                    raise RuntimeError(f"a server exited early with code {code}")
+            time.sleep(1)
+        self.__exit__(None, None, None)
+        raise RuntimeError("timed out waiting for servers")
+
+    def __exit__(self, *_exc: object) -> None:
+        for p in self.procs:
+            kill_tree(p)
+        if self.procs:
+            say("servers stopped")
+        self.procs = []
+
+
+def render_architecture() -> int:
+    """docs/deck_assets/architecture.svg -> architecture.png (Playwright screenshot of the SVG)."""
+    svg = DECK_DIR / "architecture.svg"
+    if not svg.exists():
+        say(f"missing {rel(svg)}")
+        return 1
+    return tsx("render-svg.ts", str(svg), str(DECK_DIR / "architecture.png"))
+
+
+def parse_flags(args: list) -> dict:
+    out: dict = {}
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if a.startswith("--"):
+            k = a[2:]
+            if i + 1 < len(args) and not args[i + 1].startswith("--"):
+                out[k] = args[i + 1]
+                i += 1
+            else:
+                out[k] = True
+        i += 1
+    return out
+
+
+def cmd_deck(args: list) -> int:
+    """Architecture PNG + Film stills -> docs/deck_assets/stills and frontend/public/stills."""
+    f = parse_flags(args)
+    rc = render_architecture()
+    try:
+        with DemoServers(build=not f.get("skip-build")):
+            rc |= tsx("export-deck-assets.ts", *(["--swiftshader"] if f.get("swiftshader") else []))
+    except RuntimeError as e:
+        say(f"deck failed: {e}")
+        return 1
+    return 1 if rc else 0
+
+
+def cmd_record(args: list) -> int:
+    """build -> demo servers -> deck stills -> film video -> app video -> stop servers (PRD 17.6).
+    Flags: --skip-build, --no-film, --no-app, --no-stills, --swiftshader, --film-rate N (smoke only)."""
+    f = parse_flags(args)
+    sw = ["--swiftshader"] if f.get("swiftshader") else []
+    rc = render_architecture()
+    DECK_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        with DemoServers(build=not f.get("skip-build")):
+            if not f.get("no-stills"):
+                rc |= tsx("export-deck-assets.ts", *sw)
+            if not f.get("no-film"):
+                extra = ["--rate", str(f["film-rate"])] if f.get("film-rate") else []
+                rc |= tsx("record-film.ts", *sw, *extra)
+            if not f.get("no-app"):
+                rc |= tsx("record-app.ts", *sw)
+    except RuntimeError as e:
+        say(f"record failed: {e}")
+        return 1
+    for n in ("backup_film.mp4", "backup_film.webm", "backup_app_demo.mp4", "architecture.png"):
+        p = DECK_DIR / n
+        size = f" ({p.stat().st_size / 1e6:.1f} MB)" if p.exists() else ""
+        say(f"{'ok     ' if p.exists() else 'MISSING'} {rel(p)}{size}")
+    stills = sorted((DECK_DIR / "stills").glob("*.png"))
+    say(f"{len(stills)} stills in {rel(DECK_DIR / 'stills')}")
+    return 1 if rc else 0
+
+
+def _rmtree(path: Path) -> None:
+    def onerr(func, p, _exc):  # read-only files on Windows
+        try:
+            os.chmod(p, 0o700)
+            func(p)
+        except Exception:
+            pass
+
+    shutil.rmtree(path, onerror=onerr)
+
+
+def cmd_freshclone(args: list) -> int:
+    """Clone the repo (committed state only) to a temp dir, setup + demo there, run the Playwright
+    smoke against it, tear down, print PASS/FAIL. Never touches the working copy. Needs :3000/:8000 free.
+    Flags: --quick (smoke.spec only), --keep (keep the clone)."""
+    f = parse_flags(args)
+    results: list = []
+
+    def check(name: str, ok: bool, detail: str = "") -> bool:
+        results.append((name, ok, detail))
+        say(f"{'PASS' if ok else 'FAIL'}  {name} {detail}")
+        return ok
+
+    if http_ok(f"http://127.0.0.1:{API_PORT}/api/health") or http_ok(f"http://localhost:{WEB_PORT}/film"):
+        say("FAIL: ports 8000/3000 are in use. Stop the running servers first (the clone must bind them).")
+        return 1
+    dirty = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=str(ROOT), capture_output=True, text=True
+    ).stdout.strip()
+    if dirty:
+        say(
+            f"warning: {len(dirty.splitlines())} uncommitted change(s) in the working copy are NOT in the "
+            "clone - commit first for a faithful test"
+        )
+    tmp = Path(tempfile.mkdtemp(prefix="zill-fresh-"))
+    clone = tmp / "zill"
+    demo = None
+    try:
+        rc = subprocess.call(["git", "clone", "--quiet", "--local", str(ROOT), str(clone)])
+        if not check("git clone", rc == 0):
+            return 1
+        py = sys.executable
+        setup_rc = subprocess.call([py, str(clone / "scripts" / "zill.py"), "setup"], cwd=str(clone))
+        if not check("setup (venv, backend, npm ci, playwright)", setup_rc == 0):
+            return 1
+        demo = spawn("demo", [py, str(clone / "scripts" / "zill.py"), "demo"], clone)
+        deadline = time.time() + 420
+        up = False
+        while time.time() < deadline:
+            if demo.poll() is not None:
+                break
+            if http_ok(f"http://127.0.0.1:{API_PORT}/api/health") and http_ok(f"http://localhost:{WEB_PORT}/film"):
+                up = True
+                break
+            time.sleep(2)
+        if not check("demo servers up", up, "" if up else "(build failed or timed out)"):
+            return 1
+        for path in ("/film", "/app", "/health", "/api/health", "/api/scenarios/dubai_downtown", "/api/cities"):
+            check(f"GET {path}", http_ok(f"http://localhost:{WEB_PORT}{path}"))
+        e2e = [NPX, "playwright", "test", "--reporter=line"] + (["e2e/smoke.spec.ts"] if f.get("quick") else [])
+        e2e_rc = subprocess.call(e2e, cwd=str(clone / "frontend"))
+        check("playwright smoke" + (" (quick)" if f.get("quick") else ""), e2e_rc == 0)
+    finally:
+        if demo is not None:
+            kill_tree(demo)
+        time.sleep(2)
+        if f.get("keep"):
+            say(f"kept clone at {tmp}")
+        else:
+            _rmtree(tmp)
+    ok = all(r[1] for r in results)
+    summary = ", ".join(f"{n}:{'ok' if o else 'FAIL'}" for n, o, _ in results)
+    say(f"FRESHCLONE {'PASS' if ok else 'FAIL'}  ({summary})")
+    return 0 if ok else 1
 
 
 def cmd_lint(_args: list) -> int:
@@ -272,6 +460,8 @@ COMMANDS = {
     "test": cmd_test,
     "bake": cmd_bake,
     "record": cmd_record,
+    "deck": cmd_deck,
+    "freshclone": cmd_freshclone,
     "lint": cmd_lint,
 }
 

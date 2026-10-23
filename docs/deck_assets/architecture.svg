@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9" fill="none" stroke="#C8A15A" stroke-width="1.3"/></marker>
+<marker id="ahs" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10,1 L1,5 L10,9" fill="none" stroke="#C8A15A" stroke-width="1.3"/></marker>
+</defs>
+<rect width="1920" height="1080" fill="#0E0C0A"/>
+<text x="95" y="84" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="46" font-weight="300" fill="#E9DCBC">Zill, architecture</text>
+<text x="95" y="118" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="17" fill="#D8C7A3" fill-opacity="0.8">Open data in, shade-aware routes out. One shade raster feeds the router and the 3D overlay, so the picture and the numbers cannot disagree.</text>
+<text x="95" y="168" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="13" letter-spacing="2.6" fill="#D8C7A3" fill-opacity="0.75">OPEN DATA</text>
+<line x1="95" y1="182" x2="385" y2="182" stroke="#F4EEE1" stroke-opacity="0.12" stroke-width="1"/>
+<text x="455" y="168" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="13" letter-spacing="2.6" fill="#D8C7A3" fill-opacity="0.75">BAKE  (make bake)</text>
+<line x1="455" y1="182" x2="745" y2="182" stroke="#F4EEE1" stroke-opacity="0.12" stroke-width="1"/>
+<text x="815" y="168" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="13" letter-spacing="2.6" fill="#D8C7A3" fill-opacity="0.75">SHADE  AND  ROUTING</text>
+<line x1="815" y1="182" x2="1105" y2="182" stroke="#F4EEE1" stroke-opacity="0.12" stroke-width="1"/>
+<text x="1175" y="168" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="13" letter-spacing="2.6" fill="#D8C7A3" fill-opacity="0.75">AGENT  (LLM)</text>
+<line x1="1175" y1="182" x2="1465" y2="182" stroke="#F4EEE1" stroke-opacity="0.12" stroke-width="1"/>
+<text x="1535" y="168" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="13" letter-spacing="2.6" fill="#D8C7A3" fill-opacity="0.75">PRODUCT</text>
+<line x1="1535" y1="182" x2="1825" y2="182" stroke="#F4EEE1" stroke-opacity="0.12" stroke-width="1"/>
+<rect x="95" y="215" width="290" height="440" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="115" y="253" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">OpenStreetMap</text>
+<text x="115" y="279" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">Overpass API, cached in data/raw</text>
+<text x="115" y="300" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82"></text>
+<text x="115" y="321" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">buildings and building:part</text>
+<text x="115" y="342" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">walkable and cyclable ways</text>
+<text x="115" y="363" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">trees and tree rows</text>
+<text x="115" y="384" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">covered, indoor, bridge tags</text>
+<text x="115" y="405" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">entrances, POIs</text>
+<text x="115" y="426" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82"></text>
+<text x="115" y="447" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">ODbL: attribution on every screen</text>
+<rect x="95" y="700" width="290" height="110" fill="#1A1511" stroke="#A06A3B" stroke-opacity="0.55" stroke-width="1"/>
+<text x="115" y="738" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Curated overrides</text>
+<text x="115" y="764" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">Burj Khalifa 828 m, gazetteer,</text>
+<text x="115" y="785" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">UAE midday policy pack (unverified)</text>
+<rect x="455" y="215" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="475" y="253" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Buildings and heights</text>
+<text x="475" y="279" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">parts, height tag, levels, fallback</text>
+<text x="475" y="300" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">8,602 footprints in caster box</text>
+<rect x="455" y="375" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="475" y="413" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Trees</text>
+<text x="475" y="439" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">744 mapped, default crown 3 m</text>
+<text x="475" y="460" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">canopy transmissivity 0.35</text>
+<rect x="455" y="535" width="290" height="110" fill="#1A1511" stroke="#5E8C7B" stroke-opacity="0.55" stroke-width="1"/>
+<text x="475" y="573" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Walk and cycle graph</text>
+<text x="475" y="599" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">7,657 edges, covered / indoor /</text>
+<text x="475" y="620" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">air-conditioned link classes</text>
+<rect x="455" y="695" width="290" height="110" fill="#1A1511" stroke="#5E8C7B" stroke-opacity="0.55" stroke-width="1"/>
+<text x="475" y="733" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Covered and AC links</text>
+<text x="475" y="759" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">15 ac_link edges from OSM tags</text>
+<text x="475" y="780" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">on-site check still open</text>
+<rect x="815" y="215" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="835" y="253" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Heightmap</text>
+<text x="835" y="279" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">2 m grid, caster = core + 900 m</text>
+<text x="835" y="300" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">building mask and canopy grid</text>
+<rect x="815" y="375" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="835" y="413" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Shadow raymarch</text>
+<text x="835" y="439" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">numba, 10-minute steps, soft sun disc</text>
+<text x="835" y="460" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">sun_fraction raster per step</text>
+<rect x="815" y="535" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="835" y="573" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Per-edge exposure</text>
+<text x="835" y="599" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">[edges x steps], sampled every 3 m</text>
+<text x="835" y="620" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">covered / indoor edges = 0</text>
+<rect x="815" y="695" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="835" y="733" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Time-dependent A*</text>
+<text x="835" y="759" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">exposure looked up at arrival time</text>
+<text x="835" y="780" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">Fastest, Balanced, Coolest</text>
+<rect x="815" y="855" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="835" y="893" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Departure optimiser</text>
+<text x="835" y="919" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">19 departures, RHL + waiting cost</text>
+<text x="835" y="940" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">returns the human-checkable why</text>
+<rect x="1175" y="215" width="290" height="80" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1195" y="245" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="21" font-weight="300" fill="#E9DCBC">Planner</text>
+<text x="1195" y="271" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">tool-use loop, drafts a plan</text>
+<rect x="1175" y="310" width="290" height="80" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1195" y="340" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="21" font-weight="300" fill="#E9DCBC">Verifier</text>
+<text x="1195" y="366" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">separate call, checks every claim</text>
+<rect x="1175" y="405" width="290" height="80" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1195" y="435" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="21" font-weight="300" fill="#E9DCBC">Monitor</text>
+<text x="1195" y="461" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">simulated clock, replans, L1-L3</text>
+<rect x="1175" y="500" width="290" height="80" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1195" y="530" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="21" font-weight="300" fill="#E9DCBC">Narrator</text>
+<text x="1195" y="556" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">persona-aware text with tokens</text>
+<rect x="1175" y="595" width="290" height="80" fill="#1A1511" stroke="#5E8C7B" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1195" y="625" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="21" font-weight="300" fill="#E9DCBC">Token resolver</text>
+<text x="1195" y="651" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">numbers come from tool results only</text>
+<rect x="1175" y="695" width="290" height="270" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1195" y="733" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Tools (deterministic)</text>
+<text x="1195" y="759" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">resolve_place, get_sun, get_weather,</text>
+<text x="1195" y="780" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">plan_route, compare_routes,</text>
+<text x="1195" y="801" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">optimise_departure, find_cool_stops,</text>
+<text x="1195" y="822" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">plan_day, check_policy, commit_plan,</text>
+<text x="1195" y="843" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">explain_segment, build_city and more</text>
+<text x="1195" y="864" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">(14 tools, JSON-schema, in-process)</text>
+<text x="1195" y="885" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82"></text>
+<text x="1195" y="906" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">No key or no network: recorded replay</text>
+<rect x="1535" y="215" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1555" y="253" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">API</text>
+<text x="1555" y="279" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">FastAPI, SSE agent events,</text>
+<text x="1555" y="300" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">baked assets and shade PNGs</text>
+<rect x="1535" y="375" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1555" y="413" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Film  /film</text>
+<text x="1555" y="439" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">13-minute scroll-driven pitch,</text>
+<text x="1555" y="460" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">deterministic per chapter</text>
+<rect x="1535" y="535" width="290" height="110" fill="#1A1511" stroke="#C8A15A" stroke-opacity="0.55" stroke-width="1"/>
+<text x="1555" y="573" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">App  /app</text>
+<text x="1555" y="599" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">time slider, A to B, fly-through,</text>
+<text x="1555" y="620" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">agent chat, approval, replan</text>
+<rect x="1535" y="695" width="290" height="270" fill="none" stroke="#F4EEE1" stroke-opacity="0.18" stroke-width="1" stroke-dasharray="2 5"/>
+<text x="1555" y="735" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="20" font-weight="300" fill="#E9DCBC" fill-opacity="1">Runs offline on localhost.</text>
+<text x="1555" y="759" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" font-weight="300" fill="#D8C7A3" fill-opacity="0.82"></text>
+<text x="1555" y="783" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" font-weight="300" fill="#D8C7A3" fill-opacity="0.82">Only live LLM calls and live</text>
+<text x="1555" y="807" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" font-weight="300" fill="#D8C7A3" fill-opacity="0.82">weather need a network;</text>
+<text x="1555" y="831" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" font-weight="300" fill="#D8C7A3" fill-opacity="0.82">both have recorded fallbacks</text>
+<text x="1555" y="855" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" font-weight="300" fill="#D8C7A3" fill-opacity="0.82">and are badged in the UI.</text>
+<line x1="385" y1="270" x2="455" y2="270" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="385" y1="430" x2="455" y2="430" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="385" y1="590" x2="455" y2="590" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="385" y1="755" x2="455" y2="750" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="745" y1="270" x2="815" y2="270" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="745" y1="430" x2="815" y2="430" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="745" y1="590" x2="815" y2="590" stroke="#5E8C7B" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="745" y1="750" x2="815" y2="750" stroke="#5E8C7B" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="960.0" y1="325" x2="960.0" y2="375" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="960.0" y1="485" x2="960.0" y2="535" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="960.0" y1="645" x2="960.0" y2="695" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="960.0" y1="805" x2="960.0" y2="855" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)"/>
+<line x1="1105" y1="750" x2="1175" y2="750" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)" marker-start="url(#ahs)"/>
+<line x1="1105" y1="910" x2="1175" y2="910" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)" marker-start="url(#ahs)"/>
+<line x1="1320.0" y1="675" x2="1320.0" y2="695" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)" marker-start="url(#ahs)"/>
+<line x1="1465" y1="255" x2="1535" y2="255" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)" marker-start="url(#ahs)"/>
+<line x1="1680.0" y1="325" x2="1680.0" y2="375" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)" marker-start="url(#ahs)"/>
+<line x1="1680.0" y1="485" x2="1680.0" y2="535" stroke="#C8A15A" stroke-opacity="0.8" stroke-width="1.2" marker-end="url(#ah)" marker-start="url(#ahs)"/>
+<line x1="95" y1="1008" x2="1825" y2="1008" stroke="#F4EEE1" stroke-opacity="0.12" stroke-width="1"/>
+<text x="95" y="1040" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.75">Model v1: buildings, mapped trees, covered links. Awnings, unmapped trees and wind are not modelled. Counts from data/cities/dubai_downtown/meta.json. (c) OpenStreetMap contributors.</text>
+</svg>

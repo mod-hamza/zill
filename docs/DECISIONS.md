@@ -50,3 +50,7 @@
 - 2026-10-23 scene: QA OD pair for route stills = Burj Khalifa/Dubai Mall Metro -> Dubai Opera (live /api/route), labelled as a QA pair, not a hero scenario; hero journeys come only from hero.json.
 - 2026-10-23 scene: fly-through camera heights authored by raycasting the buildings along the route (roof + 14 m where the route passes under/through a building), indoor/AC-link segments get a mild oasis grade.
 - 2026-10-23 app: ActivityFeed 'now' prop is presentational only (emphasises rows within 1.2 s of it, ms since first event); caller controls visibility — keeps the Film deterministic.
+- 2026-10-23 ops: backup recorders end the film recording when `window.__zillFilm.t` reaches 780 s (else a wall-clock cap); stills seek in-page via `window.__zillFilmSetT` and wait for `__zillFrameReady`; chapter list parsed from `src/film/master.ts` (single source of truth) when the page does not expose `__zillChapters`.
+- 2026-10-23 ops: film mp4 kept at crf 20 as briefed (about 6.7 Mbit/s with film grain, roughly 650 MB for 13 min); `--crf` flag allows smaller files.
+- 2026-10-23 ops: routing perf figures in docs come from a re-run committed at `docs/qa/phase9/bench_routing.json`; the hand-off's quiet-machine figures are mentioned but marked as not stored in the repo.
+- 2026-10-23 ops: `freshclone` requires ports 3000/8000 free (next.config hard-codes the API port) and tests committed state only.

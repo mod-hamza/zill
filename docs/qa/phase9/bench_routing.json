@@ -1,0 +1,26 @@
+{
+ "graph": {
+  "nodes": 5455,
+  "edges": 7657
+ },
+ "pairs": 100,
+ "route_lam3": {
+  "p50_ms": 7.6,
+  "p95_ms": 25.1,
+  "max_ms": 39.2
+ },
+ "route_lam3_with_segments_and_baseline": {
+  "p50_ms": 11.9,
+  "p95_ms": 43.0,
+  "max_ms": 59.9
+ },
+ "compare_triple": {
+  "p50_ms": 21.2,
+  "p95_ms": 68.8,
+  "max_ms": 101.2
+ },
+ "departure_19": {
+  "ms": 38.3,
+  "rows": 19
+ }
+}

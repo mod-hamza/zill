@@ -30,6 +30,7 @@ dependencies = [
   "networkx>=3.3",
   "orjson>=3.10",
   "tzdata>=2024.1",
+  "imageio-ffmpeg>=0.5",
 ]
 
 [project.optional-dependencies]
