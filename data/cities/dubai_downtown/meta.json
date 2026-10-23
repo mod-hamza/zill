@@ -44,8 +44,8 @@
   "building_parts": 577,
   "trees": 744,
   "nodes": 5455,
-  "edges": 7657,
-  "edges_walk": 7029,
+  "edges": 7659,
+  "edges_walk": 7031,
   "edges_cycle": 4822,
   "covered_edges": 116,
   "indoor_edges": 1446,
@@ -66,7 +66,7 @@
  "max_building_height_m": 828.0,
  "source": {
   "osm_timestamp": "2026-10-22T19:17:21Z",
-  "fetched_at": "2026-10-22T21:02:25.423952+00:00",
+  "fetched_at": "2026-10-23T03:56:47.323151+00:00",
   "overpass_endpoint": "https://overpass-api.de/api/interpreter"
  },
  "attribution": "© OpenStreetMap contributors",
@@ -79,56 +79,56 @@
  "build_log": [
   {
    "t_ms": 0,
-   "dur_ms": 210,
+   "dur_ms": 194,
    "step": "geocode",
    "count": 50,
    "label": "50 places resolved (18/19 gazetteer hits)"
   },
   {
-   "t_ms": 211,
-   "dur_ms": 218,
+   "t_ms": 194,
+   "dur_ms": 214,
    "step": "fetch_buildings",
    "count": 8853,
    "label": "8853 OSM building elements"
   },
   {
-   "t_ms": 430,
-   "dur_ms": 154,
+   "t_ms": 409,
+   "dur_ms": 150,
    "step": "fetch_roads",
    "count": 4037,
    "label": "4037 OSM ways (highway/indoor)"
   },
   {
-   "t_ms": 584,
+   "t_ms": 560,
    "dur_ms": 11,
    "step": "fetch_trees",
    "count": 744,
    "label": "744 trees (547 mapped, 197 from rows)"
   },
   {
-   "t_ms": 597,
-   "dur_ms": 1545,
+   "t_ms": 572,
+   "dur_ms": 1547,
    "step": "heights",
    "count": 8602,
    "label": "8602 footprints; max 828 m; 97 shells replaced by parts"
   },
   {
-   "t_ms": 2142,
-   "dur_ms": 482,
+   "t_ms": 2120,
+   "dur_ms": 488,
    "step": "graph",
    "count": 7752,
    "label": "7752 raw edges split at intersections"
   },
   {
-   "t_ms": 2625,
-   "dur_ms": 440,
+   "t_ms": 2608,
+   "dur_ms": 512,
    "step": "covered_links",
    "count": 1577,
    "label": "116 covered, 1446 indoor, 15 AC-link edges"
   },
   {
-   "t_ms": 3066,
-   "dur_ms": 4490,
+   "t_ms": 3121,
+   "dur_ms": 4409,
    "step": "write",
    "count": 7,
    "label": "meta, buildings(.json/.glb), trees, graph, links, pois"
@@ -287,6 +287,16 @@
     "ac_link": 17,
     "indoor": 1495
    },
+   "entrance_unlinked": [
+    605013590,
+    6016160754,
+    8423933515,
+    10309469222,
+    11476065350,
+    13602483132,
+    13609243923
+   ],
+   "entrance_links": 2,
    "entrance_split_nodes": 25,
    "entrance_wall_curated": 27,
    "entrance_rejoined_curated": 1,
@@ -297,6 +307,20 @@
   },
   "curated_links": [],
   "curated_entrances_snapped": 0,
+  "entrance_links": [
+   {
+    "entrance": 8423933513,
+    "to": 13659236917,
+    "side": "out",
+    "length_m": 29.0
+   },
+   {
+    "entrance": 8423933514,
+    "to": 13381412904,
+    "side": "out",
+    "length_m": 20.3
+   }
+  ],
   "poi_resolution": [
    {
     "id": "burj_khalifa",
@@ -449,10 +473,12 @@
    }
   ],
   "poi_snap_warnings": [
-   "dubai_fountain snapped 78 m",
-   "burj_lake snapped 88 m",
-   "bay_avenue_mall snapped 63 m",
-   "bayside_park_5 snapped 127 m"
+   "burj_khalifa snapped 71 m (entrance)",
+   "dubai_fountain snapped 78 m (nearest)",
+   "dubai_opera snapped 63 m (entrance)",
+   "burj_lake snapped 88 m (nearest)",
+   "bay_avenue_mall snapped 63 m (nearest)",
+   "bayside_park_5 snapped 127 m (nearest)"
   ],
   "overpass_requests": 0,
   "overpass_cache_hits": 40,

@@ -11,8 +11,9 @@
    "osm_name": "Burj Khalifa",
    "x": -18.82,
    "z": 18.22,
-   "node": 3793,
-   "snap_m": 33.3
+   "node": 299,
+   "snap_m": 71.0,
+   "snap": "entrance"
   },
   {
    "id": "dubai_mall",
@@ -26,7 +27,8 @@
    "x": 420.45,
    "z": 21.31,
    "node": 4192,
-   "snap_m": 5.5
+   "snap_m": 5.5,
+   "snap": "nearest"
   },
   {
    "id": "dubai_fountain",
@@ -40,7 +42,8 @@
    "x": 130.77,
    "z": 209.54,
    "node": 4125,
-   "snap_m": 78.3
+   "snap_m": 78.3,
+   "snap": "nearest"
   },
   {
    "id": "dubai_opera",
@@ -53,8 +56,9 @@
    "osm_name": "Dubai Opera",
    "x": -243.52,
    "z": 169.09,
-   "node": 3923,
-   "snap_m": 38.1
+   "node": 3373,
+   "snap_m": 63.5,
+   "snap": "entrance"
   },
   {
    "id": "metro_burj_khalifa",
@@ -68,7 +72,8 @@
    "x": -489.02,
    "z": -468.47,
    "node": 5451,
-   "snap_m": 13.7
+   "snap_m": 13.7,
+   "snap": "nearest"
   },
   {
    "id": "souk_al_bahar",
@@ -82,7 +87,8 @@
    "x": 220.28,
    "z": 268.29,
    "node": 4126,
-   "snap_m": 49.0
+   "snap_m": 49.0,
+   "snap": "entrance"
   },
   {
    "id": "burj_park",
@@ -96,7 +102,8 @@
    "x": -98.3,
    "z": 333.71,
    "node": 3931,
-   "snap_m": 43.0
+   "snap_m": 43.0,
+   "snap": "nearest"
   },
   {
    "id": "address_downtown",
@@ -110,7 +117,8 @@
    "x": 451.83,
    "z": 351.36,
    "node": 1968,
-   "snap_m": 38.4
+   "snap_m": 38.4,
+   "snap": "nearest"
   },
   {
    "id": "armani_hotel",
@@ -124,7 +132,8 @@
    "x": 33.38,
    "z": -28.67,
    "node": 299,
-   "snap_m": 15.7
+   "snap_m": 15.7,
+   "snap": "nearest"
   },
   {
    "id": "palace_downtown",
@@ -138,7 +147,8 @@
    "x": 131.49,
    "z": 390.89,
    "node": 298,
-   "snap_m": 47.9
+   "snap_m": 47.9,
+   "snap": "nearest"
   },
   {
    "id": "boulevard_plaza",
@@ -152,7 +162,8 @@
    "x": -122.77,
    "z": -353.34,
    "node": 1279,
-   "snap_m": 0.0
+   "snap_m": 0.0,
+   "snap": "nearest"
   },
   {
    "id": "emaar_square",
@@ -166,7 +177,8 @@
    "x": -115.74,
    "z": -416.1,
    "node": 481,
-   "snap_m": 7.7
+   "snap_m": 7.7,
+   "snap": "nearest"
   },
   {
    "id": "address_boulevard",
@@ -180,7 +192,8 @@
    "x": 181.71,
    "z": -406.39,
    "node": 5272,
-   "snap_m": 41.8
+   "snap_m": 41.8,
+   "snap": "nearest"
   },
   {
    "id": "address_sky_view",
@@ -194,7 +207,8 @@
    "x": -339.06,
    "z": -499.13,
    "node": 1955,
-   "snap_m": 13.7
+   "snap_m": 13.7,
+   "snap": "nearest"
   },
   {
    "id": "burj_lake",
@@ -208,7 +222,8 @@
    "x": 88.75,
    "z": 354.75,
    "node": 298,
-   "snap_m": 87.9
+   "snap_m": 87.9,
+   "snap": "nearest"
   },
   {
    "id": "dubai_opera_garden",
@@ -222,7 +237,8 @@
    "x": -97.63,
    "z": 214.93,
    "node": 3546,
-   "snap_m": 12.3
+   "snap_m": 12.3,
+   "snap": "nearest"
   },
   {
    "id": "business_bay_metro",
@@ -236,7 +252,8 @@
    "x": -1410.38,
    "z": 651.04,
    "node": 1568,
-   "snap_m": 43.7
+   "snap_m": 43.7,
+   "snap": "nearest"
   },
   {
    "id": "dubai_mall_metro_link",
@@ -250,7 +267,8 @@
    "x": -148.32,
    "z": -340.37,
    "node": 2581,
-   "snap_m": 17.8
+   "snap_m": 17.8,
+   "snap": "nearest"
   },
   {
    "id": "the_address_dubai_mall",
@@ -263,7 +281,8 @@
    "x": 319.69,
    "z": -271.8,
    "node": 3209,
-   "snap_m": 47.6
+   "snap_m": 47.6,
+   "snap": "nearest"
   },
   {
    "id": "ramada_downtown_dubai",
@@ -276,7 +295,8 @@
    "x": -179.64,
    "z": 466.11,
    "node": 4132,
-   "snap_m": 49.3
+   "snap_m": 49.3,
+   "snap": "nearest"
   },
   {
    "id": "sofitel_dubai_downtown",
@@ -289,7 +309,8 @@
    "x": -576.39,
    "z": -287.74,
    "node": 2116,
-   "snap_m": 51.5
+   "snap_m": 51.5,
+   "snap": "nearest"
   },
   {
    "id": "swissotel_al_murooj_dubai",
@@ -302,7 +323,8 @@
    "x": 229.68,
    "z": -638.1,
    "node": 3185,
-   "snap_m": 4.1
+   "snap_m": 4.1,
+   "snap": "nearest"
   },
   {
    "id": "swissotel_al_murooj",
@@ -315,7 +337,8 @@
    "x": 325.31,
    "z": -616.26,
    "node": 3137,
-   "snap_m": 39.3
+   "snap_m": 39.3,
+   "snap": "nearest"
   },
   {
    "id": "al_manzil",
@@ -328,7 +351,8 @@
    "x": 326.0,
    "z": 664.36,
    "node": 3523,
-   "snap_m": 39.4
+   "snap_m": 39.4,
+   "snap": "nearest"
   },
   {
    "id": "vida_downtown_dubai_hotel",
@@ -341,7 +365,8 @@
    "x": 12.18,
    "z": 779.13,
    "node": 2614,
-   "snap_m": 30.2
+   "snap_m": 30.2,
+   "snap": "nearest"
   },
   {
    "id": "rove",
@@ -354,7 +379,8 @@
    "x": 499.78,
    "z": -603.6,
    "node": 3261,
-   "snap_m": 25.0
+   "snap_m": 25.0,
+   "snap": "nearest"
   },
   {
    "id": "the_dubai_edition",
@@ -367,7 +393,8 @@
    "x": 624.46,
    "z": 554.1,
    "node": 5318,
-   "snap_m": 43.1
+   "snap_m": 43.1,
+   "snap": "nearest"
   },
   {
    "id": "taj_dubai_hotel",
@@ -380,7 +407,8 @@
    "x": -716.92,
    "z": 539.99,
    "node": 2871,
-   "snap_m": 43.4
+   "snap_m": 43.4,
+   "snap": "nearest"
   },
   {
    "id": "leva_hotel_and_suites_opposite_downtown",
@@ -393,7 +421,8 @@
    "x": -954.77,
    "z": -142.52,
    "node": 858,
-   "snap_m": 39.7
+   "snap_m": 39.7,
+   "snap": "nearest"
   },
   {
    "id": "maryland_international_hotel",
@@ -406,7 +435,8 @@
    "x": 751.54,
    "z": 621.24,
    "node": 1439,
-   "snap_m": 35.9
+   "snap_m": 35.9,
+   "snap": "nearest"
   },
   {
    "id": "movenpick_hotel_apartments_downtown_dubai",
@@ -419,7 +449,8 @@
    "x": 932.2,
    "z": 343.44,
    "node": 1614,
-   "snap_m": 43.9
+   "snap_m": 43.9,
+   "snap": "nearest"
   },
   {
    "id": "dusit_thani",
@@ -432,7 +463,8 @@
    "x": -144.56,
    "z": -996.98,
    "node": 239,
-   "snap_m": 39.1
+   "snap_m": 39.1,
+   "snap": "nearest"
   },
   {
    "id": "mazaya_shopping_centre",
@@ -445,7 +477,8 @@
    "x": -908.42,
    "z": -210.3,
    "node": 1682,
-   "snap_m": 42.9
+   "snap_m": 42.9,
+   "snap": "nearest"
   },
   {
    "id": "bay_avenue_mall",
@@ -458,7 +491,8 @@
    "x": -906.46,
    "z": 721.94,
    "node": 743,
-   "snap_m": 62.7
+   "snap_m": 62.7,
+   "snap": "nearest"
   },
   {
    "id": "al_wasl_centre",
@@ -471,7 +505,8 @@
    "x": -1233.05,
    "z": 191.35,
    "node": 4137,
-   "snap_m": 50.8
+   "snap_m": 50.8,
+   "snap": "nearest"
   },
   {
    "id": "public_playground_dubai_mall",
@@ -484,7 +519,8 @@
    "x": -190.5,
    "z": 22.29,
    "node": 3949,
-   "snap_m": 23.8
+   "snap_m": 23.8,
+   "snap": "nearest"
   },
   {
    "id": "bay_avenue_park",
@@ -497,7 +533,8 @@
    "x": -790.16,
    "z": 784.01,
    "node": 1579,
-   "snap_m": 3.8
+   "snap_m": 3.8,
+   "snap": "nearest"
   },
   {
    "id": "bayside_park_5",
@@ -510,7 +547,8 @@
    "x": 788.02,
    "z": 982.0,
    "node": 1013,
-   "snap_m": 127.0
+   "snap_m": 127.0,
+   "snap": "nearest"
   },
   {
    "id": "action_hub",
@@ -523,7 +561,8 @@
    "x": -832.16,
    "z": 984.31,
    "node": 5378,
-   "snap_m": 44.1
+   "snap_m": 44.1,
+   "snap": "nearest"
   },
   {
    "id": "al_wasl_park_2",
@@ -536,7 +575,8 @@
    "x": -1355.2,
    "z": -113.68,
    "node": 2263,
-   "snap_m": 33.6
+   "snap_m": 33.6,
+   "snap": "nearest"
   },
   {
    "id": "diplodocus",
@@ -549,7 +589,8 @@
    "x": 505.03,
    "z": 34.51,
    "node": 4875,
-   "snap_m": 11.5
+   "snap_m": 11.5,
+   "snap": "nearest"
   },
   {
    "id": "the_waterfall",
@@ -562,7 +603,8 @@
    "x": 510.22,
    "z": 211.14,
    "node": 4526,
-   "snap_m": 9.6
+   "snap_m": 9.6,
+   "snap": "nearest"
   },
   {
    "id": "at_mosphere_burj_khalifa",
@@ -575,7 +617,8 @@
    "x": -30.67,
    "z": 5.73,
    "node": 337,
-   "snap_m": 46.8
+   "snap_m": 46.8,
+   "snap": "nearest"
   },
   {
    "id": "ten_11_coffee_boutique_dubai_mall",
@@ -588,7 +631,8 @@
    "x": 238.38,
    "z": -22.46,
    "node": 4969,
-   "snap_m": 10.4
+   "snap_m": 10.4,
+   "snap": "nearest"
   },
   {
    "id": "kriskos",
@@ -601,7 +645,8 @@
    "x": -92.78,
    "z": -272.05,
    "node": 3640,
-   "snap_m": 37.1
+   "snap_m": 37.1,
+   "snap": "nearest"
   },
   {
    "id": "starbucks",
@@ -614,7 +659,8 @@
    "x": 31.08,
    "z": -294.05,
    "node": 486,
-   "snap_m": 51.2
+   "snap_m": 51.2,
+   "snap": "nearest"
   },
   {
    "id": "grand_cafe",
@@ -627,7 +673,8 @@
    "x": 227.41,
    "z": -216.57,
    "node": 3212,
-   "snap_m": 20.4
+   "snap_m": 20.4,
+   "snap": "nearest"
   },
   {
    "id": "the_six_board_game_cafe",
@@ -640,7 +687,8 @@
    "x": -368.94,
    "z": -119.42,
    "node": 5406,
-   "snap_m": 48.5
+   "snap_m": 48.5,
+   "snap": "nearest"
   },
   {
    "id": "caribou_coffee",
@@ -653,7 +701,8 @@
    "x": -388.44,
    "z": 98.86,
    "node": 3847,
-   "snap_m": 33.7
+   "snap_m": 33.7,
+   "snap": "nearest"
   },
   {
    "id": "arabica",
@@ -666,7 +715,8 @@
    "x": 393.27,
    "z": -93.37,
    "node": 4577,
-   "snap_m": 40.0
+   "snap_m": 40.0,
+   "snap": "nearest"
   }
  ]
 }

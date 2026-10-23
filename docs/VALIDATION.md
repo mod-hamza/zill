@@ -25,7 +25,7 @@ Source: OpenStreetMap via Overpass (`overpass-api.de`), OSM base timestamp 2026-
 | Height source | tag 1,098 / levels 167 / **fallback 6,760** / part 576 / landmark 1 |
 | Max height | 828 m (Burj Khalifa spire part; OSM tags 760 m, curated override) |
 | Trees | 744 (547 mapped nodes + 197 sampled every 6 m along 11 tree rows); none carry crown or height tags, so defaults r 3 m, h 7 m |
-| Graph | 5,455 nodes, 7,657 edges (7,029 walk, 4,822 cycle/scooter), median edge 21 m, 302 km |
+| Graph | 5,455 nodes, 7,659 edges (7,031 walk, 4,822 cycle/scooter), median edge 21 m, 302 km; incl. 2 `entrance_link` edges (OSM doors whose outside path is unmapped) |
 | Link classes (counts) | open 6,080 / indoor 1,446 / covered 116 / ac_link 15 |
 | Dropped components | walk 40, cycle 23 (95 edges) |
 | POIs | 50 (18 of 19 curated gazetteer entries resolved; Vida Downtown dropped) |
@@ -37,7 +37,7 @@ Honest caveats:
 
 - **Heights are mostly guessed.** 6,760 of 8,602 footprints (about 79 %) have no height or levels tag and use the PRD fallbacks (apartments 30 m, hotel 45 m, office 40 m, retail 22 m, default 18 m). Shadow lengths of those buildings are approximate. Overture heights are a P2 option.
 - **Trees are under-estimated.** OSM tree mapping in Downtown Dubai is sparse, so tree shade is conservative.
-- **Graph density.** The PRD gate expected more than 10,000 edges; the real network for the scene box gives 7,657 after splitting at every shared node. Accepted, not padded (`docs/DECISIONS.md`). Many roads carry `foot=no` because sidewalks are mapped separately; they are cycle-only.
+- **Graph density.** The PRD gate expected more than 10,000 edges; the real network for the scene box gives 7,659 after splitting at every shared node. Accepted, not padded (`docs/DECISIONS.md`). Many roads carry `foot=no` because sidewalks are mapped separately; they are cycle-only.
 - **AC links come from OSM tags** (`bridge=yes` with `covered=yes` or `indoor=yes`), including the Metro Link (way/204267696), continuous from the station into the Dubai Mall indoor network. Not yet walked on site.
 - **Entrances.** 27 indoor/outdoor transitions are accepted as doors because they lie within 3 m of a building wall; 1 curated entrance (node 605023848) reconnects about 1,500 edges west of Sheikh Zayed Road (`meta.json` diagnostics).
 
@@ -125,3 +125,5 @@ Goal: check that modelled shade matches the street. On the Boulevard around 14:0
 ## 10. QA artefacts
 
 `docs/qa/phase1/` (graph, buildings), `docs/qa/phase2/` (shadow previews at 08:00, 12:00, 13:30, 16:00), `docs/qa/phase6/` (App iterations and `perf.json`), `docs/qa/phase9/bench_routing.json`.
+
+Routing sanity (graph-level + `zill.routing.tdsp.route`, walk, summer 13:30): Burj Khalifa → The Dubai Mall 447 m / 6.1 min, 100 % indoor via the OSM-mapped tower–mall link (the same route without any ac_link edge); Souk Al Bahar → Dubai Mall 385 m; Dubai Opera → Dubai Mall 1,140 m (fastest) / 1,178 m (coolest, 425 → 356 s in sun); Metro station → Dubai Mall 1,439 m via the Metro Link (ac_link 838 m). The mall connects to outdoor paths through 7 OSM `entrance=*` doors plus 2 short entrance links — not only through the Metro Link.

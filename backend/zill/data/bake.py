@@ -22,6 +22,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import shapely
 from scipy.spatial import cKDTree
 
 from zill import config
@@ -36,7 +37,15 @@ from zill.data.buildings import (
 )
 from zill.data.cities import CitySpec, get_city_spec
 from zill.data.glb import verify_glb, write_glb
-from zill.data.graph import Edge, GraphBuild, build_graph, enforce_entrances, largest_components, to_columnar
+from zill.data.graph import (
+    Edge,
+    GraphBuild,
+    build_graph,
+    enforce_entrances,
+    largest_components,
+    link_entrances,
+    to_columnar,
+)
 from zill.data.pois import SNAP_WARN_M, auto_pois, project, resolve
 from zill.data.trees import elements_to_trees
 from zill.geo import to_local, to_wgs84
@@ -215,18 +224,42 @@ def links_geojson(graph: dict[str, Any], origin: dict[str, float]) -> dict[str, 
     return {"type": "FeatureCollection", "features": feats}
 
 
-def snap_pois(pois: list[dict[str, Any]], graph: dict[str, Any]) -> list[str]:
+def snap_pois(
+    pois: list[dict[str, Any]], graph: dict[str, Any], footprints: dict[str, Any] | None = None
+) -> list[str]:
+    """Snap each POI to its nearest walk node. If that node is outdoor-only and the POI's own OSM building
+    has a mapped entrance (graph entrance node within 10 m of its outline, <= 150 m from the POI), snap to
+    that door instead: you enter the Burj Khalifa through its door, not from the nearest lawn path."""
     N, E = graph["nodes"], graph["edges"]
     walk_nodes = sorted({n for i, w in enumerate(E["walk"]) if w for n in (E["u"][i], E["v"][i])})
     xy = np.column_stack([np.array(N["x"])[walk_nodes], np.array(N["z"])[walk_nodes]])
     tree = cKDTree(xy)
+    inside_nodes = {
+        n for i, w in enumerate(E["walk"]) if w and E["cls"][i] != "open" for n in (E["u"][i], E["v"][i])
+    }
+    ent = [n for n in walk_nodes if N["entrance"][n]]
+    ent_pts = shapely.points(np.column_stack([np.array(N["x"])[ent], np.array(N["z"])[ent]])) if ent else None
     warns = []
     for p in pois:
         d, i = tree.query((p["x"], p["z"]))
-        p["node"] = int(walk_nodes[int(i)])
+        node, snap = int(walk_nodes[int(i)]), "nearest"
+        fp = (footprints or {}).get(p.get("osm") or "")
+        if fp is not None and node not in inside_nodes and ent_pts is not None:
+            near = [
+                k
+                for k in range(len(ent))
+                if fp.exterior.distance(ent_pts[k]) <= 10.0 or fp.contains(ent_pts[k])
+            ]
+            if near:
+                k = min(near, key=lambda k: (N["x"][ent[k]] - p["x"]) ** 2 + (N["z"][ent[k]] - p["z"]) ** 2)
+                de = float(np.hypot(N["x"][ent[k]] - p["x"], N["z"][ent[k]] - p["z"]))
+                if de <= 150.0:
+                    node, d, snap = ent[k], de, "entrance"
+        p["node"] = node
         p["snap_m"] = round(float(d), 1)
+        p["snap"] = snap
         if d > SNAP_WARN_M:
-            warns.append(f"{p['id']} snapped {d:.0f} m")
+            warns.append(f"{p['id']} snapped {d:.0f} m ({snap})")
     return warns
 
 
@@ -304,6 +337,7 @@ def bake(city_id: str, refresh: bool = False, out_root: Path | None = None, run_
     link_report = apply_curated_links(gb, ac_feats, origin)
     ents = _load_curated(city_id, "entrances.json") or []
     n_cur_ent = apply_curated_entrances(gb, ents, origin)
+    ent_links = link_entrances(gb, shell_polys)
     enforce_entrances(gb, shell_polys)
     dropped = largest_components(gb)
     graph, _remap = to_columnar(gb)
@@ -319,7 +353,7 @@ def bake(city_id: str, refresh: bool = False, out_root: Path | None = None, run_
 
     # 8. write
     sl.start()
-    poi_warns = snap_pois(pois, graph)
+    poi_warns = snap_pois(pois, graph, {b.osm: b.poly for b in raw_blds})
     glb_report = write_glb(blds, out / "buildings.glb", (scene_xz[0], scene_xz[1]))
     glb_report["verify"] = verify_glb(out / "buildings.glb")
     _dump(out / "buildings.json", {"buildings": bjson})
@@ -382,6 +416,7 @@ def bake(city_id: str, refresh: bool = False, out_root: Path | None = None, run_
             "graph_log": gb.log,
             "curated_links": link_report,
             "curated_entrances_snapped": n_cur_ent,
+            "entrance_links": ent_links,
             "poi_resolution": poi_log,
             "poi_snap_warnings": poi_warns,
             "overpass_requests": overpass.STATS.requests,

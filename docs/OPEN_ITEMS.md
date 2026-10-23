@@ -49,3 +49,5 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 - [ ] Film Ch.9 crew vignette shows the UAE midday-break window from the UNVERIFIED policy pack (`data/curated/policy_packs/uae_outdoor_work.json`), labelled "verify".
 - [ ] Film data copies: after re-recording replays, re-running `make test`, or editing SPEAKER_NOTES, run `npm run sync:film` (also runs automatically on `npm run dev` / `npm run build`).
 - [ ] Film Ch.11 roadmap cities (Doha, Riyadh, Singapore, Phoenix) are a team choice from the PRD; confirm.
+- [ ] [data] 2 auto-generated `entrance_link` edges (≤ 30 m, from OSM doors 8423933513 and 8423933514 to the nearest outdoor path) are `verified:false` — confirm the doors open onto those paths
+- [ ] [data] Burj Khalifa POI now snaps to the tower's OSM entrance, whose only mapped path is the indoor link into The Dubai Mall — confirm the public visitor route (At the Top visitors enter through the mall)

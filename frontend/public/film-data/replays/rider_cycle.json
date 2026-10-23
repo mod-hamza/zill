@@ -2,7 +2,7 @@
  "scenario_id": "rider_cycle",
  "persona": "rider",
  "prompt": "I'm cycling a delivery from Maryland International Hotel to Taj Dubai Hotel, leaving at 15:30. Keep me out of the sun where it is cheap to.",
- "recorded_at": "2026-10-22T21:20:45+00:00",
+ "recorded_at": "2026-10-23T04:00:27+00:00",
  "model": "zill-scripted-planner",
  "live": false,
  "autonomy_level": 2,
@@ -14,10 +14,10 @@
    "dt_ms": 200,
    "event": {
     "id": "evt_0001",
-    "ts": "2026-10-22T21:20:44.972+00:00",
+    "ts": "2026-10-23T04:00:27.715+00:00",
     "type": "session_started",
     "payload": {
-     "session_id": "s_481e0b2189",
+     "session_id": "s_1073ff1a51",
      "persona": "rider",
      "city": "dubai_downtown",
      "date_key": "summer",
@@ -34,7 +34,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0002",
-    "ts": "2026-10-22T21:20:44.972+00:00",
+    "ts": "2026-10-23T04:00:27.716+00:00",
     "type": "thought",
     "payload": {
      "text": "Locating where you are starting."
@@ -46,7 +46,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0003",
-    "ts": "2026-10-22T21:20:44.972+00:00",
+    "ts": "2026-10-23T04:00:27.716+00:00",
     "type": "tool_call",
     "payload": {
      "name": "resolve_place",
@@ -63,7 +63,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0004",
-    "ts": "2026-10-22T21:20:44.973+00:00",
+    "ts": "2026-10-23T04:00:27.716+00:00",
     "type": "tool_result",
     "payload": {
      "name": "resolve_place",
@@ -78,7 +78,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0005",
-    "ts": "2026-10-22T21:20:44.973+00:00",
+    "ts": "2026-10-23T04:00:27.716+00:00",
     "type": "thought",
     "payload": {
      "text": "Locating your destination."
@@ -90,7 +90,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0006",
-    "ts": "2026-10-22T21:20:44.973+00:00",
+    "ts": "2026-10-23T04:00:27.716+00:00",
     "type": "tool_call",
     "payload": {
      "name": "resolve_place",
@@ -107,7 +107,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0007",
-    "ts": "2026-10-22T21:20:44.973+00:00",
+    "ts": "2026-10-23T04:00:27.716+00:00",
     "type": "tool_result",
     "payload": {
      "name": "resolve_place",
@@ -122,7 +122,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0008",
-    "ts": "2026-10-22T21:20:44.973+00:00",
+    "ts": "2026-10-23T04:00:27.717+00:00",
     "type": "thought",
     "payload": {
      "text": "Checking the heat at your travel time."
@@ -134,7 +134,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0009",
-    "ts": "2026-10-22T21:20:44.973+00:00",
+    "ts": "2026-10-23T04:00:27.717+00:00",
     "type": "tool_call",
     "payload": {
      "name": "get_weather",
@@ -149,7 +149,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0010",
-    "ts": "2026-10-22T21:20:44.975+00:00",
+    "ts": "2026-10-23T04:00:27.718+00:00",
     "type": "tool_result",
     "payload": {
      "name": "get_weather",
@@ -164,7 +164,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0011",
-    "ts": "2026-10-22T21:20:44.976+00:00",
+    "ts": "2026-10-23T04:00:27.718+00:00",
     "type": "thought",
     "payload": {
      "text": "Comparing fastest, balanced and coolest routes."
@@ -176,7 +176,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0012",
-    "ts": "2026-10-22T21:20:44.976+00:00",
+    "ts": "2026-10-23T04:00:27.718+00:00",
     "type": "tool_call",
     "payload": {
      "name": "compare_routes",
@@ -195,13 +195,13 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0013",
-    "ts": "2026-10-22T21:20:45.005+00:00",
+    "ts": "2026-10-23T04:00:27.746+00:00",
     "type": "tool_result",
     "payload": {
      "name": "compare_routes",
      "ok": true,
      "summary": "Maryland International Hotel to Taj Dubai Hotel by cycle at 15:30. fastest: 9.0 min, 17% shaded, sun 7.4 min, RHL 479; balanced: 9.8 min, 45% shaded, sun 5.4 min, RHL 415; coolest: 10.6 min, 57% shaded, sun 4.6 min, RHL 401.",
-     "duration_ms": 29,
+     "duration_ms": 28,
      "data": {
       "plan_id": "plan_1",
       "routes": {
@@ -263,7 +263,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0014",
-    "ts": "2026-10-22T21:20:45.006+00:00",
+    "ts": "2026-10-23T04:00:27.748+00:00",
     "type": "thought",
     "payload": {
      "text": "Your departure is flexible, so I will test later start times."
@@ -275,7 +275,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0015",
-    "ts": "2026-10-22T21:20:45.006+00:00",
+    "ts": "2026-10-23T04:00:27.748+00:00",
     "type": "tool_call",
     "payload": {
      "name": "optimise_departure",
@@ -297,13 +297,13 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0016",
-    "ts": "2026-10-22T21:20:45.111+00:00",
+    "ts": "2026-10-23T04:00:27.851+00:00",
     "type": "tool_result",
     "payload": {
      "name": "optimise_departure",
      "ok": true,
      "summary": "Best departure 15:30 out of 19 evaluated.",
-     "duration_ms": 103
+     "duration_ms": 102
     }
    },
    "phase": "plan"
@@ -312,7 +312,7 @@
    "dt_ms": 800,
    "event": {
     "id": "evt_0017",
-    "ts": "2026-10-22T21:20:45.112+00:00",
+    "ts": "2026-10-23T04:00:27.853+00:00",
     "type": "verifier",
     "payload": {
      "checked": 11,
@@ -329,7 +329,7 @@
    "dt_ms": 700,
    "event": {
     "id": "evt_0018",
-    "ts": "2026-10-22T21:20:45.113+00:00",
+    "ts": "2026-10-23T04:00:27.853+00:00",
     "type": "proposal",
     "payload": {
      "plan_id": "plan_1",
@@ -6640,7 +6640,7 @@
    "dt_ms": 400,
    "event": {
     "id": "evt_0019",
-    "ts": "2026-10-22T21:20:45.113+00:00",
+    "ts": "2026-10-23T04:00:27.853+00:00",
     "type": "approval_request",
     "payload": {
      "plan_id": "plan_1",
@@ -6664,7 +6664,7 @@
    "dt_ms": 900,
    "event": {
     "id": "evt_0020",
-    "ts": "2026-10-22T21:20:45.113+00:00",
+    "ts": "2026-10-23T04:00:27.853+00:00",
     "type": "message",
     "payload": {
      "text": "Take the balanced route, Maryland International Hotel to Taj Dubai Hotel, leave 15:30. The balanced ride spends 5.4 min in direct sun against 7.4 min on the fastest, saving 2.1 min of sun, and 45% of it is shaded. It takes 0.8 min longer than the fastest. There is a heat alert: carry water and take shade breaks. Shade counts buildings, mapped trees and covered links only; awnings and wind are not modelled.",
@@ -6712,7 +6712,7 @@
    "dt_ms": 500,
    "event": {
     "id": "evt_0021",
-    "ts": "2026-10-22T21:20:45.113+00:00",
+    "ts": "2026-10-23T04:00:27.854+00:00",
     "type": "plan_committed",
     "payload": {
      "plan_id": "plan_1",
@@ -6741,7 +6741,7 @@
    "dt_ms": 600,
    "event": {
     "id": "evt_0022",
-    "ts": "2026-10-22T21:20:45.113+00:00",
+    "ts": "2026-10-23T04:00:27.854+00:00",
     "type": "monitor_tick",
     "payload": {
      "sim_time": "2026-07-15T15:30:00+04:00",

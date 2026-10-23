@@ -59,3 +59,20 @@ def test_pois_snapped():
     n_nodes = len(_load("graph.json")["nodes"]["x"])
     for p in pois:
         assert 0 <= p["node"] < n_nodes
+
+
+def test_dubai_mall_reachable_without_ac_link():
+    """The mall must connect to the street network through its own doors, not only via the Metro Link."""
+    import networkx as nx
+
+    g = _load("graph.json")
+    E = g["edges"]
+    pois = {p["id"]: p for p in _load("pois.json")["pois"]}
+    G = nx.Graph()
+    for i in range(len(E["u"])):
+        if E["walk"][i] and E["cls"][i] != "ac_link":
+            G.add_edge(E["u"][i], E["v"][i], w=E["length_m"][i])
+    d = nx.shortest_path_length(G, pois["burj_khalifa"]["node"], pois["dubai_mall"]["node"], weight="w")
+    assert d < 700
+    for pid in ("dubai_opera", "souk_al_bahar", "address_downtown"):
+        assert nx.has_path(G, pois[pid]["node"], pois["dubai_mall"]["node"])

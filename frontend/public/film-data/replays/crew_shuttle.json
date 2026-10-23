@@ -2,7 +2,7 @@
  "scenario_id": "crew_shuttle",
  "persona": "crew",
  "prompt": "My crew needs to move from Address Boulevard to Address Sky View at 14:30. Check it against the midday work policy.",
- "recorded_at": "2026-10-22T21:20:45+00:00",
+ "recorded_at": "2026-10-23T04:00:27+00:00",
  "model": "zill-scripted-planner",
  "live": false,
  "autonomy_level": 2,
@@ -14,10 +14,10 @@
    "dt_ms": 200,
    "event": {
     "id": "evt_0001",
-    "ts": "2026-10-22T21:20:45.114+00:00",
+    "ts": "2026-10-23T04:00:27.854+00:00",
     "type": "session_started",
     "payload": {
-     "session_id": "s_152f7b3e93",
+     "session_id": "s_299065f361",
      "persona": "crew",
      "city": "dubai_downtown",
      "date_key": "summer",
@@ -34,7 +34,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0002",
-    "ts": "2026-10-22T21:20:45.114+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "thought",
     "payload": {
      "text": "Locating where you are starting."
@@ -46,7 +46,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0003",
-    "ts": "2026-10-22T21:20:45.115+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "tool_call",
     "payload": {
      "name": "resolve_place",
@@ -63,7 +63,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0004",
-    "ts": "2026-10-22T21:20:45.115+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "tool_result",
     "payload": {
      "name": "resolve_place",
@@ -78,7 +78,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0005",
-    "ts": "2026-10-22T21:20:45.115+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "thought",
     "payload": {
      "text": "Locating your destination."
@@ -90,7 +90,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0006",
-    "ts": "2026-10-22T21:20:45.115+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "tool_call",
     "payload": {
      "name": "resolve_place",
@@ -107,7 +107,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0007",
-    "ts": "2026-10-22T21:20:45.115+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "tool_result",
     "payload": {
      "name": "resolve_place",
@@ -122,7 +122,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0008",
-    "ts": "2026-10-22T21:20:45.115+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "thought",
     "payload": {
      "text": "Checking the heat at your travel time."
@@ -134,7 +134,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0009",
-    "ts": "2026-10-22T21:20:45.115+00:00",
+    "ts": "2026-10-23T04:00:27.855+00:00",
     "type": "tool_call",
     "payload": {
      "name": "get_weather",
@@ -149,7 +149,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0010",
-    "ts": "2026-10-22T21:20:45.117+00:00",
+    "ts": "2026-10-23T04:00:27.857+00:00",
     "type": "tool_result",
     "payload": {
      "name": "get_weather",
@@ -164,7 +164,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0011",
-    "ts": "2026-10-22T21:20:45.118+00:00",
+    "ts": "2026-10-23T04:00:27.857+00:00",
     "type": "thought",
     "payload": {
      "text": "Comparing fastest, balanced and coolest routes."
@@ -176,7 +176,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0012",
-    "ts": "2026-10-22T21:20:45.118+00:00",
+    "ts": "2026-10-23T04:00:27.857+00:00",
     "type": "tool_call",
     "payload": {
      "name": "compare_routes",
@@ -195,13 +195,13 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0013",
-    "ts": "2026-10-22T21:20:45.124+00:00",
+    "ts": "2026-10-23T04:00:27.863+00:00",
     "type": "tool_result",
     "payload": {
      "name": "compare_routes",
      "ok": true,
      "summary": "Address Boulevard to Address Sky View by walk at 14:30. fastest: 10.0 min, 36% shaded, sun 6.4 min, RHL 460; balanced: 10.7 min, 64% shaded, sun 3.8 min, RHL 375; coolest: 10.7 min, 64% shaded, sun 3.8 min, RHL 375.",
-     "duration_ms": 6,
+     "duration_ms": 5,
      "data": {
       "plan_id": "plan_1",
       "routes": {
@@ -263,7 +263,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0014",
-    "ts": "2026-10-22T21:20:45.125+00:00",
+    "ts": "2026-10-23T04:00:27.864+00:00",
     "type": "thought",
     "payload": {
      "text": "Checking the plan against the midday-break policy pack."
@@ -275,7 +275,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0015",
-    "ts": "2026-10-22T21:20:45.125+00:00",
+    "ts": "2026-10-23T04:00:27.864+00:00",
     "type": "tool_call",
     "payload": {
      "name": "check_policy",
@@ -288,7 +288,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0016",
-    "ts": "2026-10-22T21:20:45.126+00:00",
+    "ts": "2026-10-23T04:00:27.865+00:00",
     "type": "tool_result",
     "payload": {
      "name": "check_policy",
@@ -303,7 +303,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0017",
-    "ts": "2026-10-22T21:20:45.126+00:00",
+    "ts": "2026-10-23T04:00:27.866+00:00",
     "type": "thought",
     "payload": {
      "text": "The plan falls inside the midday window; searching compliant departures."
@@ -315,7 +315,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0018",
-    "ts": "2026-10-22T21:20:45.126+00:00",
+    "ts": "2026-10-23T04:00:27.866+00:00",
     "type": "tool_call",
     "payload": {
      "name": "optimise_departure",
@@ -336,13 +336,13 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0019",
-    "ts": "2026-10-22T21:20:45.149+00:00",
+    "ts": "2026-10-23T04:00:27.885+00:00",
     "type": "tool_result",
     "payload": {
      "name": "optimise_departure",
      "ok": true,
      "summary": "Best departure 15:00 out of 13 evaluated.",
-     "duration_ms": 23
+     "duration_ms": 19
     }
    },
    "phase": "plan"
@@ -351,7 +351,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0020",
-    "ts": "2026-10-22T21:20:45.151+00:00",
+    "ts": "2026-10-23T04:00:27.886+00:00",
     "type": "thought",
     "payload": {
      "text": "Planning the move at the compliant departure."
@@ -363,7 +363,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0021",
-    "ts": "2026-10-22T21:20:45.151+00:00",
+    "ts": "2026-10-23T04:00:27.886+00:00",
     "type": "tool_call",
     "payload": {
      "name": "compare_routes",
@@ -382,7 +382,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0022",
-    "ts": "2026-10-22T21:20:45.158+00:00",
+    "ts": "2026-10-23T04:00:27.892+00:00",
     "type": "tool_result",
     "payload": {
      "name": "compare_routes",
@@ -450,7 +450,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0023",
-    "ts": "2026-10-22T21:20:45.158+00:00",
+    "ts": "2026-10-23T04:00:27.893+00:00",
     "type": "thought",
     "payload": {
      "text": "Planning the move at the compliant departure."
@@ -462,7 +462,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0024",
-    "ts": "2026-10-22T21:20:45.158+00:00",
+    "ts": "2026-10-23T04:00:27.893+00:00",
     "type": "tool_call",
     "payload": {
      "name": "compare_routes",
@@ -481,7 +481,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0025",
-    "ts": "2026-10-22T21:20:45.167+00:00",
+    "ts": "2026-10-23T04:00:27.901+00:00",
     "type": "tool_result",
     "payload": {
      "name": "compare_routes",
@@ -549,7 +549,7 @@
    "dt_ms": 650,
    "event": {
     "id": "evt_0026",
-    "ts": "2026-10-22T21:20:45.169+00:00",
+    "ts": "2026-10-23T04:00:27.902+00:00",
     "type": "thought",
     "payload": {
      "text": "Re-checking the policy for the revised plan."
@@ -561,7 +561,7 @@
    "dt_ms": 350,
    "event": {
     "id": "evt_0027",
-    "ts": "2026-10-22T21:20:45.169+00:00",
+    "ts": "2026-10-23T04:00:27.902+00:00",
     "type": "tool_call",
     "payload": {
      "name": "check_policy",
@@ -574,7 +574,7 @@
    "dt_ms": 450,
    "event": {
     "id": "evt_0028",
-    "ts": "2026-10-22T21:20:45.169+00:00",
+    "ts": "2026-10-23T04:00:27.903+00:00",
     "type": "tool_result",
     "payload": {
      "name": "check_policy",
@@ -589,7 +589,7 @@
    "dt_ms": 800,
    "event": {
     "id": "evt_0029",
-    "ts": "2026-10-22T21:20:45.171+00:00",
+    "ts": "2026-10-23T04:00:27.905+00:00",
     "type": "verifier",
     "payload": {
      "checked": 18,
@@ -606,7 +606,7 @@
    "dt_ms": 700,
    "event": {
     "id": "evt_0030",
-    "ts": "2026-10-22T21:20:45.172+00:00",
+    "ts": "2026-10-23T04:00:27.905+00:00",
     "type": "proposal",
     "payload": {
      "plan_id": "plan_3",
@@ -4553,7 +4553,7 @@
    "dt_ms": 400,
    "event": {
     "id": "evt_0031",
-    "ts": "2026-10-22T21:20:45.172+00:00",
+    "ts": "2026-10-23T04:00:27.905+00:00",
     "type": "approval_request",
     "payload": {
      "plan_id": "plan_3",
@@ -4577,7 +4577,7 @@
    "dt_ms": 900,
    "event": {
     "id": "evt_0032",
-    "ts": "2026-10-22T21:20:45.173+00:00",
+    "ts": "2026-10-23T04:00:27.906+00:00",
     "type": "message",
     "payload": {
      "text": "Movement plan: Address Boulevard to Address Sky View by the coolest route, leaving 15:00, arriving 15:10. The coolest walk spends 3.5 min in direct sun against 5.7 min on the fastest, saving 2.2 min of sun, and 67% of it is shaded. It takes 0.7 min longer than the fastest. 26% of it is under cover. There is a heat alert: carry water and take shade breaks. I moved this from 14:30 to 15:00 because Policy pack: UAE midday break (v1, verify) bars outdoor work in direct sun between 12:30 and 15:00; the new timing has no conflict. Please verify the rule before relying on it. Shade counts buildings, mapped trees and covered links only; awnings and wind are not modelled.",
@@ -4653,7 +4653,7 @@
    "dt_ms": 500,
    "event": {
     "id": "evt_0033",
-    "ts": "2026-10-22T21:20:45.173+00:00",
+    "ts": "2026-10-23T04:00:27.906+00:00",
     "type": "plan_committed",
     "payload": {
      "plan_id": "plan_3",
@@ -4682,7 +4682,7 @@
    "dt_ms": 600,
    "event": {
     "id": "evt_0034",
-    "ts": "2026-10-22T21:20:45.173+00:00",
+    "ts": "2026-10-23T04:00:27.906+00:00",
     "type": "monitor_tick",
     "payload": {
      "sim_time": "2026-07-15T14:30:00+04:00",

@@ -82,7 +82,7 @@
     "first": "0530",
     "last": "1910",
     "png_mb": 6.87,
-    "npz_mb": 0.254,
+    "npz_mb": 0.255,
     "timing": {
      "total_s": 56.89,
      "computed_steps": 75,
@@ -125,15 +125,16 @@
    }
   },
   "exposure_sampler": {
-   "samples": 112212,
+   "samples": 112231,
    "outside_grid": 25,
-   "in_building": 1389,
-   "snapped_to_outdoor": 166,
+   "in_building": 1390,
+   "snapped_to_outdoor": 167,
    "left_shaded": 1223
   },
-  "n_edges": 7657,
+  "n_edges": 7659,
   "total_png_mb": 28.89,
-  "total_npz_mb": 1.031,
+  "total_npz_mb": 1.032,
   "total_s": 230.8
- }
+ },
+ "exposure_refreshed_at": "2026-10-23T03:58:02+00:00"
 }

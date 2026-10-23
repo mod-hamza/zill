@@ -86,6 +86,7 @@ class GraphBuild:
     entrance: set[int] = field(default_factory=set)
     curated_entrance: set[int] = field(default_factory=set)
     crossing: set[int] = field(default_factory=set)
+    free_entrance: dict[int, tuple[float, float, float, float]] = field(default_factory=dict)  # not on a way
     log: dict[str, Any] = field(default_factory=dict)
 
 
@@ -146,10 +147,12 @@ def build_graph(
 ) -> GraphBuild:
     gb = GraphBuild()
     node_tags: dict[int, dict[str, str]] = {}
+    node_ll: dict[int, tuple[float, float]] = {}
     ways = []
     for el in elements:
         if el["type"] == "node":
             node_tags[el["id"]] = el.get("tags") or {}
+            node_ll[el["id"]] = (el["lat"], el["lon"])
         elif el["type"] == "way" and "highway" in (el.get("tags") or {}):
             ways.append(el)
     # coordinates for all way nodes
@@ -215,6 +218,10 @@ def build_graph(
         gb.nodes[n] = (xz[n][0], xz[n][1], coords[n][0], coords[n][1])
     for n, t in node_tags.items():
         if n not in gb.nodes:
+            if "entrance" in t and t.get("entrance") != "no" and n in node_ll:
+                la, lo = node_ll[n]
+                fx, fz = to_local(la, lo, origin)
+                gb.free_entrance[n] = (float(fx), float(fz), la, lo)
             continue
         if "entrance" in t or t.get("railway") == "subway_entrance" or t.get("door") not in (None, "no"):
             gb.entrance.add(n)
@@ -480,3 +487,92 @@ def nearest_node(gb: GraphBuild, x: float, z: float, mode: str = "walk") -> tupl
             if d < bd:
                 best, bd = n, d
     return best, math.sqrt(bd)
+
+
+ENTRANCE_LINK_M = 40.0
+
+
+def link_entrances(
+    gb: GraphBuild, building_polys: list[Polygon], max_m: float = ENTRANCE_LINK_M
+) -> list[dict]:
+    """Connect OSM ``entrance=*`` doors whose outdoor (or indoor) side is not mapped.
+
+    * entrance node with indoor edges but no outdoor edge -> short straight ``entrance_link`` edge to the
+      nearest outdoor walk node within ``max_m``;
+    * entrance node on no way at all -> links to the nearest outdoor AND nearest indoor walk node.
+    A link is rejected if more than 2 m of it runs through a building footprint (would walk through
+    walls). Links are cls ``open``, walk-only, ``curated=True, verified=False``.
+    """
+    inside_cls = {"indoor", "ac_link"}
+    inc: dict[int, set[str]] = defaultdict(set)
+    upper: set[int] = set()  # nodes on bridges / upper or lower floors: never linked to street level
+    for e in gb.edges:
+        if e.walk:
+            k = "in" if e.cls in inside_cls else "out"
+            inc[e.u].add(k)
+            inc[e.v].add(k)
+            lvl = str(e.tags.get("level", "0")).split(";")
+            if e.cls == "ac_link" or _is_elevated(e.tags) or any(x.strip() not in ("0", "") for x in lvl):
+                upper.update((e.u, e.v))
+    out_nodes = sorted(n for n, k in inc.items() if "out" in k)
+    in_nodes = sorted(n for n, k in inc.items() if "in" in k)
+    if not out_nodes:
+        return []
+    from scipy.spatial import cKDTree
+
+    t_out = cKDTree(np.array([gb.nodes[n][:2] for n in out_nodes]))
+    t_in = cKDTree(np.array([gb.nodes[n][:2] for n in in_nodes])) if in_nodes else None
+    walls = shapely.STRtree(building_polys) if building_polys else None
+
+    def blocked(a: tuple[float, float], b: tuple[float, float]) -> bool:
+        if walls is None:
+            return False
+        seg = LineString([a, b])
+        inside = sum(building_polys[i].intersection(seg).length for i in walls.query(seg))
+        return inside > 2.0
+
+    report: list[dict] = []
+    gb.log["entrance_unlinked"] = []
+
+    def add(src: int, tree: Any, pool: list[int], side: str) -> None:
+        xy = gb.nodes[src][:2]
+        for d, j in zip(*tree.query(xy, k=4), strict=True):
+            if not np.isfinite(d) or d > max_m:
+                break
+            dst = pool[int(j)]
+            if dst == src or (side == "out" and blocked(xy, gb.nodes[dst][:2])):
+                continue
+            e = Edge(
+                src,
+                dst,
+                [xy, gb.nodes[dst][:2]],
+                {"highway": "footway", "entrance_link": "yes"},
+                "curated/entrance_link",
+                True,
+                False,
+                cls="open" if side == "out" else "indoor",
+                curated=True,
+                verified=False,
+            )
+            if e.length > 0.05:
+                gb.edges.append(e)
+                report.append({"entrance": src, "to": dst, "side": side, "length_m": round(e.length, 1)})
+            return
+        gb.log["entrance_unlinked"].append(src)
+
+    for n in sorted(gb.entrance):
+        k = inc.get(n, set())
+        if "in" in k and "out" not in k and n not in upper:
+            add(n, t_out, out_nodes, "out")
+    for n, v in sorted(gb.free_entrance.items()):
+        if t_in is None:
+            break
+        dn_out = t_out.query(v[:2])[0]
+        dn_in = t_in.query(v[:2])[0]
+        if dn_out <= max_m and dn_in <= max_m:
+            gb.nodes[n] = v
+            gb.entrance.add(n)
+            add(n, t_in, in_nodes, "in")
+            add(n, t_out, out_nodes, "out")
+    gb.log["entrance_links"] = len(report)
+    return report
