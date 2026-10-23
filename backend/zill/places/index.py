@@ -21,6 +21,8 @@ MAX_FUZZY_CANDIDATES = 60
 CURATED_DEDUPE_M = 150.0
 KINDS = tuple(KIND_WEIGHT)
 _ARTICLE = re.compile(r"^(?:the|el|al) (?=\S)")
+_PAREN = re.compile(r"\s*\(([^()]{2,40})\)\s*")
+CURATED_BONUS = 1.05  # a curated place beats an equally exact-matching OSM stop/shop
 
 
 def _dist_m(a: dict[str, Any], b: dict[str, Any]) -> float:
@@ -39,7 +41,10 @@ class PlaceIndex:
         self._raw: list[str] = []  # original-cased variant for display of the matched alias
         for i, p in enumerate(places):
             seen: set[str] = set()
-            for raw in [p["name"], *p.get("alt_names", [])]:
+            raws = [p["name"], *p.get("alt_names", [])]
+            for m in _PAREN.finditer(p["name"]):  # "Oslo Central Station (Oslo S)": both parts are names
+                raws += [m.group(1), _PAREN.sub(" ", p["name"]).strip()]
+            for raw in raws:
                 f = fold(raw)
                 for v in (f, _ARTICLE.sub("", f)):  # "the dubai mall" is also findable as "dubai mall"
                     if len(v) >= 2 and v not in seen:
@@ -122,6 +127,8 @@ class PlaceIndex:
             if kinds and p["kind"] not in kinds:
                 continue
             adj = s * (0.8 + 0.2 * KIND_WEIGHT.get(p["kind"], 0.5))
+            if p.get("curated"):
+                adj *= CURATED_BONUS
             if i not in best or adj > best[i][0]:
                 best[i] = (adj, j)
         ranked = sorted(best.items(), key=lambda kv: (-kv[1][0], len(self.places[kv[0]]["name"])))[:limit]
@@ -171,12 +178,30 @@ def _merge_curated(places: list[dict[str, Any]], pois: list[dict[str, Any]]) -> 
     return curated + kept
 
 
+def apply_aliases(places: list[dict[str, Any]], aliases: dict[str, list[str]]) -> None:
+    """Add curated aliases (``data/curated/<city>/aliases.json``: ``{place_id: [alias, ...]}``) in place."""
+    for p in places:
+        extra = aliases.get(p["id"])
+        if extra:
+            have = {fold(p["name"]), *(fold(a) for a in p.get("alt_names", []))}
+            p["alt_names"] = [*p.get("alt_names", []), *(a for a in extra if fold(a) not in have)]
+
+
+def load_aliases(city_id: str) -> dict[str, list[str]]:
+    from zill import config
+
+    f = config.DATA_DIR / "curated" / city_id / "aliases.json"
+    return json.loads(f.read_text(encoding="utf-8")) if f.exists() else {}
+
+
 def load_places(cdir: Path) -> list[dict[str, Any]]:
     pf = cdir / "places.json"
     places = json.loads(pf.read_text(encoding="utf-8"))["places"] if pf.exists() else []
     pp = cdir / "pois.json"
     pois = json.loads(pp.read_text(encoding="utf-8")).get("pois", []) if pp.exists() else []
-    return _merge_curated(places, pois)
+    merged = _merge_curated(places, pois)
+    apply_aliases(merged, load_aliases(cdir.name))
+    return merged
 
 
 _LOCK = threading.Lock()

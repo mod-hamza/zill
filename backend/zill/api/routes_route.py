@@ -201,5 +201,5 @@ def get_scenarios(city: str) -> Any:
     get_city(city)
     p = scenarios_path(city)
     if not p.exists():
-        raise ApiError(404, "scenarios_not_found", f"No hero scenarios have been generated for {city}")
+        return {"city_id": city, "scenarios": [], "generated": False}  # valid, empty: no console 404
     return json.loads(p.read_text(encoding="utf-8"))

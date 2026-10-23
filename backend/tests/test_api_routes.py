@@ -180,7 +180,7 @@ def test_gazetteer(client):
 
 def test_scenarios_endpoint(client, tmp_path, monkeypatch):
     monkeypatch.setenv("ZILL_SCENARIOS_DIR", str(tmp_path))
-    assert client.get("/api/scenarios/synth").status_code == 404
+    assert client.get("/api/scenarios/synth").json()["scenarios"] == []  # valid, empty
     (tmp_path / "hero_synth.json").write_text(json.dumps({"scenarios": [{"id": "tourist_walk"}]}))
     assert client.get("/api/scenarios/synth").json()["scenarios"][0]["id"] == "tourist_walk"
 

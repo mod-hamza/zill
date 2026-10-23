@@ -194,6 +194,9 @@ def build_places(city_id: str, spec: CitySpec | None = None, refresh: bool = Fal
     n_before = len(places)
     snap_pois(places, graph, fps)
     places = [p for p in places if p["snap_m"] <= MAX_SNAP_M]
+    from zill.places.index import apply_aliases, load_aliases
+
+    apply_aliases(places, load_aliases(city_id))
     by_kind: dict[str, int] = defaultdict(int)
     for p in places:
         by_kind[p["kind"]] += 1

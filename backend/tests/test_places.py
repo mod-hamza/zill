@@ -379,3 +379,18 @@ def test_route_accepts_online_place_ids(api, monkeypatch):
             "depart_at": "2026-07-15T14:30:00+04:00"}  # fmt: skip
     assert api.post("/api/route", json=body).status_code == 200
     online.clear()
+
+
+def test_abbreviation_and_alias_outrank_prefix_hits():
+    from zill.places.index import apply_aliases
+
+    places = [
+        _p("spek", "Oslo Spektrum", "landmark", lon=25.1),
+        _p("stop1", "Oslo S", "stop", lon=25.2),
+        _p("cs", "Oslo Central Station (Oslo S)", "station", curated=True, lon=25.3),
+        _p("hbf", "Hauptbahnhof", "station", lon=25.4),
+    ]
+    apply_aliases(places, {"hbf": ["Hbf"]})
+    idx = PlaceIndex("t", places)
+    assert idx.search("Oslo S")[0]["id"] == "cs"
+    assert idx.search("hbf")[0]["id"] == "hbf"

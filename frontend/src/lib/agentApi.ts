@@ -1,9 +1,10 @@
 // Typed client for the agent endpoints (CONTRACTS change log 2026-10-22) and the P1 wedge APIs.
 import type { AgentEvent, FeedBadge } from "@/app-ui/feed/types";
 import type { Mode } from "./api";
+import { fetchRetrying } from "./busy";
 import { postSSE } from "./sseClient";
 
-export type Persona = "tourist" | "rider" | "crew";
+export type Persona = "tourist" | "rider" | "crew" | "daylight_seeker";
 export type AutonomyLevel = 1 | 2 | 3;
 
 export type SessionInfo = {
@@ -30,7 +31,7 @@ export type AgentStatus = {
 };
 
 async function json<T>(url: string, init?: RequestInit): Promise<T> {
-  const r = await fetch(url, init);
+  const r = await fetchRetrying(url, init);
   if (!r.ok) {
     let msg = `${r.status} ${r.statusText}`;
     try {

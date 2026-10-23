@@ -16,6 +16,7 @@ const PERSONAS: { id: Persona; label: string }[] = [
   { id: "tourist", label: "Tourist" },
   { id: "rider", label: "Rider" },
   { id: "crew", label: "Crew" },
+  { id: "daylight_seeker", label: "Daylight" },
 ];
 
 const AUTONOMY: { id: AutonomyLevel; label: string; name: string; hint: string }[] = [
@@ -34,6 +35,7 @@ const PERSONA_NAME: Record<Persona, string> = {
   tourist: "Tourist walk",
   rider: "Delivery rider",
   crew: "Crew shuttle",
+  daylight_seeker: "Daylight walk",
 };
 
 function Segmented<T extends string | number>({

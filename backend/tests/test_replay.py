@@ -90,7 +90,7 @@ def test_shipped_recordings_if_present():
         seen.add(rec["scenario_id"])
         assert rec["live"] in (True, False)
         assert_no_bare_numbers(rec)
-    assert {"tourist_walk", "rider_cycle", "crew_shuttle", "replan_demo"} <= seen
+    assert {"tourist_walk", "rider_cycle", "crew_shuttle", "replan_demo", "daylight_seeker"} <= seen
 
 
 def test_play_orders_events_scales_time_and_badges(recordings):
@@ -208,6 +208,21 @@ def test_live_path_with_fake_openai_server(client, monkeypatch):
     sim = parse_sse(client.post("/api/agent/simulate", json={"session_id": s["session_id"], "type": "delay",
                                                              "params": {"minutes": 20}}).text)
     assert "replan" in [e["type"] for e in sim]
+
+
+def test_daylight_seeker_session_replays_without_key(monkeypatch):
+    from pathlib import Path
+
+    monkeypatch.setattr(routes_agent, "REPLAY_DIR", Path(__file__).resolve().parents[1] / "replay")
+    monkeypatch.setattr(routes_agent, "BACKEND_FACTORY", lambda city: SyntheticBackend())
+    monkeypatch.setattr(config, "REPLAY", True)
+    routes_agent.SESSIONS.clear()
+    c = TestClient(app)
+    s = c.post("/api/agent/session", json={"persona": "daylight_seeker", "autonomy_level": 2}).json()
+    assert s["mode"] == "replay" and s["persona"] == "daylight_seeker"
+    prompt = next(x["prompt"] for x in c.get("/api/agent/replays").json()["replays"] if x["scenario_id"] == "daylight_seeker")
+    evs = parse_sse(c.post("/api/agent/message", json={"session_id": s["session_id"], "text": prompt, "speed": 0}).text)
+    assert "approval_request" in [e["type"] for e in evs]
 
 
 def test_live_llm_error_streams_error_event_not_500(client, monkeypatch):

@@ -1,3 +1,5 @@
+import { fetchRetrying } from "./busy";
+
 // Minimal SSE-over-fetch client (the agent endpoints are POST, so EventSource is not usable).
 // Wire format (backend api/sse.py): `event: <name>\ndata: <json>\n\n`.
 
@@ -78,7 +80,7 @@ export async function postSSE(
   body: unknown,
   opts: StreamOptions,
 ): Promise<void> {
-  const res = await fetch(url, {
+  const res = await fetchRetrying(url, {
     method: "POST",
     headers: { "content-type": "application/json", accept: "text/event-stream" },
     body: JSON.stringify(body),
