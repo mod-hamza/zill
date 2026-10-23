@@ -1,7 +1,7 @@
 // Shared helpers for the Phase 9 recording tools (record-film, record-app, export-deck-assets).
 // Owned by the OPS stream. Not imported by the app.
 import { spawnSync } from "node:child_process";
-import { existsSync, mkdirSync, readdirSync, renameSync, rmSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, renameSync, copyFileSync, rmSync, statSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { chromium, type Browser, type BrowserContext, type Page } from "@playwright/test";
 
@@ -100,6 +100,17 @@ export async function ensureServer(): Promise<void> {
   }
 }
 
+/** Move a file, falling back to copy + delete when src and dest are on different drives (EXDEV on Windows temp → D:). */
+function moveFile(src: string, dest: string): void {
+  try {
+    renameSync(src, dest);
+  } catch (e) {
+    if ((e as NodeJS.ErrnoException).code !== "EXDEV") throw e;
+    copyFileSync(src, dest);
+    rmSync(src);
+  }
+}
+
 /** Close the context (flushes the video) and move the single recorded .webm to `dest`. */
 export async function finishVideo(ctx: BrowserContext, page: Page, tmpDir: string, dest: string): Promise<void> {
   const v = page.video();
@@ -108,11 +119,11 @@ export async function finishVideo(ctx: BrowserContext, page: Page, tmpDir: strin
   mkdirSync(join(dest, ".."), { recursive: true });
   if (src && existsSync(src)) {
     if (existsSync(dest)) rmSync(dest);
-    renameSync(src, dest);
+    moveFile(src, dest);
   } else {
     const f = readdirSync(tmpDir).find((n) => n.endsWith(".webm"));
     if (!f) throw new Error("no video was recorded");
-    renameSync(join(tmpDir, f), dest);
+    moveFile(join(tmpDir, f), dest);
   }
   rmSync(tmpDir, { recursive: true, force: true });
   console.log(`video: ${dest} (${(statSync(dest).size / 1e6).toFixed(1)} MB)`);

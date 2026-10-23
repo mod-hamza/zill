@@ -20,6 +20,14 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+# Windows consoles default to cp1252; a single non-Latin character in server output must not
+# kill the log-pump thread (a dead pump stops draining the pipe and stalls the server).
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(errors="replace")  # type: ignore[union-attr]
+    except AttributeError:
+        pass
+
 ROOT = Path(__file__).resolve().parents[1]
 BACKEND = ROOT / "backend"
 FRONTEND = ROOT / "frontend"
