@@ -232,7 +232,8 @@ def compute_date(city_id: str, date_key: str, progress_cb: ProgressCb | None = N
             hh = np.array([int(s["hhmm"]) for s in steps], np.int16)
             mins = np.array([_minutes(s["hhmm"]) for s in steps], np.int16)
             tmp = tgt.npz_path.with_suffix(".tmp.npz")
-            np.savez_compressed(tmp, exposure=expo.astype(np.float16), hhmm=hh, minutes=mins)
+            night = np.array([bool(s["night"]) for s in steps], np.bool_)
+            np.savez_compressed(tmp, exposure=expo.astype(np.float16), hhmm=hh, minutes=mins, night=night)
             tmp.replace(tgt.npz_path)
             _exposure_cached.cache_clear()
         index["timing"] = {
@@ -277,6 +278,16 @@ class ExposureTable:
     exposure: np.ndarray  # float32 [n_edges, n_steps], 0..1
     hhmm: np.ndarray  # int16 [n_steps]
     minutes: np.ndarray  # int16 [n_steps], minutes since local midnight
+    # bool [n_steps]: sun at/below SUN_MIN_ALT_DEG. Exposure is 0 there, but it means "no direct sun
+    # anywhere (night)", not "shade". Older npz files without the array get it from index.json / pvlib.
+    night: np.ndarray | None = None
+
+    def is_night(self, minute_of_day: float) -> bool:
+        """True when the nearest step is a night step (sun below SUN_MIN_ALT_DEG)."""
+        if self.night is None or self.night.size == 0:
+            return False
+        j = int(np.argmin(np.abs(self.minutes.astype(np.float64) - minute_of_day)))
+        return bool(self.night[j])
 
     @property
     def n_edges(self) -> int:
@@ -311,8 +322,25 @@ def _exposure_cached(city_id: str, date_key: str) -> ExposureTable:
     if not tgt.npz_path.exists():
         compute_date(city_id, date_key)
     with np.load(tgt.npz_path) as z:
-        return ExposureTable(tgt.date_id, tgt.iso, z["exposure"].astype(np.float32), z["hhmm"].copy(),
-                             z["minutes"].copy())
+        night = z["night"].astype(bool) if "night" in z.files else None
+        tab = ExposureTable(tgt.date_id, tgt.iso, z["exposure"].astype(np.float32), z["hhmm"].copy(),
+                            z["minutes"].copy(), night)
+    if tab.night is None:
+        tab = ExposureTable(tab.date_key, tab.iso, tab.exposure, tab.hhmm, tab.minutes,
+                            _night_flags(city_id, tgt, tab.hhmm))
+    return tab
+
+
+def _night_flags(city_id: str, tgt: DateTarget, hhmm: np.ndarray) -> np.ndarray:
+    """Night flags for an npz written before the `night` array existed (index.json, else pvlib)."""
+    idx_path = tgt.out_dir / "index.json"
+    by_hhmm: dict[int, bool] = {}
+    if idx_path.exists():
+        by_hhmm = {int(s["hhmm"]): bool(s["night"]) for s in json.loads(idx_path.read_text("utf-8"))["steps"]}
+    if all(int(h) in by_hhmm for h in hhmm):
+        return np.array([by_hhmm[int(h)] for h in hhmm], np.bool_)
+    return np.array([s["night"] for s in plan_steps(get_city_shade(city_id), tgt.iso)
+                     if int(s["hhmm"]) in {int(h) for h in hhmm}], np.bool_)
 
 
 exposure_for.cache_clear = _exposure_cached.cache_clear  # type: ignore[attr-defined]

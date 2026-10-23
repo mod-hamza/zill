@@ -5,5 +5,14 @@
     "bbox": {"s": 25.1850, "w": 55.2600, "n": 25.2100, "e": 55.2900},
     "origin": {"lat": 25.1972, "lon": 55.2744},
     "timezone": "Asia/Dubai"
+  },
+  {
+    "city_id": "oslo",
+    "name": "Central Oslo",
+    "bbox": {"s": 59.9030, "w": 10.7240, "n": 59.9170, "e": 10.7640},
+    "origin": {"lat": 59.9100, "lon": 10.7440},
+    "timezone": "Europe/Oslo",
+    "caster_buffer_m": 1500,
+    "dates": {"winter": "2026-12-21", "spring": "2026-03-20", "summer": "2026-06-21", "hackathon": "2026-10-24"}
   }
 ]

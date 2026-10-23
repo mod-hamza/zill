@@ -406,7 +406,8 @@ def bake(city_id: str, refresh: bool = False, out_root: Path | None = None, run_
             "overpass_endpoint": overpass.STATS.endpoint,
         },
         "attribution": "© OpenStreetMap contributors",
-        "dates": dict(config.PRESET_DATES),
+        "dates": spec.preset_dates,
+        "caster_buffer_m": spec.caster_buffer_m,
         "build_log": sl.entries,
         "diagnostics": {
             "shells_replaced_by_parts": n_shell_drop,

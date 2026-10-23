@@ -1,0 +1,139 @@
+{
+ "generated_at": "2026-10-23T19:01:04+00:00",
+ "build_log": [
+  {
+   "t_ms": 0,
+   "step": "shadow_precompute",
+   "count": 1074708,
+   "label": "Rasterised 13841 buildings and 20208 trees into a 2276x2618 caster grid (2 m)",
+   "duration_ms": 1955
+  },
+  {
+   "t_ms": 3616,
+   "step": "shadow_precompute",
+   "count": 42,
+   "label": "Sun-shadow rasters for winter (2026-12-21): 42 ten-minute steps 0850-1540",
+   "duration_ms": 11852,
+   "date_id": "winter"
+  },
+  {
+   "t_ms": 15468,
+   "step": "shadow_precompute",
+   "count": 80,
+   "label": "Sun-shadow rasters for spring (2026-03-20): 80 ten-minute steps 0550-1900",
+   "duration_ms": 24411,
+   "date_id": "spring"
+  },
+  {
+   "t_ms": 39880,
+   "step": "shadow_precompute",
+   "count": 119,
+   "label": "Sun-shadow rasters for summer (2026-06-21): 119 ten-minute steps 0330-2310",
+   "duration_ms": 36782,
+   "date_id": "summer"
+  },
+  {
+   "t_ms": 76663,
+   "step": "shadow_precompute",
+   "count": 63,
+   "label": "Sun-shadow rasters for hackathon (2026-10-24): 63 ten-minute steps 0750-1810",
+   "duration_ms": 19501,
+   "date_id": "hackathon"
+  }
+ ],
+ "summary": {
+  "city_id": "oslo",
+  "core_grid": {
+   "x0": -1218.0,
+   "z0": -874.0,
+   "rows": 874,
+   "cols": 1218,
+   "res_m": 2.0
+  },
+  "caster_grid": {
+   "x0": -2618.0,
+   "z0": -2276.0,
+   "rows": 2276,
+   "cols": 2618,
+   "res_m": 2.0
+  },
+  "max_height_m": 117.0,
+  "dates": {
+   "winter": {
+    "iso": "2026-12-21",
+    "steps": 42,
+    "day_steps": 28,
+    "first": "0850",
+    "last": "1540",
+    "png_mb": 1.32,
+    "npz_mb": 0.105,
+    "timing": {
+     "total_s": 11.81,
+     "computed_steps": 28,
+     "step_mean_s": 0.285,
+     "step_max_s": 0.389,
+     "png_write_mean_s": 0.082
+    }
+   },
+   "spring": {
+    "iso": "2026-03-20",
+    "steps": 80,
+    "day_steps": 70,
+    "first": "0550",
+    "last": "1900",
+    "png_mb": 5.03,
+    "npz_mb": 0.444,
+    "timing": {
+     "total_s": 24.38,
+     "computed_steps": 70,
+     "step_mean_s": 0.216,
+     "step_max_s": 0.352,
+     "png_write_mean_s": 0.107
+    }
+   },
+   "summer": {
+    "iso": "2026-06-21",
+    "steps": 119,
+    "day_steps": 107,
+    "first": "0330",
+    "last": "2310",
+    "png_mb": 7.84,
+    "npz_mb": 0.686,
+    "timing": {
+     "total_s": 36.74,
+     "computed_steps": 107,
+     "step_mean_s": 0.205,
+     "step_max_s": 0.358,
+     "png_write_mean_s": 0.115
+    }
+   },
+   "hackathon": {
+    "iso": "2026-10-24",
+    "steps": 63,
+    "day_steps": 52,
+    "first": "0750",
+    "last": "1810",
+    "png_mb": 3.57,
+    "npz_mb": 0.283,
+    "timing": {
+     "total_s": 19.47,
+     "computed_steps": 52,
+     "step_mean_s": 0.24,
+     "step_max_s": 0.336,
+     "png_write_mean_s": 0.102
+    }
+   }
+  },
+  "exposure_sampler": {
+   "samples": 85413,
+   "outside_grid": 340,
+   "in_building": 1689,
+   "snapped_to_outdoor": 1190,
+   "left_shaded": 499
+  },
+  "n_edges": 10082,
+  "total_png_mb": 17.76,
+  "total_npz_mb": 1.518,
+  "total_s": 96.2
+ }
+}

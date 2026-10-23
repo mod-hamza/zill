@@ -141,3 +141,27 @@ Results: full backend suite green at last run (238 passed before other streams' 
 0 CSP violations. pip-audit clean; npm audit 2 findings (PostCSS inside next, fix = next 16).
 Load (local, 1 worker, no limiter): peak ~26 req/s at 20 users, p95 596 ms; 40 users p95 2.6 s. Live VM (20 users max, 48 s): 16.9 req/s, p95 1.6 s, 0 errors.
 Known issues: script-src still needs 'unsafe-inline' (Next bootstrap); Caddy/API changes take effect only after deploy; Next dev server sets its own CSP with unsafe-eval.
+
+## 2026-10-23 night - Stream A follow-up (sky state, spring scenario, agent sun mode)
+Overcast now uses the measured / Haurwitz clear-sky radiation index (< 0.4), with cloud cover only as fallback. Recorded Dubai 2026-01-15
+has 97–100 % cloud cover but an index of 0.89–0.92, so both winter scenarios are no longer flagged overcast. Their notes now say only that the
+sun is below 45° (31.4° and 43.7°). New `spring_daylight_walk` (2026-04-15, 3,640 jobs, 967 eligible; all four late-morning departures had an
+open window): Business Bay Metro Station → Burj Park 10:30, fastest 1,435 s with 1,101 s direct sun, sunniest 1,704 s with 1,625 s
+(+524 s, +48 %) for +269 s. Daylight window open (sun 59.9°, shadow 0.58× height, clear-sky index 0.91). The UV index of 8.7 is very
+high, and the scenario notes carry the WHO extra-protection advice. Agent: daylight_seeker persona; preference passes through the tools;
+sun and well-being tokens are added, and the verifier has sun and medical-claim rules. The scripted replay `daylight_seeker.json` matches
+hero.json. Tests: 362 passed (new: test_sun_mode_agent 7, test_wellbeing +4). Known limit: monitor re-plans (delay/heat alert) are not
+yet sun-aware.
+
+## 2026-10-23 night - Stream D (Oslo, the second city)
+Central Oslo baked with the unchanged city-agnostic pipeline (`zill.data.bake --city oslo`, then `zill.shade.bake --city oslo`).
+Real counts (meta.json): 13,841 buildings in the caster ring (2,359 in scene, 1,050 parts; heights: 6,962 levels, 146 tag,
+1,050 part, 5,683 fallback; max 117 m), 20,208 trees (19,777 mapped + 431 from rows), 7,247 nodes, 10,082 edges
+(10,075 walk, 2,626 cycle; 128 covered, 540 indoor, 0 AC link), 53 POIs (13/13 curated landmarks resolved from OSM).
+GLB 4.05 MB (62 tiles). Data bake 1,732 s wall (Overpass 502/504 retries); shade bake ~92 s for 4 dates
+(winter 42 steps/28 day, spring 80/70, summer 119/107, hackathon 63/52). Logs: `data/raw/logs/oslo_bake.log`, `oslo_shade_bake.log`.
+Low sun: per-city caster ring 1,500 m (117 m × 8.6 at 6.6°); night flag stored in exposure npz. Tests: `test_low_sun.py` (14),
+`test_oslo.py` (7); full backend suite 369 passed (before the last lint-only edits), ruff clean.
+Route Oslo S → City Hall works in both preferences (21 Jun 13:00: fastest 1,358 m / 605 s sun, coolest 1,536 m / 331 s,
+sunniest 1,498 m / 1,063 s; 21 Dec 12:10: fastest 125 s sun, sunniest 2,321 m / 1,336 s).
+Known: frontend `state/sun.ts` hard-codes Dubai ISO dates per preset id; Oslo needs the per-city `dates` from `/api/cities`.

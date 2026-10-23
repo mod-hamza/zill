@@ -1,0 +1,604 @@
+{
+ "city_id": "oslo",
+ "name": "Central Oslo",
+ "timezone": "Europe/Oslo",
+ "origin": {
+  "lat": 59.91,
+  "lon": 10.744
+ },
+ "bbox_core": {
+  "s": 59.903,
+  "w": 10.724,
+  "n": 59.917,
+  "e": 10.764
+ },
+ "bbox_caster": {
+  "s": 59.889434,
+  "w": 10.697124,
+  "n": 59.930566,
+  "e": 10.790876
+ },
+ "bbox_scene": {
+  "s": 59.902096,
+  "w": 10.722208,
+  "n": 59.917904,
+  "e": 10.765792
+ },
+ "core_grid": {
+  "x0": -1218.0,
+  "z0": -874.0,
+  "rows": 874,
+  "cols": 1218,
+  "res_m": 2.0
+ },
+ "caster_grid": {
+  "x0": -2618.0,
+  "z0": -2276.0,
+  "rows": 2276,
+  "cols": 2618,
+  "res_m": 2.0
+ },
+ "counts": {
+  "buildings": 13841,
+  "buildings_scene": 2359,
+  "building_parts": 1050,
+  "trees": 20208,
+  "nodes": 7247,
+  "edges": 10082,
+  "edges_walk": 10075,
+  "edges_cycle": 2626,
+  "covered_edges": 128,
+  "indoor_edges": 540,
+  "ac_link_edges": 0,
+  "pois": 53
+ },
+ "height_sources": {
+  "tag": 146,
+  "levels": 6962,
+  "fallback": 5683,
+  "landmark": 0,
+  "part": 1050
+ },
+ "dropped_components": {
+  "walk": 59,
+  "cycle": 92
+ },
+ "max_building_height_m": 117.0,
+ "source": {
+  "osm_timestamp": "2026-10-23T18:57:20Z",
+  "fetched_at": "2026-10-23T18:59:01.366804+00:00",
+  "overpass_endpoint": "https://overpass-api.de/api/interpreter"
+ },
+ "attribution": "© OpenStreetMap contributors",
+ "dates": {
+  "winter": "2026-12-21",
+  "spring": "2026-03-20",
+  "summer": "2026-06-21",
+  "hackathon": "2026-10-24"
+ },
+ "caster_buffer_m": 1500.0,
+ "build_log": [
+  {
+   "t_ms": 0,
+   "dur_ms": 179357,
+   "step": "geocode",
+   "count": 53,
+   "label": "53 places resolved (13/13 gazetteer hits)"
+  },
+  {
+   "t_ms": 179357,
+   "dur_ms": 683395,
+   "step": "fetch_buildings",
+   "count": 14271,
+   "label": "14271 OSM building elements"
+  },
+  {
+   "t_ms": 862753,
+   "dur_ms": 699163,
+   "step": "fetch_roads",
+   "count": 5666,
+   "label": "5666 OSM ways (highway/indoor)"
+  },
+  {
+   "t_ms": 1561917,
+   "dur_ms": 161341,
+   "step": "fetch_trees",
+   "count": 20208,
+   "label": "20208 trees (19777 mapped, 431 from rows)"
+  },
+  {
+   "t_ms": 1723260,
+   "dur_ms": 3042,
+   "step": "heights",
+   "count": 13841,
+   "label": "13841 footprints; max 117 m; 171 shells replaced by parts"
+  },
+  {
+   "t_ms": 1726303,
+   "dur_ms": 772,
+   "step": "graph",
+   "count": 10137,
+   "label": "10137 raw edges split at intersections"
+  },
+  {
+   "t_ms": 1727075,
+   "dur_ms": 702,
+   "step": "covered_links",
+   "count": 668,
+   "label": "128 covered, 540 indoor, 0 AC-link edges"
+  },
+  {
+   "t_ms": 1727778,
+   "dur_ms": 4221,
+   "step": "write",
+   "count": 7,
+   "label": "meta, buildings(.json/.glb), trees, graph, links, pois"
+  }
+ ],
+ "diagnostics": {
+  "shells_replaced_by_parts": 171,
+  "shells_kept_partial_parts": [
+   "way/27767764",
+   "way/218364246",
+   "way/92648077",
+   "way/92657714",
+   "way/112190380",
+   "way/112191345",
+   "way/112191358",
+   "way/112506380",
+   "way/1039892347",
+   "relation/8596227",
+   "way/112491976",
+   "way/112491987",
+   "way/112491993",
+   "way/112502863",
+   "way/112502878",
+   "way/1040907101",
+   "way/25409857",
+   "way/88639599",
+   "way/88639614",
+   "way/136540550",
+   "way/5042466",
+   "way/44278259",
+   "way/44278268",
+   "way/89541289",
+   "way/90768983",
+   "way/90966481",
+   "way/90966487",
+   "way/90968240",
+   "way/90968242",
+   "way/92647224",
+   "way/92652811",
+   "way/111767399",
+   "way/111767401",
+   "way/111767402",
+   "way/111767410",
+   "way/111767412",
+   "way/111767415",
+   "way/111845770",
+   "way/111845774",
+   "way/111851434",
+   "way/111851880",
+   "way/111853222",
+   "way/111866963",
+   "way/111866970",
+   "way/111866976",
+   "way/111866984",
+   "way/112037152",
+   "way/112047275",
+   "way/112051231",
+   "way/112051238",
+   "way/112089120",
+   "way/112146272",
+   "way/112506356",
+   "way/112509668",
+   "way/301901698",
+   "way/669303867",
+   "way/669303873",
+   "way/669476289",
+   "way/669476309",
+   "way/669476329",
+   "way/669513087",
+   "way/669513094",
+   "way/672476058",
+   "way/947317431",
+   "way/1040907081",
+   "way/1040907083",
+   "way/1040907170",
+   "way/1041933860",
+   "relation/9312411",
+   "relation/9312997",
+   "relation/9313000",
+   "relation/13931022",
+   "relation/13931031",
+   "relation/13943073",
+   "relation/13943074",
+   "relation/13965034",
+   "relation/14166523",
+   "way/32447748",
+   "way/43364377",
+   "way/111308430",
+   "way/112089436",
+   "way/112237586",
+   "way/112383220",
+   "way/112401116",
+   "way/112495428",
+   "way/112495461",
+   "way/112495466",
+   "way/112500562",
+   "way/112509649",
+   "way/619758008",
+   "way/619758017",
+   "way/625809468",
+   "way/669529743",
+   "way/669529754",
+   "way/852399723",
+   "way/1040907180",
+   "relation/9313003",
+   "way/88051946",
+   "way/115958001",
+   "way/115958018",
+   "way/115958023",
+   "way/129247161",
+   "way/133318097",
+   "way/115278312",
+   "way/115278320",
+   "way/115395525",
+   "way/115396387",
+   "way/115396392",
+   "way/1040647121",
+   "relation/1603739",
+   "way/113044088",
+   "way/113044101",
+   "way/113044116",
+   "way/113061027",
+   "way/113061040",
+   "way/113133338",
+   "way/673225213",
+   "relation/13803838",
+   "way/134815253"
+  ],
+  "landmark_overrides": 0,
+  "tree_stats": {
+   "node": 19777,
+   "row_ways": 40,
+   "row": 431,
+   "crown_tagged": 1,
+   "height_tagged": 27
+  },
+  "graph_log": {
+   "crossing_from_ways": 54,
+   "clipped_edges": 309,
+   "cls_counts": {
+    "open": 9443,
+    "indoor": 545,
+    "covered": 148,
+    "ac_link": 1
+   },
+   "entrance_unlinked": [
+    4920237235,
+    5039388123,
+    5858762373,
+    13026869726,
+    3409244943,
+    4962344616,
+    12542862097
+   ],
+   "entrance_links": 28,
+   "entrance_split_nodes": 87,
+   "entrance_wall_curated": 119,
+   "entrance_rejoined_curated": 2,
+   "entrance_rejoined_nodes": [
+    1388679567,
+    4575478706
+   ],
+   "dropped_edges_lcc": 83
+  },
+  "curated_links": [],
+  "curated_entrances_snapped": 0,
+  "entrance_links": [
+   {
+    "entrance": 2785921267,
+    "to": 8793272185,
+    "side": "out",
+    "length_m": 0.1
+   },
+   {
+    "entrance": 4949050750,
+    "to": 4949050737,
+    "side": "out",
+    "length_m": 1.7
+   },
+   {
+    "entrance": 4966253808,
+    "to": 4635606752,
+    "side": "out",
+    "length_m": 17.3
+   },
+   {
+    "entrance": 5039388954,
+    "to": 5039388129,
+    "side": "out",
+    "length_m": 0.3
+   },
+   {
+    "entrance": 7044014566,
+    "to": 3768671390,
+    "side": "out",
+    "length_m": 26.7
+   },
+   {
+    "entrance": 1740224163,
+    "to": 5039388502,
+    "side": "in",
+    "length_m": 29.4
+   },
+   {
+    "entrance": 1740224163,
+    "to": 3131330506,
+    "side": "out",
+    "length_m": 19.0
+   },
+   {
+    "entrance": 3409244943,
+    "to": 3409122644,
+    "side": "in",
+    "length_m": 17.5
+   },
+   {
+    "entrance": 3409244944,
+    "to": 3409122647,
+    "side": "in",
+    "length_m": 38.3
+   },
+   {
+    "entrance": 3409244944,
+    "to": 4635606764,
+    "side": "out",
+    "length_m": 14.4
+   },
+   {
+    "entrance": 4962344604,
+    "to": 3132157595,
+    "side": "in",
+    "length_m": 2.8
+   },
+   {
+    "entrance": 4962344604,
+    "to": 3132157595,
+    "side": "out",
+    "length_m": 2.8
+   },
+   {
+    "entrance": 4962344605,
+    "to": 3132157595,
+    "side": "in",
+    "length_m": 2.9
+   },
+   {
+    "entrance": 4962344605,
+    "to": 3578576361,
+    "side": "out",
+    "length_m": 3.0
+   },
+   {
+    "entrance": 4962344607,
+    "to": 3578576345,
+    "side": "in",
+    "length_m": 37.6
+   },
+   {
+    "entrance": 4962344607,
+    "to": 7044014532,
+    "side": "out",
+    "length_m": 18.0
+   },
+   {
+    "entrance": 4962344616,
+    "to": 3578576357,
+    "side": "in",
+    "length_m": 17.3
+   },
+   {
+    "entrance": 5854655038,
+    "to": 8852164501,
+    "side": "in",
+    "length_m": 20.1
+   },
+   {
+    "entrance": 5854655038,
+    "to": 25334848,
+    "side": "out",
+    "length_m": 10.3
+   },
+   {
+    "entrance": 5854658680,
+    "to": 4966253809,
+    "side": "in",
+    "length_m": 37.9
+   },
+   {
+    "entrance": 5854658680,
+    "to": 4966253810,
+    "side": "out",
+    "length_m": 10.8
+   },
+   {
+    "entrance": 9505614861,
+    "to": 1276290488,
+    "side": "in",
+    "length_m": 20.6
+   },
+   {
+    "entrance": 9505614861,
+    "to": 4635606751,
+    "side": "out",
+    "length_m": 5.8
+   },
+   {
+    "entrance": 12542862097,
+    "to": 7613453489,
+    "side": "in",
+    "length_m": 24.3
+   },
+   {
+    "entrance": 13026869729,
+    "to": 13026869721,
+    "side": "in",
+    "length_m": 15.7
+   },
+   {
+    "entrance": 13026869729,
+    "to": 5875443079,
+    "side": "out",
+    "length_m": 10.2
+   },
+   {
+    "entrance": 14299724674,
+    "to": 8796277828,
+    "side": "in",
+    "length_m": 21.1
+   },
+   {
+    "entrance": 14299724674,
+    "to": 7059640097,
+    "side": "out",
+    "length_m": 2.3
+   }
+  ],
+  "poi_resolution": [
+   {
+    "id": "oslo_s",
+    "resolved": true,
+    "osm": "node/660921",
+    "lat": 59.9110251,
+    "lon": 10.7531379,
+    "hint_offset_m": 20.6
+   },
+   {
+    "id": "oslo_opera_house",
+    "resolved": true,
+    "osm": "way/810259696",
+    "lat": 59.9074842,
+    "lon": 10.7526811,
+    "hint_offset_m": 23.4
+   },
+   {
+    "id": "akershus_fortress",
+    "resolved": true,
+    "osm": "relation/12391390",
+    "lat": 59.9076,
+    "lon": 10.7372632,
+    "hint_offset_m": 78.8
+   },
+   {
+    "id": "oslo_city_hall",
+    "resolved": true,
+    "osm": "relation/13425551",
+    "lat": 59.9119282,
+    "lon": 10.7335699,
+    "hint_offset_m": 13.2
+   },
+   {
+    "id": "aker_brygge",
+    "resolved": true,
+    "osm": "node/4948484499",
+    "lat": 59.9101383,
+    "lon": 10.7287289,
+    "hint_offset_m": 44.4
+   },
+   {
+    "id": "nationaltheatret",
+    "resolved": true,
+    "osm": "way/4368869",
+    "lat": 59.9143659,
+    "lon": 10.7342544,
+    "hint_offset_m": 39.4
+   },
+   {
+    "id": "stortinget",
+    "resolved": true,
+    "osm": "way/29132806",
+    "lat": 59.9130058,
+    "lon": 10.7401133,
+    "hint_offset_m": 12.2
+   },
+   {
+    "id": "nasjonalmuseet",
+    "resolved": true,
+    "osm": "relation/13920125",
+    "lat": 59.9116084,
+    "lon": 10.7288214,
+    "hint_offset_m": 64.4
+   },
+   {
+    "id": "munch",
+    "resolved": true,
+    "osm": "way/545260792",
+    "lat": 59.9057241,
+    "lon": 10.7552547,
+    "hint_offset_m": 8.8
+   },
+   {
+    "id": "byporten",
+    "resolved": true,
+    "osm": "node/441346649",
+    "lat": 59.9118053,
+    "lon": 10.7530602,
+    "hint_offset_m": 131.7
+   },
+   {
+    "id": "oslo_city_mall",
+    "resolved": true,
+    "osm": "way/10568050",
+    "lat": 59.912695,
+    "lon": 10.7524305,
+    "hint_offset_m": 49.6
+   },
+   {
+    "id": "jernbanetorget",
+    "resolved": true,
+    "osm": "node/5218231668",
+    "lat": 59.9122056,
+    "lon": 10.75169,
+    "hint_offset_m": 100.2
+   },
+   {
+    "id": "spikersuppa",
+    "resolved": true,
+    "osm": "way/841080898",
+    "lat": 59.9145976,
+    "lon": 10.7344119,
+    "hint_offset_m": 175.2
+   }
+  ],
+  "poi_snap_warnings": [],
+  "overpass_requests": 54,
+  "overpass_cache_hits": 0,
+  "glb": {
+   "tiles": 62,
+   "tile_size_m": 250.0,
+   "vertices": 103115,
+   "triangles": 57541,
+   "bytes": 4049184,
+   "verify": {
+    "loaded": true,
+    "geometries": 62,
+    "vertices": 103115,
+    "faces": 57541,
+    "bounds": [
+     [
+      -1237.46,
+      0.0,
+      -891.23
+     ],
+     [
+      1240.07,
+      117.0,
+      896.51
+     ]
+    ]
+   }
+  }
+ }
+}

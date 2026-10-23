@@ -26,8 +26,14 @@ AUTO_KINDS = [
 ]
 
 
+# letters NFKD does not decompose (Nordic/German); without this "Bjørvika" would slug to "bjrvika"
+_FOLD = str.maketrans(
+    {"ø": "o", "Ø": "O", "æ": "ae", "Æ": "AE", "ß": "ss", "đ": "d", "Đ": "D", "ł": "l", "Ł": "L"}
+)
+
+
 def slug(s: str) -> str:
-    s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore").decode()
+    s = unicodedata.normalize("NFKD", s.translate(_FOLD)).encode("ascii", "ignore").decode()
     return re.sub(r"[^a-z0-9]+", "_", s.lower()).strip("_")
 
 

@@ -226,3 +226,31 @@ Buckets: agent 8 burst / 10 per min; `/api/shade/compute` and `/api/cities/build
 shade tiles and city files 300 / 1,800; other 60 / 240; `/api/health` exempt. `ZILL_RATE_LIMIT=0` disables limiting.
 CORS allows only the two production origins and localhost/127.0.0.1/[::1] on any port; methods GET, POST, OPTIONS.
 Note for the frontend: handle 429 by honouring `Retry-After`. Other streams: keep new free-text fields short (1,000 chars max).
+
+### Stream A follow-up (2026-10-23 night): sky state, spring scenario, agent sun mode
+- `GET /api/weather` and `wellbeing.weather` add `clear_sky_index` = measured `shortwave_radiation` / Haurwitz clear-sky GHI
+  (1098·cos z·exp(−0.057/cos z); each hourly value compared at mid-hour since Open-Meteo radiation is a preceding-hour mean).
+- Overcast and the daylight-window sky condition: `clear_sky_index < 0.4` (`config.CLEAR_SKY_INDEX_OVERCAST`); cloud cover ≥ 70 %
+  only when radiation is missing. `daylight_window.sky = {overcast, basis:"radiation|cloud_cover|unknown", clear_sky_index, cloud_cover_pct, rule}`;
+  `overcast` (sun mode) gains `clear_sky_index` and `basis`.
+- `hero.json["sun"]` gains scenario `spring_daylight_walk` (procedure S7) and `candidates_spring`.
+- Agent: persona `daylight_seeker` (`preference: "sun"`; `POST /api/agent/session` accepts it). Tools `compare_routes`,
+  `plan_route`, `optimise_departure`, `plan_day` take `preference: "shade"|"sun"` (default = persona's). Sun-mode
+  `compare_routes` stores routes `fastest/balanced/sunniest`, plan `preference:"sun"`, and the store key `wellbeing`
+  (same shape as the route API). Token examples: `{{route.sunniest.sun_gained_min}}`, `{{wellbeing.uv.band}}`,
+  `{{wellbeing.uv.index}}`, `{{wellbeing.daylight_window.text}}`, `{{wellbeing.daylight_window.shadow_text}}`,
+  `{{departure.sun_gained_min}}`; new formats `_deg` → "31°", `_wm2` → "632 W/m²". Draft `recommendation` may be `sunniest`.
+  Verifier adds: "more sun" claims need `sun_gained_s > 0`; medical words (treat, cure, prevent, prescribe, diagnose, deficiency) are defects.
+- Replay `backend/replay/daylight_seeker.json` (scripted, `live:false`), recorded from `hero.json["sun"]` `spring_daylight_walk` and
+  checked against its fastest/sunniest stats: `python scripts/record_replay.py --only daylight_seeker`. Intent entry `daylight_seeker`.
+
+## Overnight additions — Stream D (Oslo, low sun)
+- `data/cities.json` entries may carry two optional keys (absent = old behaviour, Dubai has neither):
+  `caster_buffer_m` (caster ring width, default `CASTER_BUFFER_M` = 900; Oslo 1500) and
+  `dates` (preset id → ISO date, default `PRESET_DATES`). Both are copied into `meta.json`
+  (`meta.dates`, `meta.caster_buffer_m`). Oslo: `city_id "oslo"`, tz `Europe/Oslo`, dates
+  `winter 2026-12-21, spring 2026-03-20, summer 2026-06-21, hackathon 2026-10-24` (same preset ids as Dubai,
+  different ISO dates — the frontend must take ISO dates from `/api/cities` `dates`, not its own table).
+- `exposure_<date_id>.npz` written from now on has an extra array `night` bool `[n_steps]` (sun ≤ `SUN_MIN_ALT_DEG`).
+  Night columns are 0 meaning "no direct sun anywhere", not "shade". `shade.cache.ExposureTable` gains
+  `night` (derived from `index.json` for older npz files) and `is_night(minute_of_day)`.
