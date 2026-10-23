@@ -53,7 +53,7 @@ const PLAN: Plan[] = [
   { ch: 1, t: 0.82 }, // title + one-liner over the lit skyline
   { ch: 2, t: 0.72 }, // street level, ember sun-exposure HUD high
   { ch: 3, t: 0.93 }, // hold at 16:00, tower shadows over whole streets
-  { ch: 4, t: 0.72 }, // city assembling, counters
+  { ch: 4, t: 0.83 }, // 74.7 s: counters final (ramp 62-72 s) and still visible (fade-out from ~76.5 s), ch04.ts
   { ch: 5, t: 0.62 }, // per-edge exposure labels + schematic
   { ch: 6, t: 0.22, suffix: "feed" }, // agent activity feed, two routes
   { ch: 6, t: 0.5, suffix: "flythrough" }, // fly-through with HUD
