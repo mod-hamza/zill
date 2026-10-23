@@ -6,7 +6,17 @@
 # State: deploy/.deployed (last good commit). Log: journalctl -u zill-cd
 set -euo pipefail
 
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+REPO_DIR="${REPO_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+
+# `git reset` below rewrites this very file, and bash reads scripts incrementally: run from a copy
+if [[ -z "${ZILL_CD_COPY:-}" ]]; then
+  copy="$(mktemp /tmp/zill-cd.XXXXXX.sh)"
+  cp "${BASH_SOURCE[0]}" "$copy"
+  rc=0
+  ZILL_CD_COPY=1 REPO_DIR="$REPO_DIR" bash "$copy" "$@" || rc=$?
+  rm -f "$copy"
+  exit "$rc"
+fi
 STATE="$REPO_DIR/deploy/.deployed"
 COMPOSE=(docker compose -f "$REPO_DIR/deploy/docker-compose.yml")
 FORCE="${1:-}"
