@@ -17,7 +17,9 @@
    "relative_humidity_2m": 69,
    "wind_speed_10m": 3.97,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 0,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T01:00",
@@ -26,7 +28,9 @@
    "relative_humidity_2m": 72,
    "wind_speed_10m": 4.01,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 5,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T02:00",
@@ -35,7 +39,9 @@
    "relative_humidity_2m": 73,
    "wind_speed_10m": 3.97,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 20,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T03:00",
@@ -44,7 +50,9 @@
    "relative_humidity_2m": 75,
    "wind_speed_10m": 3.22,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 9,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T04:00",
@@ -53,7 +61,9 @@
    "relative_humidity_2m": 82,
    "wind_speed_10m": 3.08,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 2,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T05:00",
@@ -62,7 +72,9 @@
    "relative_humidity_2m": 84,
    "wind_speed_10m": 2.61,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 0,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T06:00",
@@ -71,7 +83,9 @@
    "relative_humidity_2m": 85,
    "wind_speed_10m": 2.79,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 1,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T07:00",
@@ -80,7 +94,9 @@
    "relative_humidity_2m": 81,
    "wind_speed_10m": 3.01,
    "uv_index": 0.36,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 15,
+   "shortwave_radiation": 57.0
   },
   {
    "time": "2026-04-15T08:00",
@@ -89,7 +105,9 @@
    "relative_humidity_2m": 73,
    "wind_speed_10m": 2.92,
    "uv_index": 1.84,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 29,
+   "shortwave_radiation": 243.0
   },
   {
    "time": "2026-04-15T09:00",
@@ -98,7 +116,9 @@
    "relative_humidity_2m": 62,
    "wind_speed_10m": 4.18,
    "uv_index": 4.39,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 98,
+   "shortwave_radiation": 467.0
   },
   {
    "time": "2026-04-15T10:00",
@@ -107,7 +127,9 @@
    "relative_humidity_2m": 56,
    "wind_speed_10m": 4.43,
    "uv_index": 7.4,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 100,
+   "shortwave_radiation": 667.0
   },
   {
    "time": "2026-04-15T11:00",
@@ -116,7 +138,9 @@
    "relative_humidity_2m": 55,
    "wind_speed_10m": 5.41,
    "uv_index": 10.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 97,
+   "shortwave_radiation": 821.0
   },
   {
    "time": "2026-04-15T12:00",
@@ -125,7 +149,9 @@
    "relative_humidity_2m": 54,
    "wind_speed_10m": 5.6,
    "uv_index": 11.36,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 100,
+   "shortwave_radiation": 896.0
   },
   {
    "time": "2026-04-15T13:00",
@@ -134,7 +160,9 @@
    "relative_humidity_2m": 55,
    "wind_speed_10m": 6.25,
    "uv_index": 11.04,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 100,
+   "shortwave_radiation": 920.0
   },
   {
    "time": "2026-04-15T14:00",
@@ -143,7 +171,9 @@
    "relative_humidity_2m": 58,
    "wind_speed_10m": 5.85,
    "uv_index": 9.15,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 99,
+   "shortwave_radiation": 846.0
   },
   {
    "time": "2026-04-15T15:00",
@@ -152,7 +182,9 @@
    "relative_humidity_2m": 63,
    "wind_speed_10m": 5.57,
    "uv_index": 6.3,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 84,
+   "shortwave_radiation": 726.0
   },
   {
    "time": "2026-04-15T16:00",
@@ -161,7 +193,9 @@
    "relative_humidity_2m": 65,
    "wind_speed_10m": 4.16,
    "uv_index": 3.36,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 99,
+   "shortwave_radiation": 585.0
   },
   {
    "time": "2026-04-15T17:00",
@@ -170,7 +204,9 @@
    "relative_humidity_2m": 69,
    "wind_speed_10m": 4.1,
    "uv_index": 1.16,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 87,
+   "shortwave_radiation": 368.0
   },
   {
    "time": "2026-04-15T18:00",
@@ -179,7 +215,9 @@
    "relative_humidity_2m": 72,
    "wind_speed_10m": 3.7,
    "uv_index": 0.12,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 77,
+   "shortwave_radiation": 160.0
   },
   {
    "time": "2026-04-15T19:00",
@@ -188,7 +226,9 @@
    "relative_humidity_2m": 76,
    "wind_speed_10m": 4.61,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 97,
+   "shortwave_radiation": 19.0
   },
   {
    "time": "2026-04-15T20:00",
@@ -197,7 +237,9 @@
    "relative_humidity_2m": 75,
    "wind_speed_10m": 4.52,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 50,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T21:00",
@@ -206,7 +248,9 @@
    "relative_humidity_2m": 72,
    "wind_speed_10m": 5.05,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 20,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T22:00",
@@ -215,7 +259,9 @@
    "relative_humidity_2m": 77,
    "wind_speed_10m": 4.14,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 0,
+   "shortwave_radiation": 0.0
   },
   {
    "time": "2026-04-15T23:00",
@@ -224,7 +270,11 @@
    "relative_humidity_2m": 74,
    "wind_speed_10m": 4.19,
    "uv_index": 0.0,
-   "uv_index_clear_sky": null
+   "uv_index_clear_sky": null,
+   "cloud_cover": 2,
+   "shortwave_radiation": 0.0
   }
- ]
+ ],
+ "sky_source_api": "archive",
+ "sky_fetched_at": "2026-10-23T22:33:03+04:00"
 }

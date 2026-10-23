@@ -158,3 +158,61 @@ the UI badge must then say "Scripted session" not "Recorded session".
 ## Change log
 - 2026-10-22 initial (orchestrator).
 - 2026-10-22 agent: §7 recording items gain a `phase` field: `{"dt_ms","event","phase":"plan|approve|monitor"}` (message -> approve -> simulate through one recorded session); files also carry `autonomy_level`, `city`, `date_id`, `pacing`, `source`. Replayed events carry `payload.replay = {"source":"recorded|scripted","label","scenario_id","phase"}` for the UI badge. Agent endpoints (all SSE `event: agent`): `POST /api/agent/session {persona,city,date_id,clock,autonomy_level} -> {session_id, mode:"live|replay", badge?}`, `POST /api/agent/message {session_id,text,speed}`, `POST /api/agent/approve {session_id,plan_id?,approve,undo_token?}`, `POST /api/agent/simulate {session_id,type:delay|closure|heat_alert|sun_clock_jump|tick,params}`, `GET /api/agent/replays`, `GET /api/agent/status`. Extra event fields: `approval_request.risk`, `plan_committed.{auto,undo_token,undo}`, `replan.{kind,diff,auto,new_plan_id,routes}`, `message.{template,source}`.
+
+## Overnight additions — Stream E (typed places)
+Index file `data/cities/<city>/places.json`: `{"city_id","generated_at","source","attribution","count","dropped_far_from_graph","by_kind","places":[{"id","name","alt_names":[..],"kind","lat","lon","x","z","node","snap_m","osm"}]}`.
+Kinds: `station landmark mall square park hotel building street stop amenity food shop other`. Build: `python -m zill.places.build <city_id> [--refresh]` (needs graph.json; uses the cached POI Overpass dump).
+Curated `pois.json` entries are merged in (`curated:true`) and keep their ids.
+
+`GET /api/places/search?city=&q=&limit=8&online=true` (q 1..200 chars, limit 1..20) ->
+`{"city","q","results":[Place],"online_enabled":bool,"timing_ms"}`; Place = `{"id","name","alt_names","kind","lat","lon","x","z","node","snap_m","score","source":"index|online","matched"?,"label"?,"curated"?}`.
+Matching folds case, accents, Arabic letter variants and Norwegian letters (å→a, ø→o, æ→ae); ranks exact > prefix > all-tokens-prefix > fuzzy (capped at 88), weighted by kind. Unknown city -> 404.
+`GET /api/places/stats?city=` -> `{"city","count","by_kind"}`.
+`POST /api/places/parse {"city","text"}` (text 1..300 chars) ->
+`{"origin":Place|null,"dest":Place|null,"origin_candidates":[Place],"dest_candidates":[Place],"ambiguous":{"origin":bool,"dest":bool},"confidence":0..1,"parsed":{"origin_text","dest_text"},"depart_at"?:ISO in city tz,"depart_time"?:"HH:MM","depart_date"?:"YYYY-MM-DD","mode"?:"walk|cycle|scooter","preference"?:"shade|sun","city","timing_ms"}`.
+Accepts "from X to Y", "X to Y", "X → Y", "X -> Y", "X - Y", Arabic "من X إلى Y"; "at 15:30", "5pm", "tomorrow 9am", "noon"; "walk/cycle/bike/scooter", "by bike", "shade/shady/sunny/sun". `ambiguous` is true when the best score < 85, or near-tied candidates / same-named branches far apart exist; show a picker from `*_candidates`.
+`/api/route`, `/api/departure`, `/api/plan` accept any search-result `id` as a string `origin`/`dest` (or `{"poi": id}`), including `online_*` ids returned by search in the same server process.
+Online fallback (Nominatim, `bounded=1` to the city bbox, UA `Zill-hackathon-prototype/0.1`, <= 1 req/s, 2 s timeout, cached, results `source:"online"`) runs only if the best local score < 80; `ZILL_ONLINE_GEOCODE=0` disables it.
+
+## Overnight additions — Stream A (sun mode, well-being, UV and clouds)
+`preference: "shade" | "sun"` (default `"shade"`) on `POST /api/route`, `POST /api/departure`, `POST /api/plan`
+and on `tdsp.route/compare`, `optimise_departure`, `planner.plan` (Python kwarg `preference=`). Shade mode is
+unchanged (hero.json shade scenarios recomputed byte-identical); unknown values → 422.
+
+Sun cost (no negative weights, A* stays admissible): `t + λ·SUN_WEIGHT[mode]·shade_time`, shade_time = `t·(1−sun)` on
+open edges and `t` on covered/indoor/ac_link (indoor links get no bonus). λ triple stays [0,1,3].
+
+`POST /api/route` request: `{"city","mode","origin","dest","depart_at","date_key"?,"lambdas"?,"include_segments"?,"preference"?}`.
+Response, shade: `{"fastest","balanced","coolest","best"(=coolest),"preference":"shade","origin","dest","date_key","wellbeing","timing_ms"}`.
+Response, sun: `{"fastest","balanced","sunniest","best"(=sunniest),"preference":"sun","origin","dest","date_key","wellbeing","timing_ms"}`
+(no `coolest` key). Every Route keeps §5; sun-mode stats add `sun_gained_s`, `sun_gained_pct` (vs fastest; 0 for fastest;
+`sun_saved_*` stay and are negative). `sunniest` honesty rule: most sun among {λ3, λ1, fastest}; `stats.note` explains a fallback.
+
+`wellbeing` (best route, weather at departure; `null` only if the lookup fails):
+```json
+{"preference":"sun",
+ "uv":{"index":5.0,"band":"low|moderate|high|very high|extreme|unknown","advice":"...","basis":"uv_index_forecast|clear_sky_estimate","source":"WHO Global Solar UV Index bands"},
+ "heat_stress":{"apparent_c":24.8,"band":"none|caution|extreme caution|danger|extreme danger|unknown","advice":"...","indicative":true,"source":"...","route_rhl":765.4},
+ "daylight_window":{"active":false,"text":"Daylight / vitamin D window. Well-being guidance, not medical advice." | "No daylight / vitamin D window now: <reasons>.",
+   "sun_alt_deg":43.7,"shadow_ratio":1.05,"shadow_text":"Your shadow is 1.0× your height.","uv_index":5.0,"cloud_cover_pct":100,"reasons":[...],"rule":"...","disclaimer":"..."},
+ "breaks":{"hot":false,"every_sun_min":10.0,"prompts":[{"at_s":900.0,"sun_min":10.0,"text":"..."}],"rule":"..."},
+ "overcast":null | {"cloud_cover_pct":100,"text":"Cloud cover is about 100% ... little direct sun today. The sun figures assume a clear sky."},
+ "weather":{"source":"cached|live|representative","label":"Recorded weather for 2026-01-15 (Open-Meteo archive)","at":"...","apparent_c":..,"uv_index":..,"cloud_cover_pct":..,"shortwave_wm2":..},
+ "disclaimer":"Well-being guidance, not medical advice."}
+```
+Window rule: altitude ≥ 45° AND rounded UV ≥ 3 AND cloud < 70 % (unknown cloud never opens it). `overcast` is only set in
+sun mode. Break prompts only when apparent temperature ≥ 32.2 °C. Route weather uses the recorded file for the date when
+one exists (no network wait), else live (10-min cache), else the labelled representative profile.
+
+`POST /api/departure` sun: rows add `shade_s`; `score = shade_s + μ·wait_s`; `recommended` adds `sun_gained_s`,
+`sun_gained_pct` (vs the requested departure); response adds top-level `preference` (shade too).
+`POST /api/plan` sun: legs are sun-mode balanced routes, ordering/shift scored on shade time; response adds `"preference":"sun"`
+(key absent in shade mode). Heat-load cool-down breaks stay on in both modes.
+
+`GET /api/weather` adds `cloud_cover_pct` and `shortwave_wm2` (Open-Meteo hourly `cloud_cover`, `shortwave_radiation`; recorded
+files gained them via `python -m zill.weather.record --add-sky`, other values untouched).
+
+`data/scenarios/hero.json` gains key `"sun"` = `{"generated_at","city","search":{procedure S1–S6, attempts, notes, filters,...},
+"scenarios":[{"id":"winter_morning_walk"|"office_lunch_walk","persona","preference":"sun","mode","origin","dest","date_id","depart",
+"straight_m","fastest","balanced","sunniest","wellbeing","departure"}],"candidates":[top 20 rows]}`. Run: `python -m zill.routing.scenarios --sun`.
+The shade search keeps an existing `sun` block when it rewrites the file.

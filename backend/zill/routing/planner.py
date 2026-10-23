@@ -9,6 +9,9 @@
   shift window picks the start with the fewest policy conflicts then the lowest heat load;
 * policy conflicts come from the policy pack (`zill.agent.policy.check_policy`, pack is data and
   `verified: false`; never legal advice).
+* sun mode (preference="sun", overnight Stream A): legs use the sun-mode Balanced route and orders /
+  shift starts are scored on time NOT in direct sun instead of heat load. Heat-load cool-down breaks
+  stay on in both modes (a safety rule, not a preference).
 """
 
 from __future__ import annotations
@@ -68,8 +71,10 @@ def _nearest_poi_kind(ctx: CityContext, x: float, z: float, within_m: float = 60
 class _Router:
     """Leg router with a small cache (balanced route, no geometry)."""
 
-    def __init__(self, ctx: CityContext, mode: str, date_key: str) -> None:
+    def __init__(self, ctx: CityContext, mode: str, date_key: str, preference: str = "shade") -> None:
         self.ctx, self.mode, self.date_key = ctx, mode, date_key
+        self.preference = tdsp.check_preference(preference)
+        self.kw: dict[str, Any] = {"preference": "sun"} if preference == "sun" else {}
         self.cache: dict[tuple[int, int, int], tdsp.RouteResult | None] = {}
 
     def leg(self, a: int, b: int, depart: datetime, geometry: bool = False) -> tdsp.RouteResult | None:
@@ -87,6 +92,7 @@ class _Router:
                 "balanced",
                 with_geometry=True,
                 relative=False,
+                **self.kw,
             )
         key = (a, b, int(depart.timestamp() // 600))
         if key not in self.cache:
@@ -102,10 +108,20 @@ class _Router:
                     "balanced",
                     with_geometry=False,
                     relative=False,
+                    **self.kw,
                 )
             except NoRoute:
                 self.cache[key] = None
         return self.cache[key]
+
+
+def _leg_cost(rt: _Router, r: tdsp.RouteResult | None) -> float:
+    """Shade mode: the leg's heat load (RHL). Sun mode: seconds NOT in direct sun."""
+    if r is None:
+        return 0.0
+    if rt.preference == "sun":
+        return r.stats["duration_s"] - r.stats["sun_exposure_s"]
+    return r.stats["rhl"]
 
 
 def _score_order(rt: _Router, start: Stop, order: list[Stop], t0: datetime, mu: float) -> float:
@@ -116,7 +132,7 @@ def _score_order(rt: _Router, start: Stop, order: list[Stop], t0: datetime, mu: 
         if r is None and cur.node != st.node:
             return math.inf
         dur = r.stats["duration_s"] if r else 0.0
-        total += (r.stats["rhl"] if r else 0.0) + mu * dur
+        total += _leg_cost(rt, r) + mu * dur
         clock += timedelta(seconds=dur)
         if st.window:
             if clock < st.window[0]:
@@ -377,9 +393,10 @@ def plan(
     policy_pack: str | None = None,
     shift_window: tuple[datetime, datetime] | None = None,
     mu: float = config.DEPARTURE_MU,
+    preference: str = "shade",
 ) -> dict[str, Any]:
     tab = ctx.exposure(date_key)
-    rt = _Router(ctx, mode, date_key)
+    rt = _Router(ctx, mode, date_key, preference)
     start = Stop(
         -1,
         start_place["name"],
@@ -405,7 +422,9 @@ def plan(
         res = _execute(ctx, rt, tab, persona, start, order, t0, return_to_start)
         pol = check_policy({"items": res["items"], "persona": persona}, pack) if pack else None
         res["policy"] = pol
-        key = (pol["count"] if pol else 0, res["totals"]["rhl"] + mu * res["totals"]["duration_s"])
+        tot = res["totals"]
+        cost = (tot["duration_s"] - tot["sun_exposure_s"]) if preference == "sun" else tot["rhl"]
+        key = (pol["count"] if pol else 0, cost + mu * tot["duration_s"])
         if shift_window and datetime.fromisoformat(res["totals"]["end"]) > shift_window[1]:
             key = (key[0] + 1000, key[1])
         if best is None or key < best[0]:
@@ -417,6 +436,8 @@ def plan(
     res["persona"] = persona
     res["mode"] = mode
     res["date_key"] = date_key
+    if preference == "sun":
+        res["preference"] = "sun"
     if shift_window and len(starts) > 1:
         res["shift_search"] = {
             "candidates": [s.isoformat() for s in starts],
@@ -476,6 +497,7 @@ def plan_from_request(ctx: CityContext, req: Any, start_at: datetime, date_key: 
         req.return_to_start,
         req.policy_pack,
         sw,
+        preference=getattr(req, "preference", "shade"),
     )
     out["start"] = sp
     return out

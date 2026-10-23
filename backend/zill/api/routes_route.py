@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import time
 from datetime import datetime, timedelta
@@ -21,12 +22,14 @@ from zill.api.schemas import (
     PlanResponse,
     RouteRequest,
     RouteResponse,
+    SunRouteResponse,
 )
 from zill.routing import tdsp
 from zill.routing.departure import optimise_departure
 from zill.services import CityContext, get_city
 
 router = APIRouter(prefix="/api", tags=["routing"], default_response_class=ORJSON)
+log = logging.getLogger(__name__)
 
 DEFAULT_DATE_KEY = "summer"
 
@@ -75,9 +78,30 @@ def _place_in(p: Any) -> Any:
     return p.model_dump(exclude_none=True) if hasattr(p, "model_dump") else p
 
 
-@router.post("/route", response_model=RouteResponse, response_model_by_alias=True)
+def wellbeing_for(
+    ctx: CityContext, preference: str, dep: datetime, best: tdsp.RouteResult
+) -> dict[str, Any] | None:
+    """`wellbeing` block for the recommended route. Never fails the route: errors -> None (logged)."""
+    try:
+        from zill import weather, wellbeing
+        from zill.sun.position import sun_position
+
+        o = ctx.origin
+        alt = sun_position(dep, o["lat"], o["lon"], ctx.tz).alt_deg
+        w = weather.get(ctx.city_id, dep, prefer_recorded=True)
+        return wellbeing.assess(preference, alt, w, best.stats, best.segments)
+    except Exception as e:  # weather/sun lookups must never break routing
+        log.warning("wellbeing unavailable: %s", type(e).__name__)
+        return None
+
+
+@router.post("/route", response_model=RouteResponse | SunRouteResponse, response_model_by_alias=True)
 def post_route(req: RouteRequest) -> dict[str, Any]:
-    """Fastest / Balanced / Coolest routes with stats and per-segment geometry (CONTRACTS 5)."""
+    """Fastest / Balanced / Coolest routes with stats and per-segment geometry (CONTRACTS 5).
+
+    `preference: "sun"` returns fastest / balanced / sunniest instead of coolest. Both modes add
+    `best` (= coolest or sunniest), `preference` and a `wellbeing` block (UV, heat stress, daylight
+    window, break prompts, overcast note)."""
     t0 = time.perf_counter()
     ctx = get_city(req.city)
     dep, dk = resolve_times(ctx, req.depart_at, req.date_key)
@@ -92,19 +116,27 @@ def post_route(req: RouteRequest) -> dict[str, Any]:
         dk,
         _lambdas(req.lambdas),
         with_geometry=req.include_segments,
+        preference=req.preference,
     )
+    best = res[tdsp.best_label(req.preference)]
+    out = {k: v.to_dict(include_segments=req.include_segments) for k, v in res.items()}
     return {
-        **{k: v.to_dict(include_segments=req.include_segments) for k, v in res.items()},
+        **out,
+        "best": out[tdsp.best_label(req.preference)],
+        "preference": req.preference,
         "origin": o,
         "dest": d,
         "date_key": dk,
+        "wellbeing": wellbeing_for(ctx, req.preference, dep, best),
         "timing_ms": round((time.perf_counter() - t0) * 1000, 1),
     }
 
 
 @router.post("/departure", response_model=DepartureResponse)
 def post_departure(req: DepartureRequest) -> dict[str, Any]:
-    """Best departure in a window (Balanced route per departure, minimises RHL + mu*wait) with a `why`."""
+    """Best departure in a window (Balanced route per departure, minimises RHL + mu*wait) with a `why`.
+
+    Sun mode minimises shade_s + mu*wait (most direct sun) instead."""
     t0 = time.perf_counter()
     ctx = get_city(req.city)
     w = req.window
@@ -135,9 +167,15 @@ def post_departure(req: DepartureRequest) -> dict[str, Any]:
         mu=req.mu,
         date_key=dk,
         requested=requested,
+        preference=req.preference,
     )
     out = res.to_dict()
-    out.update(origin=o, dest=d, timing_ms=round((time.perf_counter() - t0) * 1000, 1))
+    out.update(
+        origin=o,
+        dest=d,
+        preference=req.preference,
+        timing_ms=round((time.perf_counter() - t0) * 1000, 1),
+    )
     return out
 
 

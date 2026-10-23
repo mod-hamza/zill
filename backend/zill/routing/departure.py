@@ -4,6 +4,9 @@ Evaluates the Balanced route for every departure in a window and recommends the 
 minimises ``rhl + mu * wait_s`` (waiting has a cost), subject to ``latest_arrival``. The `why`
 struct lists the stretches of the recommended route whose sun state differs from what the
 traveller would have met by leaving at the requested time.
+
+Sun mode (preference="sun", overnight Stream A): the Balanced route is the sun-mode lam=1 route and the
+score is ``shade_s + mu * wait_s`` (shade_s = seconds NOT in direct sun), i.e. it maximises sun.
 """
 
 from __future__ import annotations
@@ -84,7 +87,11 @@ def optimise_departure(
     mu: float = config.DEPARTURE_MU,
     date_key: str | None = None,
     requested: datetime | None = None,
+    preference: str = "shade",
 ) -> DepartureResult:
+    tdsp.check_preference(preference)
+    sun = preference == "sun"
+    rkw: dict[str, Any] = {"preference": "sun"} if sun else {}
     date_key = date_key or window_start.date().isoformat()
     tab = ctx.exposure(date_key)
     window_end = window_end or window_start + timedelta(minutes=90)
@@ -98,7 +105,7 @@ def optimise_departure(
 
     def one(dep: datetime) -> tuple[datetime, tdsp.RouteResult]:
         return dep, tdsp.route(
-            ctx, o, d, mode, dep, lam, date_key, "balanced", with_geometry=False, relative=False
+            ctx, o, d, mode, dep, lam, date_key, "balanced", with_geometry=False, relative=False, **rkw
         )
 
     with ThreadPoolExecutor(max_workers=min(8, len(departs))) as ex:
@@ -106,7 +113,11 @@ def optimise_departure(
 
     table = [_row(r, dep, window_start, latest_arrival) for dep, r in results]
     for row in table:
-        row["score"] = round(row["rhl"] + mu * row["wait_s"], 2)
+        if sun:
+            row["shade_s"] = round(row["duration_s"] - row["sun_exposure_s"], 2)
+            row["score"] = round(row["shade_s"] + mu * row["wait_s"], 2)
+        else:
+            row["score"] = round(row["rhl"] + mu * row["wait_s"], 2)
     feasible = [r for r in table if r["feasible"]]
     pool = feasible or table
     best = min(pool, key=lambda r: (r["score"], r["wait_s"]))
@@ -120,12 +131,19 @@ def optimise_departure(
     )
     rec["sun_saved_s"] = round(req_row["sun_exposure_s"] - best["sun_exposure_s"], 2)
     rec["wait_min"] = round(best["wait_s"] / 60.0, 1)
+    if sun:
+        rec["sun_gained_s"] = round(best["sun_exposure_s"] - req_row["sun_exposure_s"], 2)
+        rec["sun_gained_pct"] = (
+            round(100.0 * rec["sun_gained_s"] / req_row["sun_exposure_s"], 1)
+            if req_row["sun_exposure_s"]
+            else 0.0
+        )
 
     dep_best = datetime.fromisoformat(best["depart"])
     dep_req = datetime.fromisoformat(req_row["depart"])
-    r_best = tdsp.route(ctx, o, d, mode, dep_best, lam, date_key, "balanced", relative=False)
+    r_best = tdsp.route(ctx, o, d, mode, dep_best, lam, date_key, "balanced", relative=False, **rkw)
     r_req = (
-        tdsp.route(ctx, o, d, mode, dep_req, lam, date_key, "balanced", relative=False)
+        tdsp.route(ctx, o, d, mode, dep_req, lam, date_key, "balanced", relative=False, **rkw)
         if dep_req != dep_best
         else r_best
     )

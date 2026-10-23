@@ -16,6 +16,8 @@ ARCHIVE_URL = "https://archive-api.open-meteo.com/v1/archive"
 FORECAST_URL = "https://api.open-meteo.com/v1/forecast"
 UA = {"User-Agent": "Zill-hackathon-prototype/0.1"}
 HOURLY_BASE = "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m"
+# overnight Stream A: cloud cover (%) and global horizontal irradiance (W/m2); both archive + forecast
+HOURLY_SKY = "cloud_cover,shortwave_radiation"
 
 
 def clear_sky_uv(alt_deg: float) -> float:
@@ -31,7 +33,7 @@ def fetch_day(
     today = today or datetime.now().date()
     past = day < today - timedelta(days=2)
     url = ARCHIVE_URL if past else FORECAST_URL
-    hourly = HOURLY_BASE if past else HOURLY_BASE + ",uv_index,uv_index_clear_sky"
+    hourly = HOURLY_BASE + "," + HOURLY_SKY + ("" if past else ",uv_index,uv_index_clear_sky")
     params = {
         "latitude": f"{lat:.4f}",
         "longitude": f"{lon:.4f}",
@@ -57,6 +59,8 @@ def fetch_day(
                 "wind_speed_10m": h["wind_speed_10m"][i],
                 "uv_index": (h.get("uv_index") or [None] * len(h["time"]))[i],
                 "uv_index_clear_sky": (h.get("uv_index_clear_sky") or [None] * len(h["time"]))[i],
+                "cloud_cover": (h.get("cloud_cover") or [None] * len(h["time"]))[i],
+                "shortwave_radiation": (h.get("shortwave_radiation") or [None] * len(h["time"]))[i],
             }
         )
     return {

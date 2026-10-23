@@ -15,6 +15,17 @@ Procedure
    weighted by how sun-exposed the fastest route is.
 5. If the best tourist saving is < 90 s, the search is widened (distance band, more departures) and every
    attempt is logged.
+
+Sun-mode procedure (`--sun`, written under hero.json["sun"]; shade entries are never touched)
+S1. Same candidate places, same pair band (400-1500 m), walk only, date winter (2026-01-15).
+S2. Departures: winter morning 09:00-11:00 every 30 min, and office lunch 12:00-13:30 every 30 min.
+S3. Fastest vs Sunniest (sun mode, lam=3). Same network / duration / added-time (<= 25 %) / detour (<= 1.35)
+    filters; a row also needs sun actually gained (> 0 s).
+S4. Rank by sun_gained_s (ties: less added time). winter_morning_walk = best morning row;
+    office_lunch_walk = best lunch row with fastest walk <= 15 min, different pair. Pairs with both
+    endpoints curated are preferred when that tier gains >= 60 s.
+S5. If the best morning gain is < 90 s the band is widened to 300-1800 m and the attempt logged.
+S6. Each scenario carries the well-being block computed from the RECORDED weather for that date.
 """
 
 from __future__ import annotations
@@ -65,6 +76,12 @@ def _eval_job(job: tuple) -> dict[str, Any] | None:
     ctx = _WORKER_CTX
     assert ctx is not None
     return eval_pair(ctx, *job)
+
+
+def _eval_job_sun(job: tuple) -> dict[str, Any] | None:
+    ctx = _WORKER_CTX
+    assert ctx is not None
+    return eval_pair_sun(ctx, *job)
 
 
 def eval_pair(
@@ -118,6 +135,65 @@ def eval_pair(
         "rhl_saved_pct": c["rhl_saved_pct"],
         "coolest_indoor_pct": c["indoor_pct"],
         "coolest_covered_pct": c["covered_pct"],
+        "both_curated": bool(a.get("curated") and b.get("curated")),
+        "reject": reject,
+        "eligible": reject is None,
+    }
+
+
+def eval_pair_sun(
+    ctx: CityContext, a: dict[str, Any], b: dict[str, Any], mode: str, date_id: str, hhmm: str
+) -> dict[str, Any] | None:
+    """Sun-mode candidate row: fastest vs sunniest (lam=3, preference='sun')."""
+    try:
+        res = tdsp.compare(
+            ctx,
+            a["nodes"][mode],
+            b["nodes"][mode],
+            mode,
+            ctx.at(date_id, hhmm),
+            date_id,
+            with_geometry=False,
+            preference="sun",
+        )
+    except NoRoute:
+        return None
+    f, c = res["fastest"].stats, res["sunniest"].stats
+    straight = math.hypot(a["x"] - b["x"], a["z"] - b["z"])
+    detour = c["distance_m"] / f["distance_m"] if f["distance_m"] > 0 else 1.0
+    added_frac = c["added_time_s"] / f["duration_s"] if f["duration_s"] > 0 else 0.0
+    ratio = f["distance_m"] / straight if straight > 0 else 99.0
+    reject = None
+    if ratio > MAX_NETWORK_RATIO:
+        reject = "network_ratio>1.6"
+    elif f["duration_s"] > MAX_DURATION_S[mode]:
+        reject = f"fastest_duration>{int(MAX_DURATION_S[mode] / 60)}min"
+    elif c["sun_gained_s"] <= 0:
+        reject = "no_sun_gained"
+    elif added_frac > MAX_ADDED_FRAC:
+        reject = "added_time>25%"
+    elif detour > MAX_DETOUR:
+        reject = "detour>1.35"
+    return {
+        "origin": a["id"],
+        "dest": b["id"],
+        "origin_name": a["name"],
+        "dest_name": b["name"],
+        "mode": mode,
+        "date_id": date_id,
+        "depart": hhmm,
+        "straight_m": round(straight, 1),
+        "network_ratio": round(ratio, 3),
+        "fastest_distance_m": f["distance_m"],
+        "fastest_duration_s": f["duration_s"],
+        "fastest_sun_s": f["sun_exposure_s"],
+        "sunniest_duration_s": c["duration_s"],
+        "sunniest_sun_s": c["sun_exposure_s"],
+        "sun_gained_s": c["sun_gained_s"],
+        "sun_gained_pct": c["sun_gained_pct"],
+        "added_time_s": c["added_time_s"],
+        "added_frac": round(added_frac, 4),
+        "detour_ratio": round(detour, 4),
         "both_curated": bool(a.get("curated") and b.get("curated")),
         "reject": reject,
         "eligible": reject is None,
@@ -187,7 +263,10 @@ def run_search(
     modes: tuple[str, ...],
     serial: bool = False,
     workers: int | None = None,
+    preference: str = "shade",
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    sun = preference == "sun"
+    ev, job_fn = (eval_pair_sun, _eval_job_sun) if sun else (eval_pair, _eval_job)
     pairs = _pairs(places, lo, hi)
     skipped_dates = [d for d in dates if not ctx.has_exposure(d)]
     dates = tuple(d for d in dates if d not in skipped_dates)
@@ -204,13 +283,13 @@ def run_search(
     t0 = time.perf_counter()
     rows: list[dict[str, Any] | None]
     if serial or len(jobs) < 40:
-        rows = [eval_pair(ctx, *j) for j in jobs]
+        rows = [ev(ctx, *j) for j in jobs]
     else:
         n = workers or max(1, min(8, (os.cpu_count() or 2) - 1))
         with ProcessPoolExecutor(
             n, initializer=_init_worker, initargs=(ctx.city_id, os.environ.get("ZILL_CITIES_DIR"))
         ) as ex:
-            rows = list(ex.map(_eval_job, jobs, chunksize=8))
+            rows = list(ex.map(job_fn, jobs, chunksize=8))
     good = [r for r in rows if r is not None]
     info = {
         "places": len(places),
@@ -445,7 +524,9 @@ def generate(
         "generated_at": datetime.now(ZoneInfo(ctx.tz)).isoformat(timespec="seconds"),
         "city": city_id,
         "search": {
-            "procedure": __doc__.split("Procedure")[1].strip() if __doc__ else "",
+            "procedure": __doc__.split("Procedure")[1].split("Sun-mode procedure")[0].strip()
+            if __doc__
+            else "",
             "place_filter": {"kinds": sorted(PLACE_KINDS), "snap_max_m": SNAP_MAX_M, **place_filter},
             "filters": {
                 "max_network_ratio": MAX_NETWORK_RATIO,
@@ -471,9 +552,205 @@ def generate(
         / ("hero.json" if city_id == config.DEFAULT_CITY else f"hero_{city_id}.json")
     )
     path.parent.mkdir(parents=True, exist_ok=True)
+    prev = _read_json(path)
+    if prev and "sun" in prev:  # the sun-mode block is generated separately (generate_sun)
+        out["sun"] = prev["sun"]
     path.write_text(json.dumps(out, indent=1), encoding="utf-8")
     log(f"[scenarios] wrote {path}")
     return out
+
+
+def _read_json(path: Path) -> dict[str, Any] | None:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return None
+
+
+# ---------------------------------------------------------------------------------------------
+# Sun mode (overnight Stream A): documented search, written under hero.json["sun"]
+# ---------------------------------------------------------------------------------------------
+SUN_DATES = ("winter",)
+SUN_MORNING_DEPARTS = ("09:00", "09:30", "10:00", "10:30", "11:00")
+SUN_LUNCH_DEPARTS = ("12:00", "12:30", "13:00", "13:30")
+MIN_SUN_GAIN_S = 90.0
+LUNCH_MAX_DURATION_S = 15 * 60.0
+
+
+def _rank_sun(rows: list[dict[str, Any]], departs: tuple[str, ...]) -> list[dict[str, Any]]:
+    out = [r for r in rows if r["eligible"] and r["depart"] in departs]
+    out.sort(key=lambda r: (-r["sun_gained_s"], r["added_time_s"], r["origin"], r["dest"], r["depart"]))
+    t1 = [r for r in out if r.get("both_curated")]
+    return t1 if t1 and t1[0]["sun_gained_s"] >= 60.0 else out
+
+
+def select_sun(rows: list[dict[str, Any]]) -> dict[str, dict[str, Any] | None]:
+    morning = _rank_sun(rows, SUN_MORNING_DEPARTS)
+    m = morning[0] if morning else None
+    used = {frozenset((m["origin"], m["dest"]))} if m else set()
+    lunch = [
+        r
+        for r in _rank_sun(rows, SUN_LUNCH_DEPARTS)
+        if r["fastest_duration_s"] <= LUNCH_MAX_DURATION_S and frozenset((r["origin"], r["dest"])) not in used
+    ]
+    return {"winter_morning_walk": m, "office_lunch_walk": lunch[0] if lunch else None}
+
+
+def _full_sun(
+    ctx: CityContext, row: dict[str, Any], persona: str, sid: str, with_departure: bool
+) -> dict[str, Any]:
+    from zill import weather, wellbeing
+    from zill.sun.position import sun_position
+
+    mode, date_id, hh = row["mode"], row["date_id"], row["depart"]
+    a = ctx.resolve_place({"poi": row["origin"]}, mode)
+    b = ctx.resolve_place({"poi": row["dest"]}, mode)
+    dep = ctx.at(date_id, hh)
+    res = tdsp.compare(ctx, a["node"], b["node"], mode, dep, date_id, with_geometry=True, preference="sun")
+
+    def pl(p: dict[str, Any], name: str) -> dict[str, Any]:
+        return {"name": name, "lat": p["lat"], "lon": p["lon"], "node": p["node"], "x": p["x"], "z": p["z"]}
+
+    sunny = res["sunniest"]
+    alt = sun_position(dep, ctx.origin["lat"], ctx.origin["lon"], ctx.tz).alt_deg
+    w = weather.get(ctx.city_id, dep, allow_live=False, prefer_recorded=True)
+    w.pop("hourly", None)
+    out: dict[str, Any] = {
+        "id": sid,
+        "persona": persona,
+        "preference": "sun",
+        "mode": mode,
+        "origin": pl(a, row["origin_name"]),
+        "dest": pl(b, row["dest_name"]),
+        "date_id": date_id,
+        "depart": hh,
+        "straight_m": row["straight_m"],
+        "fastest": res["fastest"].to_dict(),
+        "sunniest": sunny.to_dict(),
+        "balanced": res["balanced"].to_dict(),
+        "wellbeing": wellbeing.assess("sun", alt, w, sunny.stats, sunny.segments),
+        "departure": None,
+    }
+    if with_departure:
+        d = optimise_departure(
+            ctx,
+            a["node"],
+            b["node"],
+            mode,
+            dep,
+            dep + timedelta(minutes=90),
+            date_key=date_id,
+            preference="sun",
+        )
+        out["departure"] = d.to_dict()
+    return out
+
+
+def generate_sun(
+    city_id: str = config.DEFAULT_CITY, out_path: Path | None = None, serial: bool = False, log: Any = print
+) -> dict[str, Any]:
+    """Run the sun-mode search and write it under the `sun` key of hero.json (other keys untouched)."""
+    ctx = get_city(city_id)
+    places, place_filter = _places(ctx)
+    departs = SUN_MORNING_DEPARTS + SUN_LUNCH_DEPARTS
+    attempts: list[dict[str, Any]] = []
+
+    def attempt(name: str, lo: float, hi: float) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+        rows, info = run_search(ctx, places, lo, hi, departs, SUN_DATES, ("walk",), serial, preference="sun")
+        sel = select_sun(rows)
+        best = sel["winter_morning_walk"]["sun_gained_s"] if sel["winter_morning_walk"] else 0.0
+        info.update(
+            name=name,
+            eligible=sum(1 for r in rows if r["eligible"]),
+            best_morning_sun_gained_s=best,
+            selected={
+                k: (
+                    None
+                    if v is None
+                    else f"{v['origin']}->{v['dest']} {v['mode']} {v['depart']} {v['date_id']}"
+                )
+                for k, v in sel.items()
+            },
+        )
+        attempts.append(info)
+        log(
+            f"[scenarios:sun] {name}: {info['jobs']} jobs in {info['elapsed_s']}s, "
+            f"eligible {info['eligible']}, "
+            f"best morning sun_gained_s {best:.1f}"
+        )
+        return rows, sel
+
+    rows, sel = attempt("baseline: curated places, pairs 400-1500 m, winter morning + lunch", 400.0, 1500.0)
+    m = sel["winter_morning_walk"]
+    if m is None or m["sun_gained_s"] < MIN_SUN_GAIN_S:
+        rows, sel = attempt("widened: pairs 300-1800 m", 300.0, 1800.0)
+    scen, notes = [], []
+    for sid, persona in (("winter_morning_walk", "daylight_seeker"), ("office_lunch_walk", "office_worker")):
+        row = sel.get(sid)
+        if row is None:
+            notes.append(f"{sid}: no eligible candidate found")
+            continue
+        scen.append(_full_sun(ctx, row, persona, sid, with_departure=(sid == "winter_morning_walk")))
+    for sc in scen:
+        wb = sc["wellbeing"]
+        if wb.get("overcast"):
+            notes.append(f"{sc['id']}: recorded weather shows {wb['overcast']['text']}")
+        if not wb["daylight_window"]["active"]:
+            notes.append(f"{sc['id']}: {wb['daylight_window']['text']}")
+    ranked = sorted((r for r in rows if r["eligible"]), key=lambda r: -r["sun_gained_s"])[:20]
+    doc = __doc__ or ""
+    block = {
+        "generated_at": datetime.now(ZoneInfo(ctx.tz)).isoformat(timespec="seconds"),
+        "city": city_id,
+        "search": {
+            "procedure": ("S1." + doc.split("S1.", 1)[1]).strip() if "S1." in doc else "",
+            "place_filter": {"kinds": sorted(PLACE_KINDS), "snap_max_m": SNAP_MAX_M, **place_filter},
+            "filters": {
+                "max_network_ratio": MAX_NETWORK_RATIO,
+                "max_duration_s": MAX_DURATION_S,
+                "lunch_max_duration_s": LUNCH_MAX_DURATION_S,
+                "max_added_frac": MAX_ADDED_FRAC,
+                "max_detour": MAX_DETOUR,
+            },
+            "attempts": attempts,
+            "notes": notes,
+            "min_sun_gained_s": MIN_SUN_GAIN_S,
+            "lambdas": config.LAMBDAS,
+            "cost": "t + lam * SUN_WEIGHT[mode] * shade_time (shade_time = time not in direct sun)",
+            "model": "Model v1: buildings, mapped trees, covered links; clear-sky geometry",
+        },
+        "scenarios": scen,
+        "candidates": ranked,
+    }
+    path = out_path or (
+        config.DATA_DIR
+        / "scenarios"
+        / ("hero.json" if city_id == config.DEFAULT_CITY else f"hero_{city_id}.json")
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    full = _read_json(path) or {}
+    full["sun"] = block
+    path.write_text(json.dumps(full, indent=1), encoding="utf-8")
+    log(f"[scenarios:sun] wrote {path} (key 'sun')")
+    return block
+
+
+def headline_sun(block: dict[str, Any]) -> list[str]:
+    lines = []
+    for s in block["scenarios"]:
+        f, c = s["fastest"]["stats"], s["sunniest"]["stats"]
+        wb = s["wellbeing"]
+        lines.append(
+            f"{s['id']}: {s['origin']['name']} -> {s['dest']['name']} {s['mode']} "
+            f"{s['date_id']} {s['depart']} "
+            f"fastest {f['duration_s']:.0f}s/{f['sun_exposure_s']:.0f}s sun | sunniest "
+            f"{c['duration_s']:.0f}s/{c['sun_exposure_s']:.0f}s sun | gained {c['sun_gained_s']:.0f}s "
+            f"({c['sun_gained_pct']:.0f}%), +{c['added_time_s']:.0f}s | "
+            f"alt {wb['daylight_window']['sun_alt_deg']} "
+            f"uv {wb['uv']['index']} cloud {wb['weather']['cloud_cover_pct']}% window "
+            f"{wb['daylight_window']['active']}"
+        )
+    return lines
 
 
 def headline(out: dict[str, Any]) -> list[str]:
@@ -496,6 +773,10 @@ if __name__ == "__main__":
     ap.add_argument("--city", default=config.DEFAULT_CITY)
     ap.add_argument("--out", default=None)
     ap.add_argument("--serial", action="store_true")
+    ap.add_argument("--sun", action="store_true", help="run only the sun-mode search (writes key 'sun')")
     a = ap.parse_args()
-    res = generate(a.city, Path(a.out) if a.out else None, a.serial)
-    print("\n".join(headline(res)))
+    if a.sun:
+        print("\n".join(headline_sun(generate_sun(a.city, Path(a.out) if a.out else None, a.serial))))
+    else:
+        res = generate(a.city, Path(a.out) if a.out else None, a.serial)
+        print("\n".join(headline(res)))

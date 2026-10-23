@@ -7,6 +7,8 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 Mode = Literal["walk", "cycle", "scooter"]
+Preference = Literal["shade", "sun"]
+PREFERENCE_DESC = "shade = least direct sun (default); sun = most direct sun / daylight (well-being)"
 
 
 class Loose(BaseModel):
@@ -89,12 +91,15 @@ class RouteRequest(BaseModel):
         default=None, description="preset id or ISO date; defaults to depart_at's date"
     )
     lambdas: list[float] | None = Field(
-        default=None, description="[fastest, balanced, coolest]; default [0,1,3]"
+        default=None, description="[fastest, balanced, coolest|sunniest]; default [0,1,3]"
     )
     include_segments: bool = True
+    preference: Preference = Field(default="shade", description=PREFERENCE_DESC)
 
 
 class RouteStats(Loose):
+    """Sun mode adds `sun_gained_s` / `sun_gained_pct` (vs fastest) as extra keys."""
+
     distance_m: float
     duration_s: float
     sun_exposure_s: float
@@ -133,12 +138,32 @@ class Route(BaseModel):
 
 
 class RouteResponse(BaseModel):
+    """Shade mode (default): fastest / balanced / coolest; `best` = coolest."""
+
     fastest: Route
     balanced: Route
     coolest: Route
+    best: Route
+    preference: Literal["shade"] = "shade"
     origin: Place
     dest: Place
     date_key: str
+    wellbeing: dict[str, Any] | None = None
+    timing_ms: float | None = None
+
+
+class SunRouteResponse(BaseModel):
+    """Sun mode: fastest / balanced / sunniest (no `coolest` key); `best` = sunniest."""
+
+    fastest: Route
+    balanced: Route
+    sunniest: Route
+    best: Route
+    preference: Literal["sun"]
+    origin: Place
+    dest: Place
+    date_key: str
+    wellbeing: dict[str, Any] | None = None
     timing_ms: float | None = None
 
 
@@ -158,6 +183,7 @@ class DepartureRequest(BaseModel):
     step_min: int = Field(default=5, ge=1, le=30)
     latest_arrival: str | None = None
     mu: float = Field(default=0.25, ge=0)
+    preference: Preference = Field(default="shade", description=PREFERENCE_DESC)
 
 
 class DepartureRow(Loose):
@@ -179,6 +205,7 @@ class DepartureResponse(Loose):
     origin: Place
     dest: Place
     date_key: str
+    preference: Preference = "shade"
     timing_ms: float | None = None
 
 
@@ -201,6 +228,7 @@ class PlanRequest(BaseModel):
     return_to_start: bool = False
     policy_pack: str | None = None
     shift_window: list[str] | None = Field(default=None, description="crew: [earliest start, latest end]")
+    preference: Preference = Field(default="shade", description=PREFERENCE_DESC)
 
 
 class PlanResponse(Loose):

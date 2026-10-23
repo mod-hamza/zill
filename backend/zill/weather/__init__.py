@@ -132,7 +132,14 @@ def _label(source: str, rec: dict[str, Any], day: date) -> str:
     return f"Recorded weather for {day.isoformat()} (Open-Meteo {rec.get('source_api', 'archive')})"
 
 
-def get(city_id: str, at: datetime | None = None, allow_live: bool | None = None) -> dict[str, Any]:
+def get(
+    city_id: str,
+    at: datetime | None = None,
+    allow_live: bool | None = None,
+    prefer_recorded: bool = False,
+) -> dict[str, Any]:
+    """Weather at `at`. `prefer_recorded=True` (route responses) uses a recorded file for the date when
+    one exists and only then tries live, so routing never waits on the network for preset dates."""
     info = _city_info(city_id)
     tz = ZoneInfo(info["tz"])
     at = at.astimezone(tz) if at and at.tzinfo else (at.replace(tzinfo=tz) if at else datetime.now(tz))
@@ -142,6 +149,11 @@ def get(city_id: str, at: datetime | None = None, allow_live: bool | None = None
     source = "representative"
 
     live_ok = _live_enabled() if allow_live is None else allow_live
+    if prefer_recorded:
+        rec = load_recorded(city_id, did)
+        if rec is not None:
+            source = "representative" if rec.get("synthetic_representative") else "cached"
+            live_ok = False
     if live_ok:
         key = (city_id, day.isoformat())
         hit = _live_mem.get(key)
@@ -174,6 +186,8 @@ def get(city_id: str, at: datetime | None = None, allow_live: bool | None = None
     rh = _interp(rows, at, "relative_humidity_2m")
     uv = _interp(rows, at, "uv_index")
     wind = _interp(rows, at, "wind_speed_10m")
+    cloud = _interp(rows, at, "cloud_cover")
+    sw = _interp(rows, at, "shortwave_radiation")
     alert = bool((app is not None and app >= HEAT_APPARENT_C) or (uv is not None and uv >= HEAT_UV))
     out = {
         "city": city_id,
@@ -185,6 +199,8 @@ def get(city_id: str, at: datetime | None = None, allow_live: bool | None = None
         "uv_index": None if uv is None else round(uv, 1),
         "uv_basis": rec.get("uv_basis", "uv_index_forecast"),
         "wind_ms": None if wind is None else round(wind, 1),
+        "cloud_cover_pct": None if cloud is None else round(cloud),
+        "shortwave_wm2": None if sw is None else round(sw),
         "heat_alert": alert,
         "label": _label(source, rec, day),
         "hourly": rows,

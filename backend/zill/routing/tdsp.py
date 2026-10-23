@@ -8,6 +8,14 @@ cost_e = t_e + t_e * lam * w_m * sun_e(tau) * uv(tau) * comfort_e    (>= t_e: h 
   sun_e(tau) is linearly interpolated between the two nearest 10-minute exposure steps.
 * Only the penalty depends on the sun; travel time never does (FIFO holds for time).
 * Exposure applies only to `open` edges; covered/indoor/ac_link edges are always sun-free.
+
+Sun mode (preference="sun", overnight Stream A) minimises the mirror image without negative weights:
+
+cost_e = t_e + lam * W_m * shade_time_e(tau),   shade_time_e = t_e * (1 - sun_e(tau)) on open edges,
+                                                shade_time_e = t_e on covered / indoor / ac_link edges
+
+W_m = config.SUN_WEIGHT[mode] (no comfort bonus for indoor links, no UV factor). Costs stay >= t_e, so
+the same straight-line heuristic stays admissible. Shade mode is unchanged.
 """
 
 from __future__ import annotations
@@ -16,7 +24,7 @@ import heapq
 import math
 from dataclasses import dataclass, field, replace
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 import numpy as np
 
@@ -27,6 +35,15 @@ from zill.routing.graph import GraphArrays, ModeGraph, NoRoute, PlaceError
 from zill.routing.heat import rhl_edge
 from zill.routing.suntable import SunTable
 from zill.services import CityContext
+
+Preference = Literal["shade", "sun"]
+PREFERENCES = ("shade", "sun")
+
+
+def check_preference(preference: str) -> str:
+    if preference not in PREFERENCES:
+        raise ValueError(f"unknown preference {preference!r}; expected one of {PREFERENCES}")
+    return preference
 
 
 @dataclass
@@ -148,6 +165,24 @@ def _finish(res_stats: dict[str, Any], fastest: dict[str, Any] | None) -> dict[s
     return _stat_round(st)
 
 
+def _finish_pref(
+    res_stats: dict[str, Any], fastest: dict[str, Any] | None, preference: str
+) -> dict[str, Any]:
+    """`_finish` plus, in sun mode, `sun_gained_s` / `sun_gained_pct` versus the fastest route."""
+    st = _finish(res_stats, fastest)
+    if preference != "sun":
+        return st
+    if fastest is None:
+        st.update(sun_gained_s=0.0, sun_gained_pct=0.0)
+    else:
+        gained = float(res_stats["sun_exposure_s"]) - float(fastest["sun_exposure_s"])
+        st["sun_gained_s"] = round(gained, 2)
+        st["sun_gained_pct"] = (
+            round(100.0 * gained / fastest["sun_exposure_s"], 2) if fastest["sun_exposure_s"] > 0 else 0.0
+        )
+    return st
+
+
 # ---------------------------------------------------------------------------------------------
 # The search
 # ---------------------------------------------------------------------------------------------
@@ -161,7 +196,11 @@ def _search(
     lam: float,
     speed: float,
     blocked: frozenset[int] = frozenset(),
+    sun_w: float | None = None,
 ) -> tuple[list[int], list[int]]:
+    """A* search. `sun_w` (sun mode only) = SUN_WEIGHT[mode]: the cost becomes t + lam*sun_w*shade_time."""
+    if sun_w is not None:
+        return _search_sun(g, mg, tab, o, d, depart_min, lam, speed, blocked, sun_w)
     n_nodes = g.n_nodes
     if mg.ptr[o + 1] == mg.ptr[o] or mg.ptr[d + 1] == mg.ptr[d]:
         if o != d:
@@ -236,6 +275,98 @@ def _search(
     return nodes, edges
 
 
+def _search_sun(
+    g: GraphArrays,
+    mg: ModeGraph,
+    tab: SunTable,
+    o: int,
+    d: int,
+    depart_min: float,
+    lam: float,
+    speed: float,
+    blocked: frozenset[int],
+    sun_w: float,
+) -> tuple[list[int], list[int]]:
+    """Sun-mode A*: cost = t + lam*W*shade_time (>= t, so the straight-line heuristic is admissible)."""
+    n_nodes = g.n_nodes
+    if mg.ptr[o + 1] == mg.ptr[o] or mg.ptr[d + 1] == mg.ptr[d]:
+        if o != d:
+            raise NoRoute("origin or destination is not on a path for this mode")
+    ptr, to, edge = mg.ptr, mg.to, mg.edge
+    base_t, open_mask, waitv = mg.base_t, mg.open_mask, mg.wait
+    fl, n_steps, m0, inv = tab.flat, tab.n, tab.m0, 1.0 / tab.step
+    kmax = max(n_steps - 2, 0)
+    h = (np.hypot(g.x - g.x[d], g.z - g.z[d]) / speed).tolist()
+
+    INF = math.inf
+    gc = [INF] * n_nodes
+    el = [0.0] * n_nodes
+    pe = [-1] * n_nodes
+    pn = [-1] * n_nodes
+    gc[o] = 0.0
+    heap: list[tuple[float, float, int]] = [(h[o], 0.0, o)]
+    pop, push = heapq.heappop, heapq.heappush
+    lw = lam * sun_w
+    use_pen = lw > 0.0
+    have_tab = n_steps >= 2
+    k, fr = 0, 0.0
+    while heap:
+        _, c, u = pop(heap)
+        if c > gc[u]:
+            continue
+        if u == d:
+            break
+        eu_ = el[u]
+        wait = waitv[u] if u != o else 0.0
+        if use_pen and have_tab:
+            pos = (depart_min + eu_ / 60.0 - m0) * inv
+            if pos <= 0.0:
+                k, fr = 0, 0.0
+            elif pos >= kmax + 1:
+                k, fr = kmax, 1.0
+            else:
+                k = int(pos)
+                fr = pos - k
+        for a in range(ptr[u], ptr[u + 1]):
+            e = edge[a]
+            if blocked and e in blocked:
+                continue
+            v = to[a]
+            t = base_t[e] + wait
+            if use_pen:
+                if open_mask[e]:
+                    if have_tab:
+                        i = e * n_steps + k
+                        s0 = fl[i]
+                        s = s0 + (fl[i + 1] - s0) * fr
+                    else:
+                        s = fl[e * n_steps] if n_steps else 0.0
+                    s = 0.0 if s < 0.0 else (1.0 if s > 1.0 else s)
+                    nc = c + t + lw * t * (1.0 - s)
+                else:
+                    nc = c + t + lw * t
+            else:
+                nc = c + t
+            if nc < gc[v]:
+                gc[v] = nc
+                el[v] = eu_ + t
+                pe[v] = e
+                pn[v] = u
+                push(heap, (nc + h[v], nc, v))
+    if gc[d] == INF:
+        raise NoRoute("no path between origin and destination for this mode")
+    nodes = [d]
+    edges: list[int] = []
+    cur = d
+    while cur != o:
+        edges.append(pe[cur])
+        cur = pn[cur]
+        nodes.append(cur)
+    nodes.reverse()
+    edges.reverse()
+    return nodes, edges
+
+
 _BASELINE: dict[tuple, dict[str, Any]] = {}
 
 
@@ -257,8 +388,11 @@ def route(
     with_geometry: bool = True,
     blocked_edges: frozenset[int] | set[int] = frozenset(),
     relative: bool = True,
+    preference: str = "shade",
 ) -> RouteResult:
     """Single time-dependent A* route.
+
+    `preference="sun"` minimises time + lam*W*shade_time instead (most direct sun); see module doc.
 
     With `relative=True` the stats carry added_time_s / sun_saved_* / rhl_saved_pct against the fastest
     route (lam=0) for the same query (computed once and cached); `compare` is the canonical entry point
@@ -266,6 +400,8 @@ def route(
     `blocked_edges` removes edges from the graph (closures for replanning).
     """
     M.check_mode(mode)
+    check_preference(preference)
+    sun_w = float(config.SUN_WEIGHT[mode]) if preference == "sun" else None
     o, d = _node(origin_node), _node(dest_node)
     g = ctx.graph
     if not (0 <= o < g.n_nodes and 0 <= d < g.n_nodes):
@@ -278,6 +414,8 @@ def route(
     def run(lam_: float) -> tuple[list[int], list[int]]:
         if o == d:
             return [o], []
+        if sun_w is not None and lam_ > 0:
+            return _search(g, mg, tab, o, d, dmin, float(lam_), config.SPEEDS[mode], blocked, sun_w)
         return _search(g, mg, tab, o, d, dmin, float(lam_), config.SPEEDS[mode], blocked)
 
     nodes, edges = run(lam)
@@ -298,10 +436,10 @@ def route(
                 _BASELINE[key] = base
     return RouteResult(
         lam=float(lam),
-        label=label or _label_for(lam),
+        label=label or _label_for(lam, preference),
         mode=mode,
         depart=depart,
-        stats=_finish(stats, None if lam <= 0 else base),
+        stats=_finish_pref(stats, None if lam <= 0 else base, preference),
         nodes=nodes,
         edges=edges,
         segments=segs,
@@ -310,10 +448,17 @@ def route(
     )
 
 
-def _label_for(lam: float) -> str:
+def _label_for(lam: float, preference: str = "shade") -> str:
     if lam <= 0:
         return "fastest"
-    return "balanced" if lam <= 1.5 else "coolest"
+    if lam <= 1.5:
+        return "balanced"
+    return "sunniest" if preference == "sun" else "coolest"
+
+
+def best_label(preference: str) -> str:
+    """Key of the lam=3 route in a compare() result: 'coolest' (shade) or 'sunniest' (sun)."""
+    return "sunniest" if preference == "sun" else "coolest"
 
 
 def compare(
@@ -326,13 +471,18 @@ def compare(
     lambdas: tuple[float, float, float] | list[float] = (0.0, 1.0, 3.0),
     with_geometry: bool = True,
     blocked_edges: frozenset[int] | set[int] = frozenset(),
+    preference: str = "shade",
 ) -> dict[str, RouteResult]:
     """Fastest / balanced / coolest with relative stats and the honesty rule.
+
+    `preference="sun"` returns fastest / balanced / sunniest instead (see `compare_sun`).
 
     "Coolest" is the lowest-RHL route among {lam=3, lam=1, fastest} whose sun exposure does not
     exceed the fastest route's. Under time-dependent exposure the lam=3 path can occasionally be
     hotter than the lam=1 path; in that case the better one is reported and `stats.note` says so.
     """
+    if check_preference(preference) == "sun":
+        return compare_sun(ctx, o, d, mode, depart, date_key, lambdas, with_geometry, blocked_edges)
     lf, lb, lc = (float(x) for x in lambdas)
     kw = {"with_geometry": with_geometry, "blocked_edges": blocked_edges, "relative": False}
     fastest = route(ctx, o, d, mode, depart, lf, date_key, "fastest", **kw)
@@ -370,6 +520,69 @@ def compare(
         coolest = best
     fastest.label, balanced.label, coolest.label = "fastest", "balanced", "coolest"
     return {"fastest": fastest, "balanced": balanced, "coolest": coolest}
+
+
+_SUN_RELATIVE_KEYS = (
+    "added_time_s",
+    "sun_saved_s",
+    "sun_saved_pct",
+    "rhl_saved_pct",
+    "note",
+    "sun_gained_s",
+    "sun_gained_pct",
+)
+
+
+def compare_sun(
+    ctx: CityContext,
+    o: Any,
+    d: Any,
+    mode: str,
+    depart: datetime,
+    date_key: str,
+    lambdas: tuple[float, float, float] | list[float] = (0.0, 1.0, 3.0),
+    with_geometry: bool = True,
+    blocked_edges: frozenset[int] | set[int] = frozenset(),
+) -> dict[str, RouteResult]:
+    """Fastest / balanced / sunniest (sun mode) with relative stats and the sun honesty rule.
+
+    "Sunniest" is the route with the most direct-sun seconds among {lam=3, lam=1, fastest}. If the
+    lam=3 search is beaten (exposure changes along the way) the better route is reported and
+    `stats.note` says so; if no route gains sun over the fastest, sunniest = fastest with a note.
+    """
+    lf, lb, lc = (float(x) for x in lambdas)
+    kw: dict[str, Any] = {
+        "with_geometry": with_geometry,
+        "blocked_edges": blocked_edges,
+        "relative": False,
+        "preference": "sun",
+    }
+    fastest = route(ctx, o, d, mode, depart, lf, date_key, "fastest", **kw)
+    balanced = route(ctx, o, d, mode, depart, lb, date_key, "balanced", **kw)
+    sunniest = route(ctx, o, d, mode, depart, lc, date_key, "sunniest", **kw)
+    fs = {k: v for k, v in fastest.stats.items() if k not in _SUN_RELATIVE_KEYS}
+    for r in (fastest, balanced, sunniest):
+        base = {k: v for k, v in r.stats.items() if k not in _SUN_RELATIVE_KEYS}
+        r.stats = _finish_pref(base, None if r is fastest else fs, "sun")
+    eps = 1e-6
+    no_gain = "No sunnier route found for this departure; sunniest = fastest."
+    best = max((sunniest, balanced, fastest), key=lambda r: r.stats["sun_exposure_s"])
+    if best.stats["sun_exposure_s"] > sunniest.stats["sun_exposure_s"] + eps:
+        if best is fastest:
+            best = replace(fastest, label="sunniest")
+            best.stats = {**best.stats, "note": no_gain}
+        else:
+            best = replace(balanced, label="sunniest")
+            best.stats = {
+                **best.stats,
+                "note": "The lam=3 search was not sunnier than the lam=1 search at this departure "
+                "(exposure changes along the way); reporting the sunniest route found.",
+            }
+        sunniest = best
+    elif sunniest.stats["sun_gained_s"] <= eps:
+        sunniest.stats = {**sunniest.stats, "note": no_gain}
+    fastest.label, balanced.label, sunniest.label = "fastest", "balanced", "sunniest"
+    return {"fastest": fastest, "balanced": balanced, "sunniest": sunniest}
 
 
 def uses_disallowed_edge(ctx: CityContext, r: RouteResult) -> bool:
