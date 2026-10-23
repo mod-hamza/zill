@@ -10,7 +10,9 @@ COPY docs/SPEAKER_NOTES.md /app/docs/SPEAKER_NOTES.md
 COPY frontend ./
 # rewrites are compiled into the build: point /api at the API container by name
 ENV ZILL_API_ORIGIN=http://zill-api:8000 NEXT_TELEMETRY_DISABLED=1
-RUN npm run build && npm prune --omit=dev
+# keep devDependencies: next.config.ts needs typescript at startup (pruning made Next
+# download it on first boot and crash once)
+RUN npm run build
 
 FROM node:24-slim
 WORKDIR /app/frontend

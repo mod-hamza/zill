@@ -31,8 +31,8 @@ export ZILL_TAG="$target"
 
 healthy() {
   # API warm-up finished + film page renders, both via the container network
-  docker exec zill-api python -c "import json,urllib.request as u; d=json.load(u.urlopen('http://127.0.0.1:8000/api/health',timeout=5)); raise SystemExit(0 if d.get('ok') and d.get('warm',{}).get('done') else 1)" \
-    && docker exec zill-web node -e "fetch('http://127.0.0.1:3000/film').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+  docker exec zill-api python -c "import json,urllib.request as u; d=json.load(u.urlopen('http://127.0.0.1:8000/api/health',timeout=5)); raise SystemExit(0 if d.get('ok') and d.get('warm',{}).get('done') else 1)" 2>/dev/null \
+    && docker exec zill-web node -e "fetch('http://127.0.0.1:3000/film').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" 2>/dev/null
 }
 
 for i in $(seq 1 60); do
