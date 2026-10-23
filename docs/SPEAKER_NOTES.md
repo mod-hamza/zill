@@ -14,7 +14,7 @@ Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter head
 ## Chapter 2 — The problem (0:40, 50 s)
 
 - Every map you use optimises time or distance. None of them optimises shade.
-- This walker takes the fastest route from the Opera to Business Bay Metro in July at 15:30: 24.3 minutes, 15.2 of them in direct sun.
+- This walker takes the fastest route from Burj Park to Business Bay Metro in July at 15:30: 23.9 minutes, 15.6 of them in direct sun.
 - A static shady route cannot exist, because shade moves every minute and changes with the season.
 - Transition: "So we asked: can we compute where the shade is, for any minute?"
 
@@ -28,7 +28,7 @@ Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter head
 ## Chapter 4 — A city, built in seconds (2:25, 90 s)
 
 - We type "Downtown Dubai" and the pipeline pulls OpenStreetMap: 8,602 buildings in the shadow-casting area, 3,039 of them in the rendered scene.
-- It builds a walking and cycling network of 7,657 street segments, 744 mapped trees, and finds covered and air-conditioned links, 15 segments tagged as enclosed bridges or passages.
+- It builds a walking and cycling network of 7,659 street segments, 744 mapped trees, and finds covered and air-conditioned links, 15 segments tagged as enclosed bridges or passages.
 - This is a cached build of the real bake, labelled as such. The pipeline takes only a name, a box and an origin, so another hot city is the same code.
 - Be upfront: 79 % of building heights are not in OpenStreetMap and use sensible defaults. We say that on the validation page.
 - Transition: "Now the engine that turns buildings into shade."
@@ -38,14 +38,14 @@ Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter head
 - Sun position from a solar model, then a ray from every two-metre cell toward the sun; if a building top is higher than the ray, the cell is in shade.
 - That gives a shade raster per ten-minute step, and an exposure number for every street segment.
 - Routing is time-aware: a street's shade is looked up for the minute the walker arrives, not the minute they leave.
-- It is tested: 221 backend tests and 69 frontend tests pass, including shadow-length geometry checks.
+- It is tested: 222 backend tests and 74 frontend tests pass, including shadow-length geometry checks.
 - Say the limits: buildings, mapped trees and covered links only. Awnings, unmapped trees and wind are not modelled.
-- Transition: "Let's use it. A tourist at the Opera wants to get to the metro."
+- Transition: "Let's use it. A tourist at Burj Park wants to get to the metro."
 
 ## Chapter 6 — The route (5:25, 150 s)
 
 - The user types a sentence. The agent resolves the places, checks the weather, compares routes, and a separate verifier checks its claims.
-- Fastest versus Coolest, same start, same time: Coolest is 26.4 minutes against 24.3, so 2.2 minutes longer, but sun exposure drops from 15.2 to 9.0 minutes. That is 6.2 minutes less sun, 41 percent, and our heat-load index falls 17.8 percent.
+- Fastest versus Coolest, same start, same time: Coolest is 26.1 minutes against 23.9, so 2.2 minutes longer, but sun exposure drops from 15.6 to 9.4 minutes. That is 6.2 minutes less sun, about 40 percent, and our heat-load index falls 17.6 percent.
 - Every number in the agent's sentence is a token filled in from the tool result. The model cannot invent a figure.
 - These are model estimates, not measurements. We say so on the card.
 - The agent session you see is a scripted recording against the real engine, not a live model, and the badge says so. [If a live key was added and sessions re-recorded, change this line.]
@@ -54,7 +54,7 @@ Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter head
 ## Chapter 7 — Leave later (7:55, 70 s)
 
 - The agent also scans departures every five minutes from 15:30 to 17:00.
-- For this trip, honestly, leaving later does not help enough: sun exposure of the balanced route falls from 569 s at 15:30 to 515 s at 16:30, about 54 seconds, for a one-hour wait. The optimiser recommends leaving now.
+- For this trip, honestly, leaving later does not help enough: sun exposure of the balanced route falls from 594 s at 15:30 to 518 s at 16:30, about 76 seconds, for a one-hour wait. The optimiser recommends leaving now.
 - That is the point of an optimiser: it can say "go now". On other trips and dates it will recommend a different time and show which streets turn to shade.
 - The agent asks approval before committing the plan. Autonomy is a setting, not a surprise.
 - Transition: "That was one traveller. Let's talk about what makes this an agent."
@@ -144,7 +144,7 @@ Everything runs: the film, the app, replay, recorded weather. Only a live model 
 ### Is this medical advice?
 No. It reduces sun exposure and labels the heat index a model estimate. The crew policy pack for the UAE midday break is unverified and not legal advice.
 
-### Why is the saving only 41 percent, and why is the late-departure gain small?
+### Why is the saving only about 40 percent, and why is the late-departure gain small?
 Because the real engine said so on the best trip we found by search, and we did not tune parameters to inflate it. The detour is 2.2 minutes. For this trip, waiting does not pay.
 
 ### What did you build in this time?

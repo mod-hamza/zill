@@ -48,7 +48,7 @@ Copy `.env.example` to `.env` and add `ZILL_LLM_API_KEY` (OpenAI-compatible endp
 ```
 backend/zill/     config, geo, data bake, sun, shade, routing, weather, agent, api
 backend/replay/   recorded agent sessions (scripted until a key is added)
-backend/tests/    pytest suite (221 tests)
+backend/tests/    pytest suite (222 tests)
 data/cities/      baked Downtown Dubai (buildings, graph, shade rasters, exposure)
 data/scenarios/   hero.json (journeys found by search, not hand-picked)
 data/curated/     landmark overrides, gazetteer, policy pack (unverified)

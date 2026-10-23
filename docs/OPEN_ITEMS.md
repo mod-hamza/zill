@@ -36,7 +36,7 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 ## Decisions
 
 - [ ] Confirm tagline and name (name lives in `frontend/src/brand.ts` / `backend/zill/brand.py`; one-line rename).
-- [ ] Graph has 7,657 edges against the PRD gate of 10,000 (real OSM density, see `docs/VALIDATION.md` section 2): accept, or change the gate.
+- [ ] Graph has 7,659 edges against the PRD gate of 10,000 (real OSM density, see `docs/VALIDATION.md` section 2): accept, or change the gate.
 - [ ] 79 % of buildings use fallback heights (no height/levels tag): accept with the stated caveat, or add Overture heights (P2).
 - [ ] OSM trees are sparse (744 in the caster box, none with crown/height tags), so tree shade is under-estimated: accept (conservative), or add a tree layer.
 - [ ] Router constants are heuristics, not measurements: `uv(alt) = clip(sin^0.6)`, RHL weights 1.0/0.35/0.1, crowd x1.15 indoors, crossing waits, planner break threshold `RHL_BREAK_THRESHOLD = 1200` (`backend/zill/config.py`). Validate with the field test.

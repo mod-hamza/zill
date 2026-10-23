@@ -49,7 +49,7 @@ Grid convention (both Python and TypeScript): `[rows, cols]`, row 0 = north edge
 
 **Departure optimiser** (`routing/departure.py`). Evaluates the Balanced route for each 5-minute departure in a window, scores `rhl + 0.25 * wait_s`, honours an optional latest arrival, and returns a `why` struct listing segments whose shade state changes. It is allowed to answer "leave now": for the hero trip it does (see VALIDATION).
 
-**Hero search** (`routing/scenarios.py`). Searches POI pairs instead of hand-picking them: 38 places, 1,028 pairs 400-1,500 m apart, 4 departures, 2 dates, walk and cycle = 10,408 routed jobs, rejection reasons counted in `data/scenarios/hero.json["search"]`.
+**Hero search** (`routing/scenarios.py`). Searches POI pairs instead of hand-picking them: 36 places, 910 pairs 400-1,500 m apart, 4 departures, 2 dates, walk and cycle = 9,280 routed jobs, rejection reasons counted in `data/scenarios/hero.json["search"]`.
 
 **Agent.** Planner (tool-use loop, at most 12 tool calls per turn, 8 s per tool) drafts a JSON plan with `{{tokens}}`; the deterministic verifier checks tokens, bare numbers, edge validity for the mode, arrival window, policy pack and qualitative claims against stats; an LLM verifier pass runs only when a live model is connected; up to 2 fix rounds. The resolver prints units (`_min`, `_pct`, `_time`, `_m`) and any digit not from a token or the user's own message is rejected (`tokens.py`, 240-case fuzz test). The monitor runs on a simulated clock and applies the autonomy policy: L1 advise only, L2 ask before committing, L3 auto-apply replans within +/-10 min arrival and +10 % RHL, with undo.
 

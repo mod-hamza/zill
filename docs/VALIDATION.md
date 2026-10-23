@@ -1,16 +1,16 @@
 # VALIDATION
 
-What we measured, what the tests prove, and where the model is weak. Every number cites the file it came from. Test totals were refreshed with `python scripts/zill.py test` on 2026-10-23 01:51 (`data/test_results.json`).
+What we measured, what the tests prove, and where the model is weak. Every number cites the file it came from. Test totals were refreshed with `python scripts/zill.py test` on 2026-10-23 08:02 (`data/test_results.json`).
 
 ## 1. Test results
 
 | Suite | Result | Source |
 | --- | --- | --- |
-| Backend pytest | 221 passed, 0 failed | `data/test_results.json` |
-| Frontend vitest | 69 passed, 0 failed (8 files) | `data/test_results.json` |
+| Backend pytest | 222 passed, 0 failed | `data/test_results.json` |
+| Frontend vitest | 74 passed, 0 failed | `data/test_results.json` |
 | Frontend typecheck, ESLint | clean at the time of the run | `python scripts/zill.py test` |
 
-Backend tests per file (from `pytest --collect-only`): tokens 34, agent orchestrator/monitor 26, routing 15, shade ray-march 14, replay 14, heights 13, LLM client 13, agent tools 12, API routes 12, sun 10, API cities 7, synthetic bake 7, planner 7, weather 7, departure 5, geo 4, Dubai data 4, shade pipeline 4, real-engine agent 4, smoke 4, scenarios 3, SSE 2.
+Backend tests per file (from `pytest --collect-only` at 221 tests; one has been added since): tokens 34, agent orchestrator/monitor 26, routing 15, shade ray-march 14, replay 14, heights 13, LLM client 13, agent tools 12, API routes 12, sun 10, API cities 7, synthetic bake 7, planner 7, weather 7, departure 5, geo 4, Dubai data 4, shade pipeline 4, real-engine agent 4, smoke 4, scenarios 3, SSE 2.
 
 Run everything with `make test` (or `python scripts/zill.py test`). Re-run it after any change and before the pitch; it rewrites `data/test_results.json`, which Film chapter 5 reads.
 
@@ -72,18 +72,18 @@ Visual alignment (PRD 18.3 step 4), checked in `docs/qa/phase2/` and `docs/qa/ph
 
 ## 6. Hero results (the money shots)
 
-From `data/scenarios/hero.json` (generated 2026-10-23T01:17:57+04:00, `search.attempts`). Re-check these if the file is regenerated.
+From `data/scenarios/hero.json` (generated 2026-10-23T08:00:18+04:00, `search.attempts`). Re-check these if the file is regenerated.
 
 | Scenario | Fastest | Coolest | Sun saved | Added time | RHL saved |
 | --- | --- | --- | --- | --- | --- |
-| Tourist walk, Dubai Opera to Business Bay Metro, summer 15:30 | 24.3 min, 15.2 min in sun, 37 % shaded | 26.4 min, 9.0 min in sun, 66 % shaded | 371.8 s (6.2 min, 40.8 %) | +131.8 s (2.2 min) | 17.8 % |
+| Tourist walk, Burj Park to Business Bay Metro, summer 15:30 | 23.9 min, 15.6 min in sun, 35 % shaded | 26.1 min, 9.4 min in sun, 64 % shaded | 371.8 s (6.2 min, 39.8 %) | +131.8 s (2.2 min) | 17.6 % |
 | Rider cycle, Maryland International Hotel to Taj Dubai Hotel, 15:30 | 9.0 min, 7.4 min in sun | 10.6 min, 4.6 min in sun | 170.7 s (38.2 %) | +93.6 s | 16.3 % |
 | Crew walk, Address Boulevard to Address Sky View, 14:30 | 10.0 min, 6.4 min in sun | 10.7 min, 3.8 min in sun | 155.3 s (40.3 %) | +43.7 s | 18.6 % |
 
 Honest findings:
 
-- The tourist saving (372 s) is above the PRD's 90 s widening threshold; no search widening was needed.
-- **The departure optimiser found no better time for the tourist trip.** Over 15:30-17:00 the recommended departure is 15:30 itself (`departure.recommended`, empty `why.changes`). The Balanced route's sun exposure falls from 569 s at 15:30 to 515 s at 16:30, a gain of 54 s that costs a 60-minute wait, so the waiting cost wins. Chapter 7 must present this honestly: "leaving later does not help this trip" is the real result.
+- The tourist saving (372 s, Burj Park to Business Bay Metro after the door-snapping regeneration; the earlier Dubai Opera pick saved the same 372 s) is above the PRD's 90 s widening threshold; no search widening was needed.
+- **The departure optimiser found no better time for the tourist trip.** Over 15:30-17:00 the recommended departure is 15:30 itself (`departure.recommended`, empty `why.changes`). The Balanced route's sun exposure falls from 594 s at 15:30 to 518 s at 16:30, a gain of 76 s that costs a 60-minute wait, so the waiting cost wins. Chapter 7 must present this honestly: "leaving later does not help this trip" is the real result.
 - The AC-link story (`hero.json["ac_link_story"]`): Burj Khalifa/Dubai Mall Metro to The Dubai Mall at 13:30 in summer is 1,438 m, 19.7 min, 0 s in sun, 100 % indoor. With the link removed the mall is unreachable in the graph, so there is no outdoor comparison. The link is unverified on site.
 - The crew shuttle's Balanced and Coolest routes are identical (`hero.json`).
 - RHL and the UV factor are model heuristics. They are not measurements.
@@ -92,7 +92,7 @@ Honest findings:
 
 1. Shade is from buildings, mapped trees and covered links only. Awnings, unmapped trees, vehicles and wind are not modelled. Label in the UI: "Model v1: buildings, mapped trees, covered links".
 2. 79 % of building heights are fallbacks, so some shadows are too long or too short.
-3. The graph has 7,657 edges; footpaths missing from OSM do not exist for the router.
+3. The graph has 7,659 edges; footpaths missing from OSM do not exist for the router.
 4. The AC link and the metro entrance connection are unverified on site.
 5. Exposure is time-of-day only for a given preset date; other dates need on-demand computation (`POST /api/shade/compute`), and un-baked dates return HTTP 409 until computed.
 6. Weather does not change shadows. Weather files are real Open-Meteo data (`data/weather_cache/*.json`: archive for winter, spring, summer; forecast for hackathon fetched 2026-10-22); UV for archive dates is a labelled clear-sky estimate.

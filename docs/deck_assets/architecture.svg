@@ -41,7 +41,7 @@
 <text x="475" y="460" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">canopy transmissivity 0.35</text>
 <rect x="455" y="535" width="290" height="110" fill="#1A1511" stroke="#5E8C7B" stroke-opacity="0.55" stroke-width="1"/>
 <text x="475" y="573" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Walk and cycle graph</text>
-<text x="475" y="599" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">7,657 edges, covered / indoor /</text>
+<text x="475" y="599" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">7,659 edges, covered / indoor /</text>
 <text x="475" y="620" font-family="'Inter Tight', Manrope, 'Segoe UI', Arial, sans-serif" font-size="14.5" fill="#D8C7A3" fill-opacity="0.82">air-conditioned link classes</text>
 <rect x="455" y="695" width="290" height="110" fill="#1A1511" stroke="#5E8C7B" stroke-opacity="0.55" stroke-width="1"/>
 <text x="475" y="733" font-family="Fraunces, 'Cormorant Garamond', Georgia, 'Times New Roman', serif" font-size="24" font-weight="300" fill="#E9DCBC">Covered and AC links</text>
