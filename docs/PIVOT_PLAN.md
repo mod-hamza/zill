@@ -124,3 +124,25 @@ Fraunces serif headings, real stills from the 3D film. About 12–14 slides:
 - `docs/pitch/<name>_pitch.pptx`: a deck I build myself in the project theme, using the real film
   stills. I check it visually, then send it to you.
 - Both use the same outline (section 5) and the same honest numbers.
+
+---
+
+## 8. Mentor feedback (2026-10-23) and overnight decisions — binding for the overnight session
+
+Mentor points and how the overnight session answers each:
+
+| Mentor point | Overnight work |
+|---|---|
+| Security: hacks, location and account data | Privacy by design (no accounts, location used only to compute a route, never stored or logged; LLM key server-side only). Hardening on the live site: rate limits per IP, security headers (CSP, HSTS, X-Frame-Options except `/embed`), request size and input-length limits, CORS locked to the domain. New `docs/SECURITY.md` + a deck slide (UAE PDPL / GDPR alignment stated as an aim, not a certification). |
+| Accuracy + update frequency | State it explicitly: shadows every 10 min, weather hourly, map data re-baked on a schedule (weekly job on the VM), accuracy limits and field-test plan; cite the geometry tests. Slide + doc section. |
+| Medical + well-being obvious | Dedicated well-being slide and app features: UV index, heat-stress level, hydration/shade-break prompts, a carefully worded "daylight / vitamin D window" indicator, "not medical advice", clinicians as future partners. |
+| Expand scope | Add segments: city planners / municipalities (where to plant trees or add shade — engine as planning analytics, B2G), schools, elderly care, events, real estate. |
+| Costs to run | Cost sheet: VPS per month, LLM cost per conversation, cost to add a city (compute minutes; open data free), cost per 1,000 users. Real measured numbers where possible. |
+| How many users | Two answers: market size (sourced figures only) and capacity (load test: concurrent users one VPS serves, p95 latency). |
+| Subscription or ads | **Decision: no ads, freemium.** Free app; optional premium (saved routes, day plans); B2B subscriptions are the main revenue. No ads keeps the location-privacy story clean. |
+
+Other decisions:
+- **Second city: Oslo.** Bake with the city-agnostic pipeline; verify very low winter sun angles (long shadows) with a test; Oslo hero scenarios found by the search, for sun mode.
+- **LLM provider: pluggable.** Support Voke and **OpenCode Go** (Voke is down), both via OpenAI-compatible endpoints configured in `.env`, with fallback between them. Confirm OpenCode Go's base URL and model ids from its docs; never guess. The AI aspect must work live to win: when a key is present, re-record the agent sessions live.
+- **Typed places:** a full OSM name index (every named building, street and area, not just 50 POIs), one-line "from X to Y" input, and an online place search fallback.
+- **Deliverables besides code:** updated Film (rename to Zill & Shams, sun mode, Oslo chapter, new business chapters), security hardening, load test + cost sheet, and **regenerated PDF + PowerPoint decks** with the mentor points (the current decks predate this feedback).
