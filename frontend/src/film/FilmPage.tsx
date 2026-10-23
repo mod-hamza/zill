@@ -20,6 +20,9 @@ import { attachScroll, PX_PER_S } from "./scroll";
 import { useFilm } from "./store";
 import "./film.css";
 
+/** the "scroll to begin" cue fades out over the first film seconds (driven by t, not a timer) */
+const CUE_FADE_S = 2.5;
+
 const KEY_CH: Record<string, number> = {
   "1": 0, "2": 1, "3": 2, "4": 3, "5": 4, "6": 5, "7": 6, "8": 7, "9": 8, "0": 9, "-": 10, "=": 11,
 };
@@ -33,6 +36,7 @@ export function FilmPage() {
   const showElapsed = useFilm((s) => s.showElapsed);
   const hidden = useFilm((s) => s.chromeHidden);
   const t = useFilm((s) => s.t);
+  const playing = useFilm((s) => s.playing);
   const chapter = useFilm((s) => s.frame?.chapter ?? 0);
   const contextLost = useStage((s) => s.contextLost);
   const [noGl, setNoGl] = useState(false);
@@ -123,6 +127,13 @@ export function FilmPage() {
       <p className="film-sr">{TAGLINE}</p>
       {qa ? null : <div aria-hidden style={{ height: `calc(${Math.round(TOTAL_S * PX_PER_S)}px + 100vh)` }} />}
       <Overlay />
+      {!qa && status === "ready" && !hidden && !playing && t < CUE_FADE_S ? (
+        <div className="film-scroll-cue" style={{ opacity: 1 - t / CUE_FADE_S }}>
+          <span className="film-scroll-cue-label">Scroll to begin</span>
+          <span className="film-scroll-cue-line" aria-hidden />
+          <span className="film-scroll-cue-hint">or press Space to play</span>
+        </div>
+      ) : null}
       {showElapsed ? (
         <div className="film-elapsed tabular">
           {String(chapter + 1).padStart(2, "0")} &middot; {mm}:{String(ss).padStart(2, "0")}

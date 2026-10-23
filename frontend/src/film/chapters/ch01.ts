@@ -30,8 +30,8 @@ export const ch01: ChapterFn = (t) => {
     sun: { dateKey: "hackathon", minutes },
     look: 1,
     litFrac: 0.14,
-    // open from black
-    fade: 1 - ramp(s, 0.2, 4.5),
+    // open on a dim pre-dawn skyline (never a blank black frame), lifting to full over ~4 s
+    fade: 0.55 * (1 - ramp(s, 0.2, 4.5)),
     overlays: [
       {
         kind: "title",

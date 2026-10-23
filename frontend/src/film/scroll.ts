@@ -4,8 +4,8 @@ import Lenis from "lenis";
 import { TOTAL_S } from "./master";
 import { useFilm } from "./store";
 
-/** scroll pixels per film second (13:00 -> ~31k px) */
-export const PX_PER_S = 40;
+/** scroll pixels per film second (13:00 -> ~125k px; one wheel notch ≈ half a film second) */
+export const PX_PER_S = 160;
 
 let lenis: Lenis | null = null;
 let programmatic: number | null = null;
@@ -15,7 +15,7 @@ function maxScroll() {
 }
 
 export function attachScroll(): () => void {
-  lenis = new Lenis({ autoRaf: false, smoothWheel: true, lerp: 0.085, wheelMultiplier: 0.9 });
+  lenis = new Lenis({ autoRaf: false, smoothWheel: true, lerp: 0.085, wheelMultiplier: 0.8 });
   lenis.on("scroll", (l: Lenis) => {
     if (programmatic !== null && Math.abs(l.scroll - programmatic) < 3) return;
     programmatic = null;
