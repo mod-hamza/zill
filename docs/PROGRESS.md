@@ -55,3 +55,8 @@
 - Docs: ARCHITECTURE (+ `docs/deck_assets/architecture.svg/png`), VALIDATION, RUNBOOK_DEMO, SPEAKER_NOTES (format read by `sync-film-data.mjs`), OPEN_ITEMS (grouped), README.
 - Tests refreshed with `python scripts/zill.py test`: backend 221 passed, frontend 69 passed, typecheck + lint clean (data/test_results.json, 2026-10-23 01:51). Routing bench: `docs/qa/phase9/bench_routing.json` (route p95 25.1 ms, triple p95 68.8 ms, departure 19x 38.3 ms).
 - Known: film not final, so deck stills and backup videos must be regenerated (`python scripts/zill.py record`); no in-browser stills fallback viewer confirmed; scripted agent sessions not live.
+
+## 2026-10-23 APP stream
+- Built: shared `ActivityFeed` (src/app-ui/feed), agent panel (chat, SSE feed, route cards, approval, autonomy L1-3, persona, simulated events, replan diff + undo), planner / fleet / crew views (`/app?view=`), `/embed/hotel`, `/health`, SSE client + streaming proxy route handlers (`src/app/api/agent/*`, needed because Next's rewrite proxy gzips and buffers SSE).
+- Tests: vitest 69 passing; Playwright app-agent 2 passing. QA stills: docs/qa/app/iter1..iter3.
+- Known: no LLM key, so all sessions are "Scripted session (live model not connected)"; replay supports only the recorded delay simulation; undo in replay is a local view revert. Route ribbon not visible in q=low swiftshader stills (scene stream).

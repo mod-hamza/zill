@@ -9,6 +9,7 @@ import { CommandBar } from "./CommandBar";
 import { FlyHud } from "./FlyHud";
 import { JourneyPanel } from "./JourneyPanel";
 import { TimeBar } from "./TimeBar";
+import { ViewHost } from "./wedges/ViewHost";
 
 function Hint() {
   const a = useRoute((s) => s.a);
@@ -54,6 +55,7 @@ export function AppUI() {
       </div>
       <CommandBar />
       <AgentPanel />
+      <ViewHost />
       <JourneyPanel />
       <Hint />
       <FlyHud />

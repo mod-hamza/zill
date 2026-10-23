@@ -1,0 +1,29 @@
+/* ActivityFeed (APP stream). Opacity/translate entry only, CSS-driven on mount. */
+.zill-feed-row {
+  animation: zill-feed-in 420ms var(--zill-ease) both;
+}
+@keyframes zill-feed-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zill-feed-row {
+    animation: none;
+  }
+}
+.zill-feed-label {
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.12em;
+}
+.zill-feed-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
