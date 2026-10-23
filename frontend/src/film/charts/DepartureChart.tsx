@@ -89,11 +89,20 @@ export function DepartureChart({
   const rec = recommendation(data);
   const yTicks = y.ticks(4);
   const xTicks = xs.filter((_, i) => i % 3 === 0);
-  const recOp = o.rec;
+  // the least-sun departure is marked once the cursor has passed it
+  const leastOp = Math.min(1, Math.max(0, (o.cursor * (table.length - 1) - leastI + 0.5) * 2));
+  // waiting cost per second, derived from the table itself: score = rhl + mu * wait_s
+  const muRow = table.find((r) => (r.wait_s ?? 0) > 0 && r.score !== undefined && r.rhl !== undefined);
+  const mu = muRow ? (muRow.score! - muRow.rhl!) / muRow.wait_s! : null;
   return (
     <div className="film-chart" style={{ opacity: o.opacity }}>
       <div className="film-chart-head">
-        <span className="smallcaps">Sun exposure by departure time</span>
+        <span className="smallcaps">
+          Sun exposure by departure time
+          <em className="film-chart-why">
+            recommended = lowest heat load + a cost for waiting{mu !== null ? ` (${(mu * 60).toFixed(0)} RHL per minute waited)` : ""}
+          </em>
+        </span>
         <span className="film-badge">departure optimiser · {table.length} departures</span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} width="100%" role="img" aria-label="Sun exposure by departure time">
@@ -115,10 +124,11 @@ export function DepartureChart({
         <path d={area} fill={colors.ember} opacity={0.22} />
         <path d={line} fill="none" stroke={colors.ember} strokeWidth={1.5} />
         {leastI !== recI && nShow > leastI ? (
-          <g opacity={recOp}>
+          <g opacity={leastOp}>
+            <line x1={x(xs[leastI]!)} x2={x(xs[leastI]!)} y1={y(ys[leastI]!) + 5} y2={H - M.b} stroke={colors.sand} strokeOpacity={0.5} />
             <circle cx={x(xs[leastI]!)} cy={y(ys[leastI]!)} r={4} fill="none" stroke={colors.sand} strokeWidth={1} />
-            <text x={x(xs[leastI]!)} y={y(ys[leastI]!) + 18} textAnchor="middle" className="film-axis">
-              least sun {table[leastI]!.depart_time}
+            <text x={x(xs[leastI]!)} y={y(ys[leastI]!) - 12} textAnchor="middle" className="film-axis" fill={colors.sand}>
+              {`least sun ${table[leastI]!.depart_time} · −${((ys[recI]! - ys[leastI]!)).toFixed(1)} min sun · +${xs[leastI]! - xs[recI]!} min wait`}
             </text>
           </g>
         ) : null}
@@ -133,7 +143,13 @@ export function DepartureChart({
         {o.cursor > 0 ? (
           <g>
             <line x1={cx} x2={cx} y1={M.t} y2={H - M.b} stroke={colors.champagne} strokeOpacity={0.55} />
-            <text x={cx + 6} y={M.t + 10} className="film-axis tabular" fill={colors.champagne}>
+            <text
+              x={cx > W - 130 ? cx - 6 : cx + 6}
+              y={M.t + 10}
+              textAnchor={cx > W - 130 ? "end" : "start"}
+              className="film-axis tabular"
+              fill={colors.champagne}
+            >
               {`${String(Math.floor(cm / 60)).padStart(2, "0")}:${String(Math.floor(cm % 60)).padStart(2, "0")} · ${cv.toFixed(1)} min`}
             </text>
           </g>
@@ -144,7 +160,6 @@ export function DepartureChart({
           <p className="font-display film-chart-rec" style={{ opacity: o.rec }}>
             {rec.line}
           </p>
-          {rec.evidence ? <p className="film-chart-evidence" style={{ opacity: o.rec }}>{rec.evidence}</p> : null}
         </div>
         <button
           type="button"

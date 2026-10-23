@@ -251,26 +251,29 @@ export function lightingFor(altDeg: number, azDeg: number): Lighting {
 // sitting in one narrow sepia band. This pushes separation without leaving the palette: a cleaner
 // warm-white horizon with a desaturated Rayleigh blue at the zenith, deeper teal-slate shade,
 // brighter sunlit stone and darker sides. `k` in [0,1] blends it in (cross-grades stay smooth).
-const FILM_ZENITH = hexToLinear("#6A8BAA");
-const FILM_HORIZON = hexToLinear("#E9E5DB");
-const FILM_FOG = hexToLinear("#D8D4C9");
+const FILM_ZENITH = hexToLinear("#5E84A8");
+const FILM_HORIZON = hexToLinear("#ECEAE3");
+const FILM_FOG = hexToLinear("#DAD8D0");
 
 export function applyFilmLook(L: Lighting, altDeg: number, k: number): Lighting {
   if (k <= 0) return L;
   const day = Math.max(0, Math.min(1, (altDeg - 4) / 18)) * k;
-  const shadeDeep = scale(SHADE, 0.62 + 0.25 * (1 - day));
+  const shadeDeep = scale(SHADE, 0.5 + 0.3 * (1 - day));
+  // paving: a little less yellow (towards its own luminance) so stone and ground separate
+  const gl = 0.2126 * L.groundSun[0] + 0.7152 * L.groundSun[1] + 0.0722 * L.groundSun[2];
+  const paving = mix(L.groundSun, [gl, gl, gl], 0.18 * day);
   return {
     ...L,
-    zenith: mix(L.zenith, FILM_ZENITH, 0.75 * day),
-    horizon: mix(L.horizon, FILM_HORIZON, 0.7 * day),
-    fog: mix(L.fog, FILM_FOG, 0.7 * day),
+    zenith: mix(L.zenith, FILM_ZENITH, 0.85 * day),
+    horizon: mix(L.horizon, FILM_HORIZON, 0.75 * day),
+    fog: mix(L.fog, FILM_FOG, 0.75 * day),
     fogDensity: L.fogDensity * (1 - 0.15 * day),
-    sunIntensity: L.sunIntensity * (1 + 0.32 * day),
+    sunIntensity: L.sunIntensity * (1 + 0.42 * day),
     hemiIntensity: L.hemiIntensity * (1 - 0.3 * day),
-    groundSun: scale(L.groundSun, 1 - 0.2 * day),
-    groundShade: mix(L.groundShade, shadeDeep, 0.7 * day),
-    saturation: L.saturation + 0.04 * day,
-    tint: mix(L.tint, hexToLinear("#FFFBF6"), 0.6 * day),
-    contrast: L.contrast + 0.07 * day,
+    groundSun: scale(paving, 1 - 0.2 * day),
+    groundShade: mix(L.groundShade, shadeDeep, 0.82 * day),
+    saturation: L.saturation + 0.02 * day,
+    tint: mix(L.tint, hexToLinear("#FFFCF8"), 0.75 * day),
+    contrast: L.contrast + 0.08 * day,
   };
 }

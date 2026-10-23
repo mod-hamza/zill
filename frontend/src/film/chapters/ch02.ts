@@ -36,13 +36,19 @@ export const ch02: ChapterFn = (t, data) => {
 
   let camera: RigState;
   if (s < A1 + 0.6) {
-    // Shot A: the walker's point of view — eye level, real walking pace, long lens ahead
-    const cam = behind(geo, tr.d - 1.5);
-    const look = routePoint(geo, tr.d + 60);
+    // Shot A: a leading Steadicam shot at the walker's pace — eye level, the lens turned back
+    // towards the Burj when the route starts near it (so the street, the sun-hit paving and the
+    // landmark read), otherwise straight down the route.
+    const cam = behind(geo, tr.d + 3);
+    const ahead = routePoint(geo, tr.d + 40);
+    const toBurj = Math.hypot(cam.x, cam.z) < 900;
+    const tx = toBurj ? 0 : cam.x + (ahead.x - cam.x) * 2.2;
+    const tz = toBurj ? 0 : cam.z + (ahead.z - cam.z) * 2.2;
     camera = {
-      position: [cam.x, 1.7, cam.z],
-      target: [look.x, 2.6 + 1.5 * ramp(s, 0, A1), look.z],
-      fov: 36,
+      // just above the canopy line so trees frame, rather than fill, the shot
+      position: [cam.x, toBurj ? 9 : 1.7, cam.z],
+      target: [tx, toBurj ? 95 + 30 * ramp(s, 0, A1) : 4, tz],
+      fov: toBurj ? 44 : 40,
       roll: 0,
     };
   } else {

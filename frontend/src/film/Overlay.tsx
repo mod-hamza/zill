@@ -244,7 +244,7 @@ function Compare({ o, data }: { o: Extract<OverlayItem, { kind: "compare" }>; da
       <p className="font-display tabular">
         time {fmtSigned(c.added_time_s)} <i>&middot;</i> sun {fmtSigned(-c.sun_saved_s)} <i>&middot;</i> RHL{" "}
         {c.rhl_saved_pct > 0 ? "−" : "+"}
-        {Math.abs(c.rhl_saved_pct).toFixed(0)}%
+        {Math.abs(c.rhl_saved_pct).toFixed(1)}%
       </p>
     </div>
   );

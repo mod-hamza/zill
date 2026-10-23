@@ -136,7 +136,10 @@ export function pickStreet(route: Route): {
   const a = mids[labelSegs[0]!]!;
   const b = mids[labelSegs[labelSegs.length - 1]!]!;
   const dir = (Math.atan2(b[0] - a[0], -(b[1] - a[1])) * 180) / Math.PI;
-  return { labelSegs, focus: { x: cx, z: cz, bearing: dir + 125 } };
+  // camera on the side away from the Burj: the tower cluster sits behind the street, not in front
+  void dir;
+  const away = (Math.atan2(cx, -cz) * 180) / Math.PI;
+  return { labelSegs, focus: { x: cx, z: cz, bearing: away } };
 }
 
 type DataStore = {

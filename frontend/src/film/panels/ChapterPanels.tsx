@@ -45,7 +45,7 @@ function Personas({ o, data }: { o: Extract<OverlayItem, { kind: "personas" }>; 
                 <p className="font-display">&ldquo;{r?.prompt ?? `${sc.origin.name} to ${sc.dest.name}, ${sc.depart}`}&rdquo;</p>
                 <p className="tabular film-persona-num">
                   coolest route: sun {fmtSigned(-st.sun_saved_s)} &middot; time {fmtSigned(st.added_time_s)} &middot; RHL −
-                  {st.rhl_saved_pct.toFixed(0)}%
+                  {st.rhl_saved_pct.toFixed(1)}%
                 </p>
               </>
             ) : null}
@@ -185,7 +185,7 @@ function Vignette({ o, data }: { o: Extract<OverlayItem, { kind: "vignette" }>; 
           {fmtSigned(-st.sun_saved_s)} <small>in sun per trip</small>
         </p>
         <span className="tabular film-panel-sub">
-          time {fmtSigned(st.added_time_s)} · heat load −{st.rhl_saved_pct.toFixed(0)}% · cycling · {sc.depart}
+          time {fmtSigned(st.added_time_s)} · heat load −{st.rhl_saved_pct.toFixed(1)}% · cycling · {sc.depart}
         </span>
         <span className="film-panel-sub">
           Per shift: trips per shift <ToFill what="trips per rider shift" />

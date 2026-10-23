@@ -28,7 +28,7 @@ const orbitPose = (u: number): RigState =>
 
 function streetPose(data: FilmData): RigState {
   const f = data.streetFocus;
-  const p = presetFrom([f.x, 0, f.z], f.bearing, 430, 640, 32);
+  const p = presetFrom([f.x, 0, f.z], f.bearing, 260, 700, 32);
   return { ...p, roll: 0 };
 }
 
