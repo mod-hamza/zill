@@ -41,11 +41,21 @@ ul.pts li:last-child{border-bottom:1px solid var(--hair)}
 ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font-weight:300}
 .panel{background:var(--umber);border:1px solid var(--hair)}
 .num{font-family:'Fraunces',serif;font-weight:300;color:var(--champ);line-height:1;font-variant-numeric:lining-nums tabular-nums}
+
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);font-weight:500;padding:0 24px 16px 0;border-bottom:1px solid rgba(244,238,225,.25)}
+.tbl td{font-size:27px;line-height:1.3;font-weight:300;padding:17px 28px 17px 0;border-bottom:1px solid var(--hair);vertical-align:top}
+.tbl td:first-child{font-family:Fraunces,serif;color:var(--champ);font-size:31px;width:30%}
+.tbl .sub{display:block;font-family:'Inter Tight';font-size:16px;color:var(--mute);margin-top:4px}
+.tbd{color:var(--ember);font-weight:400}
+.col{background:var(--umber);border:1px solid var(--hair);padding:40px 40px}
+.col h3{font-family:Fraunces,serif;font-weight:300;font-size:36px;color:var(--champ);margin-top:10px;line-height:1.1}
+.col p{font-size:27px;margin-top:14px;line-height:1.4}
+.col li{font-size:27px;line-height:1.4;list-style:none;padding:10px 0;border-top:1px solid var(--hair)}
+.fn{position:absolute;left:var(--m);right:var(--m);bottom:104px;font-size:16px;line-height:1.5;color:rgba(244,238,225,.5);font-weight:300}
 </style>
 </head>
 <body>
-
-<!-- 1 TITLE -->
 <section class="slide">
   <div class="bg" style="background-image:url(img/01_dubai-13-00.jpg);background-size:120% auto;background-position:center top"></div>
   <div class="scrim-l"></div>
@@ -60,10 +70,10 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
   <div class="foot"><span><b>Abhamzay</b> · Team 13</span><span>AI Agents Hackathon, American University in Dubai</span></div>
 </section>
 
-<!-- 2 PROBLEM -->
 <section class="slide">
-  <div class="bg" style="left:1060px;background-image:url(img/03_shade-moves.jpg);background-size:auto 1080px;background-position:-900px 0"></div>
+  <div class="bg" style="left:1060px;background-image:url(img/03_shade-moves.jpg);background-size:auto 1080px;background-position:-900px -120px"></div>
   <div class="bg" style="left:1060px;background:linear-gradient(90deg,var(--ink) 0%,rgba(14,12,10,.55) 22%,rgba(14,12,10,.05) 60%)"></div>
+  <div class="bg" style="left:1060px;top:760px;background:linear-gradient(0deg,var(--ink) 0%,rgba(14,12,10,.9) 40%,transparent 100%)"></div>
   <div class="content" style="width:1120px">
     <div class="label">02 · The problem</div>
     <h2 style="margin-top:36px;font-size:68px">Maps plan around time. Nobody plans around the sun.</h2>
@@ -76,7 +86,6 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
   <div class="foot" style="right:888px"><span><b>Zill &amp; Shams</b></span><span>02</span></div>
 </section>
 
-<!-- 3 WHY IT MATTERS -->
 <section class="slide">
   <div class="content">
     <div class="label">03 · Why it matters</div>
@@ -108,7 +117,6 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
   </div>
 </section>
 
-<!-- 4 PRODUCT -->
 <section class="slide">
   <div class="bg" style="height:320px;background-image:url(img/06_the-route-compare.jpg);background-size:1920px auto;background-position:0 -10px"></div>
   <div class="bg" style="height:320px;background:linear-gradient(0deg,var(--ink) 0%,rgba(14,12,10,.35) 45%,rgba(14,12,10,.1) 100%)"></div>
@@ -130,7 +138,6 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
   <div class="foot"><span><b>Zill &amp; Shams</b></span><span>04</span></div>
 </section>
 
-<!-- 5 HOW IT WORKS -->
 <section class="slide">
   <div class="bg" style="background-image:url(img/04_a-city-built-in-seconds.jpg);background-size:125% auto;background-position:center top"></div>
   <div class="scrim-b"></div>
@@ -147,7 +154,7 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
       <div class="step"><span>04</span>The best route for you</div>
       <div class="step"><span>05</span>An AI agent that plans, checks and adjusts</div>
     </div>
-    <p class="small" style="margin-top:36px;font-size:22px;color:rgba(244,238,225,.75)">Works for any city with OpenStreetMap data. Our first city: Downtown Dubai (<span style="color:var(--champ)">8,602</span> buildings, <span style="color:var(--champ)">7,659</span> street segments, <span style="color:var(--champ)">744</span> trees).</p>
+    <p class="small" style="margin-top:36px;font-size:22px;color:rgba(244,238,225,.75)">Works for any city with OpenStreetMap data. Two cities live: Downtown Dubai (<span style="color:var(--champ)">8,602</span> buildings, <span style="color:var(--champ)">7,659</span> street segments, <span style="color:var(--champ)">744</span> trees) and central Oslo.</p>
   </div>
   <style>
     .step{position:relative;padding:34px 40px 0 0;font-family:Fraunces,serif;font-weight:300;font-size:30px;line-height:1.25;color:var(--ivory)}
@@ -158,12 +165,11 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
   <div class="foot"><span><b>Zill &amp; Shams</b></span><span>05</span></div>
 </section>
 
-<!-- 6 PROOF -->
 <section class="slide">
   <div class="bg" style="background-image:url(img/06_the-route-flythrough.jpg);background-size:128% auto;background-position:30% top"></div>
   <div class="scrim-r"></div>
   <div class="content" style="left:860px">
-    <div class="label">06 · Proof it is real</div>
+    <div class="label">06 · Proof, shade mode</div>
     <h2 style="margin-top:28px;font-size:52px;max-width:900px">A real walk computed by the engine: Burj Park → Business Bay Metro, a summer afternoon at 15:30.</h2>
     <div style="margin-top:54px;display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--hair)">
       <div style="padding-top:30px"><div class="num" style="font-size:128px;color:var(--brass)">6.2</div><div class="label slate" style="margin-top:16px;font-size:16px">minutes less<br>direct sun</div></div>
@@ -176,141 +182,231 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
   <div class="foot"><span><b>Zill &amp; Shams</b></span><span>06</span></div>
 </section>
 
-<!-- 7 AGENT -->
+<section class="slide">
+  <div class="content">
+    <div class="label">07 · Proof, sun mode</div>
+    <h2 style="margin-top:28px;font-size:60px;max-width:1500px">Sun mode finds the sunnier walk: real routes, clear-sky geometry.</h2>
+    <div style="margin-top:50px;display:grid;grid-template-columns:1fr 1fr;gap:48px">
+      <div class="col" style="border-top:3px solid var(--ember)">
+        <div class="label" style="color:var(--ember)">Dubai · 15 April · 10:30</div>
+        <h3>Business Bay Metro → Burj Park</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:30px;border-top:1px solid var(--hair);padding-top:22px">
+          <div><div class="num" style="font-size:88px;color:var(--brass)">+8.7</div><div class="label slate" style="font-size:15px;margin-top:10px">min more sun</div></div>
+          <div><div class="num" style="font-size:88px;color:var(--brass)">+48%</div><div class="label slate" style="font-size:15px;margin-top:10px">sun vs fastest</div></div>
+          <div><div class="num" style="font-size:88px">+4.5</div><div class="label slate" style="font-size:15px;margin-top:10px">min longer</div></div>
+        </div>
+        <p class="small" style="margin-top:22px;font-size:19px">Fastest: 1,101 s in direct sun of 1,435 s. Sunniest: 1,625 s of 1,704 s. Daylight window open: sun 59.9°, UV 8.7.</p>
+      </div>
+      <div class="col" style="border-top:3px solid var(--ember)">
+        <div class="label" style="color:var(--ember)">Oslo · 21 June · 12:00</div>
+        <h3>National Museum → Byporten Shopping</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;margin-top:30px;border-top:1px solid var(--hair);padding-top:22px">
+          <div><div class="num" style="font-size:88px;color:var(--brass)">+11.3</div><div class="label slate" style="font-size:15px;margin-top:10px">min more sun</div></div>
+          <div><div class="num" style="font-size:88px;color:var(--brass)">+110%</div><div class="label slate" style="font-size:15px;margin-top:10px">sun vs fastest</div></div>
+          <div><div class="num" style="font-size:88px">+2.2</div><div class="label slate" style="font-size:15px;margin-top:10px">min longer</div></div>
+        </div>
+        <p class="small" style="margin-top:22px;font-size:19px">Fastest: 613 s in direct sun of 1,259 s. Sunniest: 1,288 s of 1,390 s. Daylight window open: sun 51.0°, UV 6.8.</p>
+      </div>
+    </div>
+    <p class="small" style="margin-top:30px;font-size:20px;max-width:1500px">Routes chosen by a documented search over place pairs 400 to 1,500 m apart (data/scenarios/hero.json). Gains are model estimates from the engine, not field measurements.</p>
+  </div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>07</span></div>
+</section>
+
+<section class="slide">
+  <div class="content" style="display:grid;grid-template-columns:760px 1fr;column-gap:96px">
+    <div>
+      <div class="label">08 · Second city</div>
+      <h2 style="margin-top:28px;font-size:62px">Oslo, built with the same pipeline.</h2>
+      <p style="margin-top:30px;font-size:26px">No city-specific code: open map data in, a shade-aware city out.</p>
+      <div style="margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:26px 40px;border-top:1px solid var(--hair);padding-top:28px">
+        <div><div class="num" style="font-size:68px;color:var(--brass)">13,841</div><div class="label slate" style="font-size:15px;margin-top:8px">buildings in the shadow ring</div></div>
+        <div><div class="num" style="font-size:68px">10,082</div><div class="label slate" style="font-size:15px;margin-top:8px">street segments</div></div>
+        <div><div class="num" style="font-size:68px">20,208</div><div class="label slate" style="font-size:15px;margin-top:8px">trees</div></div>
+        <div><div class="num" style="font-size:68px">53</div><div class="label slate" style="font-size:15px;margin-top:8px">places of interest</div></div>
+      </div>
+      <p class="small" style="margin-top:30px;font-size:20px">Low winter sun: at the December solstice the sun is about 6.6° high, so shadows run about 8.6 times a building’s height. The shadow engine is tested at exactly this angle.</p>
+    </div>
+    <div style="padding-top:20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div><img src="img/oslo_shade_winter_1210.png" style="width:100%;border:1px solid var(--hair);display:block"><div class="label slate" style="font-size:14px;margin-top:12px">Shade bake · winter · 12:10</div></div>
+        <div><img src="img/oslo_shade_summer_1320.png" style="width:100%;border:1px solid var(--hair);display:block"><div class="label slate" style="font-size:14px;margin-top:12px">Shade bake · summer · 13:20</div></div>
+      </div>
+      <p class="small" style="margin-top:22px;font-size:19px">Shade-bake output for the central Oslo core: a black and white mask, one frame of the baked day.</p>
+      <div class="col" style="margin-top:24px;padding:24px 30px"><div class="label">Honest note</div><p style="font-size:22px;margin-top:8px">Oslo’s winter weather is a labelled stand-in (the 2025 solstice). Oslo gets about 5 h 54 min of daylight at the solstice.</p></div>
+    </div>
+  </div>
+  <div class="fn" style="bottom:100px">Source: data/cities/oslo/meta.json (counts); docs/PROGRESS.md; daylight length: fjordtours.com/en/norway/people-and-culture/facts/winter-solstice. Map data © OpenStreetMap contributors.</div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>08</span></div>
+</section>
+
+<section class="slide">
+  <div class="content">
+    <div class="label">09 · Well-being</div>
+    <h2 style="margin-top:28px">Daylight and heat, made visible.</h2>
+    <div style="margin-top:44px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+      <div class="col"><div class="label" style="color:var(--ember)">UV index</div><p>Today’s index with its WHO band, from low to extreme, and the matching sun-protection advice.</p></div>
+      <div class="col"><div class="label" style="color:var(--ember)">Heat stress</div><p>A band from apparent temperature, labelled indicative.</p></div>
+      <div class="col"><div class="label" style="color:var(--brass)">Daylight window</div><p>Open when the sun is high (your shadow is shorter than you), UV is 3 or more and cloud is under 70%.</p></div>
+      <div class="col"><div class="label" style="color:#8FB3BE">Break prompts</div><p>Hydration and shade-break reminders on long, hot routes.</p></div>
+    </div>
+    <div style="margin-top:30px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div class="col" style="border-top:3px solid var(--brass)"><div class="label">Not medical advice</div><p style="font-size:28px">Zill &amp; Shams gives well-being and daylight guidance only. It does not diagnose or treat anything. Clinicians are future partners, not a claim we make today.</p></div>
+      <div class="col" style="border-top:3px solid var(--slate)"><div class="label slate">Oslo, in winter</div><p style="font-size:28px">The sun is about 6° high and UV is near zero (0.1). Sun mode there is about daylight and mood, not vitamin D.</p></div>
+    </div>
+  </div>
+  <div class="fn">Oslo solstice scenario from docs/PROGRESS.md: sun 6.3°, shadow 9.1× height, UV 0.1, window closed. UV bands follow WHO categories.</div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>09</span></div>
+</section>
+
 <section class="slide">
   <div class="bg" style="left:880px;background-image:url(img/08_an-agent-not-a-map.jpg);background-size:auto 1350px;background-position:-690px -135px"></div>
   <div class="bg" style="left:880px;background:linear-gradient(90deg,var(--ink) 0%,rgba(14,12,10,.4) 25%,rgba(14,12,10,0) 55%)"></div>
   <div class="content" style="width:960px">
-    <div class="label">07 · The agent</div>
+    <div class="label">10 · The agent</div>
     <h2 style="margin-top:36px">An agent, not just a map.</h2>
     <ul class="pts" style="margin-top:60px;max-width:740px">
       <li><span class="n" style="font-size:22px;letter-spacing:.12em">PLANS</span><span style="padding-left:40px">Understands “I’m walking to the metro, I tire easily in the heat” and compares options.</span></li>
       <li><span class="n" style="font-size:22px;letter-spacing:.12em">CHECKS</span><span style="padding-left:40px">A second AI step verifies every claim; every number comes from the engine, never made up.</span></li>
       <li><span class="n" style="font-size:22px;letter-spacing:.12em">ADAPTS</span><span style="padding-left:40px">If you are delayed or a street is closed, it replans and asks before changing your plan.</span></li>
     </ul>
+    <p class="small" style="margin-top:30px;font-size:20px;max-width:740px">A pluggable provider chain (OpenCode Go, then Voke) with automatic fallback. Until a live key is set, sessions are labelled recorded replays.</p>
   </div>
-  <div class="foot" style="right:1040px"><span><b>Zill &amp; Shams</b></span><span>07</span></div>
+  <div class="foot" style="right:1040px"><span><b>Zill &amp; Shams</b></span><span>10</span></div>
 </section>
 
-<!-- 8 WHO PAYS -->
 <section class="slide">
   <div class="content">
-    <div class="label">08 · Who pays</div>
-    <h2 style="margin-top:28px">Who pays.</h2>
-    <table class="tbl" style="margin-top:48px">
+    <div class="label">11 · Accuracy and update frequency</div>
+    <h2 style="margin-top:28px">How accurate, how fresh.</h2>
+    <div style="margin-top:40px;display:grid;grid-template-columns:1.15fr 1fr;gap:56px">
+      <table class="tbl"><thead><tr><th>Input</th><th>Refresh</th></tr></thead><tbody>
+        <tr><td>Sun position</td><td>Exact for any minute; within 0.5° of a reference solar model on 20 test samples</td></tr>
+        <tr><td>Shadows</td><td>Every 10 minutes, on a 2 m grid</td></tr>
+        <tr><td>Route timing</td><td>Departure checked every 5 minutes</td></tr>
+        <tr><td>Weather</td><td>Hourly: UV, cloud, sunlight, temperature</td></tr>
+        <tr><td>Map data</td><td>Re-baked from OpenStreetMap on demand; a weekly job is planned, not yet running</td></tr>
+      </tbody></table>
+      <div>
+        <div class="col" style="border-top:3px solid var(--brass)"><div class="label">Tested</div><p>Shadow length and direction for boxes at several sun angles, including Oslo’s 6.6° winter sun. <span style="color:var(--champ)">373</span> backend tests passed at the last run.</p></div>
+        <div class="col" style="margin-top:22px;border-top:3px solid var(--ember)"><div class="label" style="color:var(--ember)">Limits, said plainly</div><p style="font-size:25px">About 79% of Dubai buildings have no mapped height, so typical heights are used. Trees and awnings are only what is mapped. A passing cloud is not predicted. No field validation yet, so we claim no accuracy percentage.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="fn">Source: docs/ACCURACY.md, docs/VALIDATION.md, docs/PROGRESS.md. Next step: walk the hero routes with a light sensor and compare.</div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>11</span></div>
+</section>
+
+<section class="slide">
+  <div class="content">
+    <div class="label">12 · Security and privacy</div>
+    <h2 style="margin-top:28px">Nothing to steal: we store no user data.</h2>
+    <div style="margin-top:40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px">
+      <div class="col"><div class="label">By design</div><ul style="margin-top:12px"><li>No accounts, no user database</li><li>Location used per request, then discarded</li><li>Logs scrub coordinates and keys</li><li>No ads, no third-party trackers</li></ul></div>
+      <div class="col"><div class="label">On the live site</div><ul style="margin-top:12px"><li>Per-IP rate limits, tightest on the AI agent</li><li>64 KB request cap, 1,000-character text cap</li><li>CORS locked to our domain</li><li>CSP, HSTS, no framing (except the hotel widget)</li></ul></div>
+      <div class="col"><div class="label">Secrets and audit</div><ul style="margin-top:12px"><li>LLM key stays on the server</li><li>pip-audit: no known vulnerabilities</li><li>npm audit: 2 findings, both in Next’s build-time PostCSS; the fix is a major upgrade</li></ul></div>
+    </div>
+    <p class="small" style="margin-top:36px;font-size:25px;max-width:1500px">We aim to align with the UAE PDPL and the GDPR by design. This is an aim, not a certification. No external penetration test yet; it comes before any B2B launch.</p>
+  </div>
+  <div class="fn">Source: docs/SECURITY.md. Controls implemented in backend/zill/api/security.py and frontend/next.config.ts (2026-10-23).</div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>12</span></div>
+</section>
+
+<section class="slide">
+  <div class="content">
+    <div class="label">13 · Who pays, and who else needs it</div>
+    <h2 style="margin-top:24px;font-size:60px">Who pays.</h2>
+    <table class="tbl" style="margin-top:26px">
       <thead><tr><th>Segment</th><th>What they get</th><th>How they pay</th></tr></thead>
       <tbody>
-        <tr><td>Delivery fleets <span class="sub">targets such as Talabat, Deliveroo, Careem</span></td><td>Heat-aware routes and shift pacing for riders</td><td>Per rider per month</td></tr>
-        <tr><td>Hotels and tourism boards</td><td>“Walk there in the shade, or in the sun” guest concierge, so guests walk short distances instead of booking a cab</td><td>Per hotel per month</td></tr>
-        <tr><td>Employers of outdoor workers</td><td>Shift planner that respects the midday break</td><td>Per site per month</td></tr>
-        <tr><td>Corporate well-being and insurers</td><td>Daylight-walk programmes for staff</td><td>Per employee per year</td></tr>
-        <tr><td>Cities with dark winters <span class="sub">Nordics, Canada</span></td><td>Sunniest-route mode for residents</td><td>City licence</td></tr>
+        <tr><td>Delivery fleets<span class=sub>targets such as Talabat, Deliveroo, Careem</span></td><td>Heat-aware routes and shift pacing for riders</td><td style="color:var(--brass)">Per rider per month</td></tr>
+        <tr><td>Hotels and tourism boards</td><td>“Walk there in the shade, or in the sun” guest concierge</td><td style="color:var(--brass)">Per hotel per month</td></tr>
+        <tr><td>Employers of outdoor workers</td><td>Shift planner that respects the midday break</td><td style="color:var(--brass)">Per site per month</td></tr>
+        <tr><td>Cities and city planners<span class=sub>B2G planning analytics</span></td><td>Where to plant trees or add shade, from the same engine</td><td style="color:var(--brass)">City licence</td></tr>
+        <tr><td>Schools, elderly care, events, real estate</td><td>Shaded routes and outdoor-time planning; shade and sun reports for sites and venues</td><td style="color:var(--brass)">Per site subscription</td></tr>
+        <tr><td>Corporate well-being and insurers</td><td>Daylight-walk programmes for staff</td><td style="color:var(--brass)">Per employee per year</td></tr>
       </tbody>
     </table>
-    <p class="small" style="margin-top:30px;font-size:21px">Free for individuals, which builds reach and data. Prices are hypotheses we are validating.</p>
+    <p class="small" style="margin-top:18px;font-size:20px">Prices are hypotheses we are validating; none is quoted here.</p>
   </div>
-  <style>
-    .tbl{width:100%;border-collapse:collapse}
-    .tbl th{text-align:left;font-size:16px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);font-weight:500;padding:0 24px 18px 0;border-bottom:1px solid rgba(244,238,225,.25)}
-    .tbl td{font-size:25px;line-height:1.35;font-weight:300;padding:22px 32px 22px 0;border-bottom:1px solid var(--hair);vertical-align:top}
-    .tbl td:first-child{font-family:Fraunces,serif;color:var(--champ);font-size:28px;width:31%}
-    .tbl td:last-child{color:var(--brass);width:20%;white-space:nowrap}
-    .tbl .sub{display:block;font-family:'Inter Tight';font-size:17px;color:var(--mute);margin-top:6px}
-  </style>
-  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>08</span></div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>13</span></div>
 </section>
 
-<!-- 9 PERSONAS -->
-<section class="slide">
-  <div class="content">
-    <div class="label">09 · Who it is for</div>
-    <h2 style="margin-top:28px">Four people, one product.</h2>
-    <div style="margin-top:88px;display:grid;grid-template-columns:repeat(4,1fr);gap:28px">
-      <div class="card"><div class="tag" style="color:#8FB3BE">Shade</div><div class="who">Rider in Dubai</div><div class="when">July 14:00</div><p>The coolest route, plus a rest stop in air conditioning.</p></div>
-      <div class="card"><div class="tag" style="color:#8FB3BE">Shade</div><div class="who">Hotel guest</div><div class="when">Burj Park</div><p>A 25-minute walk in the shade instead of a cab.</p></div>
-      <div class="card"><div class="tag" style="color:var(--brass)">Sun</div><div class="who">Office worker</div><div class="when">Dubai, winter</div><p>A 15-minute sunny walk at lunch for daylight.</p></div>
-      <div class="card"><div class="tag" style="color:var(--brass)">Sun</div><div class="who">Resident of Oslo</div><div class="when">December</div><p>The sunniest path during the few daylight hours.</p></div>
-    </div>
-    <p class="small" style="margin-top:44px;font-size:21px">Sun mode is about daylight and well-being, not medical advice.</p>
-  </div>
-  <style>
-    .card{background:var(--umber);border:1px solid var(--hair);padding:48px 40px 52px;min-height:500px}
-    .card .tag{font-size:15px;letter-spacing:.18em;text-transform:uppercase;font-weight:500}
-    .card .who{margin-top:56px;font-family:Fraunces,serif;font-weight:300;font-size:40px;color:var(--champ);line-height:1.1}
-    .card .when{margin-top:10px;font-size:18px;letter-spacing:.18em;text-transform:uppercase;color:var(--slate)}
-    .card p{margin-top:36px;padding-top:28px;border-top:1px solid var(--hair);font-size:26px}
-  </style>
-  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>09</span></div>
-</section>
-
-<!-- 10 BUSINESS MODEL -->
 <section class="slide">
   <div class="content" style="display:grid;grid-template-columns:640px 1fr;column-gap:120px">
     <div>
-      <div class="label">10 · Business model</div>
-      <h2 style="margin-top:28px">Business model.</h2>
-      <p style="margin-top:56px;font-family:Fraunces,serif;font-size:38px;line-height:1.25;color:var(--champ)">Low cost to add a city: <span style="color:var(--brass)">it is built from open data automatically.</span></p>
+      <div class="label">14 · Business model</div>
+      <h2 style="margin-top:28px">Freemium. No ads.</h2>
+      <p style="margin-top:48px;font-family:Fraunces,serif;font-size:38px;line-height:1.25;color:var(--champ)">No ads, because <span style="color:var(--brass)">selling attention would mean selling location.</span></p>
+      <p style="margin-top:28px;font-size:25px;color:var(--mute)">Keeping location out of any ad pipeline keeps the privacy story clean.</p>
     </div>
-    <ul class="pts" style="margin-top:100px">
-      <li><span class="n">01</span><span><span style="color:var(--champ)">B2B software subscriptions</span> (fleets, hotels, employers) as the main revenue.</span></li>
-      <li><span class="n">02</span><span>A <span style="color:var(--champ)">pay-per-route API</span> for delivery and mobility apps.</span></li>
-      <li><span class="n">03</span><span><span style="color:var(--champ)">City and tourism-board licences.</span></span></li>
-      <li><span class="n">04</span><span>A <span style="color:var(--champ)">free consumer app</span> for reach.</span></li>
+    <ul class="pts" style="margin-top:80px">
+      <li><span class="n">01</span><span><span style="color:var(--champ)">Free app</span> for individuals: reach and trust.</span></li>
+      <li><span class="n">02</span><span><span style="color:var(--champ)">Optional premium:</span> saved routes and day plans.</span></li>
+      <li><span class="n">03</span><span><span style="color:var(--champ)">B2B and B2G subscriptions</span> (fleets, hotels, employers, cities) as the main revenue.</span></li>
+      <li><span class="n">04</span><span>A <span style="color:var(--champ)">pay-per-route API</span> for delivery and mobility apps.</span></li>
     </ul>
   </div>
-  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>10</span></div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>14</span></div>
 </section>
 
-<!-- 11 GTM -->
 <section class="slide">
-  <div class="bg" style="left:1000px;top:120px;background-image:url(img/11_any-hot-city.jpg);background-size:1920px 1080px;background-position:-520px -150px;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 70%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 70%,transparent 100%)"></div>
-  <div class="bg" style="left:1000px;background:linear-gradient(90deg,var(--ink) 0%,rgba(14,12,10,0) 18%),linear-gradient(180deg,var(--ink) 0%,rgba(14,12,10,0) 22%)"></div>
-  <div class="content" style="width:1040px">
-    <div class="label">11 · Go-to-market and roadmap</div>
-    <h2 style="margin-top:28px">Go-to-market and roadmap.</h2>
-    <div class="tl" style="margin-top:64px">
-      <div class="ph"><div class="k">01 · Dubai</div><p>A pilot with one delivery fleet and one hotel. The prototype is already live.</p></div>
-      <div class="ph"><div class="k">02 · UAE and Gulf</div><p>Abu Dhabi, Doha, Riyadh; the sun mode for winter well-being.</p></div>
-      <div class="ph"><div class="k">03 · Northern cities</div><p>A winter daylight pilot in a city like Oslo or Toronto.</p></div>
+  <div class="content">
+    <div class="label">15 · Costs to run</div>
+    <h2 style="margin-top:28px">Cheap to run, cheap to add a city.</h2>
+    <div style="margin-top:40px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+      <div class="col" style="min-height:430px"><div class="label">Server</div><div class="num" style="font-size:36px;margin:24px 0 14px;color:var(--ember);white-space:nowrap">[TEAM TO FILL]</div><p style="font-size:25px">Contabo plan price. The VM is shared with other apps, so Zill’s share is a fraction.</p></div>
+      <div class="col" style="min-height:430px"><div class="label">AI agent</div><div class="num" style="font-size:80px;margin-top:14px">$10</div><p style="font-size:25px">per month flat on OpenCode Go: about 3,630 conversations on glm-5.3-flash, about 56 on the strongest model, kimi-k3.</p></div>
+      <div class="col" style="min-height:430px"><div class="label">Add a city</div><div class="num" style="font-size:80px;margin-top:14px">$0</div><p style="font-size:25px">Open data is free. Measured: Dubai data bake 7.5 s, shade bake 487.5 s for four dates. Oslo took about 29 minutes, mostly waiting on Overpass.</p></div>
+      <div class="col" style="min-height:430px"><div class="label">Per 1,000 users</div><div class="num" style="font-size:36px;margin:24px 0 14px;color:var(--ember);white-space:nowrap">[TEAM TO FILL]</div><p style="font-size:25px">Server share is plan price × 0.0003, assuming 20 requests per visit.</p></div>
     </div>
   </div>
-  <style>
-    .tl{position:relative;padding-left:52px;border-left:1px solid rgba(200,161,90,.45)}
-    .ph{position:relative;padding:0 0 46px}
-    .ph::before{content:"";position:absolute;left:-58px;top:10px;width:11px;height:11px;border-radius:50%;background:var(--brass)}
-    .ph .k{font-size:18px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass);font-weight:500}
-    .ph p{margin-top:12px;font-size:30px;max-width:800px}
-  </style>
-  <div class="foot" style="right:960px"><span><b>Zill &amp; Shams</b></span><span>11</span></div>
+  <div class="fn">Source: docs/COSTS.md. Token counts use characters ÷ 4 on the scripted planner, so output tokens are a lower bound. Bake timings were measured on a dev laptop, not the VM. Per-token API prices and Open-Meteo commercial pricing are [TEAM TO FILL].</div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>15</span></div>
 </section>
 
-<!-- 12 WHAT WORKS -->
 <section class="slide">
-  <div class="bg" style="background-image:url(img/05_the-shade-engine.jpg);background-size:cover;background-position:center"></div>
-  <div class="scrim-l" style="background:linear-gradient(90deg,rgba(14,12,10,.97) 0%,rgba(14,12,10,.9) 42%,rgba(14,12,10,.3) 68%,rgba(14,12,10,.05) 100%)"></div>
-  <div class="content" style="width:1060px">
-    <div class="label">12 · What already works</div>
-    <h2 style="margin-top:28px">What already works.</h2>
-    <ul class="pts" style="margin-top:56px;max-width:880px">
-      <li><span class="n">01</span><span>A live prototype at <span style="color:var(--brass)">zill.itshamza.me</span>: 3D city, shade engine, routing and an AI agent.</span></li>
-      <li><span class="n">02</span><span>Real data for Downtown Dubai and real sun calculations; <span style="color:var(--champ)">296</span> automated tests pass.</span></li>
-      <li><span class="n">03</span><span><span style="color:var(--champ)">Honest limits:</span> shade comes from buildings and mapped trees; field measurements are the next step.</span></li>
-    </ul>
+  <div class="content">
+    <div class="label">16 · How many users</div>
+    <h2 style="margin-top:28px;font-size:62px">Who needs it, and how many one server holds.</h2>
+    <div style="margin-top:36px;display:grid;grid-template-columns:1fr 1.25fr;gap:56px">
+      <div>
+        <div class="label slate">Market, sourced</div>
+        <div style="margin-top:16px;border-top:1px solid var(--hair);padding:22px 0"><div class="num" style="font-size:92px">70,000+</div><p style="font-size:24px;margin-top:8px">delivery riders in Dubai <span class="small">(Dubai RTA)</span></p></div>
+        <div style="border-top:1px solid var(--hair);padding:22px 0"><div class="num" style="font-size:92px">18.72<span style="font-size:44px;color:var(--mute)"> million</span></div><p style="font-size:24px;margin-top:8px">international overnight visitors in 2024 <span class="small">(Dubai DET via WAM)</span></p></div>
+      </div>
+      <div>
+        <div class="label slate">Capacity, measured</div>
+        <table class="tbl" style="margin-top:16px"><thead><tr><th>Where</th><th>Users</th><th>Req/s</th><th>p95</th><th>Errors</th></tr></thead><tbody>
+          <tr><td style="font-size:26px">Local machine</td><td>20</td><td>26.4</td><td>596 ms</td><td>0</td></tr>
+          <tr><td style="font-size:26px">Local machine</td><td>40</td><td>17.1</td><td>2.6 s</td><td>0</td></tr>
+          <tr><td style="font-size:26px">Live VM</td><td>10</td><td>10.4</td><td>1.0 s</td><td>0</td></tr>
+          <tr><td style="font-size:26px">Live VM</td><td>20</td><td>16.9</td><td>1.6 s</td><td>0</td></tr>
+        </tbody></table>
+        <p class="small" style="margin-top:18px;font-size:19px">One API worker saturates near 26 requests per second on this machine. The live run (capped at 20 concurrent users, 48 s) did not reach its limit, and its latency includes the network round trip. VM CPU count: <span class="tbd">[TEAM TO FILL]</span>.</p>
+      </div>
+    </div>
   </div>
-  <div class="foot" style="right:900px"><span><b>Zill &amp; Shams</b></span><span>12</span></div>
+  <div class="fn">Sources: docs/COSTS.md (scripts/loadtest.py). RTA: rta.ae news, 23 temporary rest areas to protect delivery riders. DET: wam.ae/article/bi46kc8-dubai-welcomes-1872-million-international-visitors. Market figures are context, not a revenue forecast.</div>
+  <div class="foot"><span><b>Zill &amp; Shams</b></span><span>16</span></div>
 </section>
 
-<!-- 13 CLOSING -->
 <section class="slide">
   <div class="bg" style="background-image:url(img/12_the-ask.jpg);background-size:150% auto;background-position:center top"></div>
-  <div class="scrim-b" style="background:linear-gradient(0deg,rgba(14,12,10,.98) 0%,rgba(14,12,10,.9) 30%,rgba(14,12,10,.25) 58%,rgba(14,12,10,0) 78%)"></div>
-  <div style="position:absolute;left:0;right:0;bottom:150px;text-align:center">
-    <h1 style="font-size:132px">Zill &amp; Shams</h1>
-    <div class="ar" style="margin-top:14px;font-size:42px;color:var(--brass)">ظل وشمس</div>
-    <p style="margin-top:28px;font-family:Fraunces,serif;font-size:42px;color:var(--ivory)">Shade when you need it. <span style="color:var(--ember)">Sun when you want it.</span></p>
-    <div style="margin:40px auto 0;width:120px" class="rule"></div>
-    <div class="label" style="margin-top:32px;color:var(--champ);font-size:19px">Abhamzay: Mohammed Hamza Ansari · Abhay Preethan</div>
-    <div class="label" style="margin-top:16px;font-size:19px">Try it: zill.itshamza.me</div>
+  <div class="scrim-b" style="background:linear-gradient(0deg,rgba(14,12,10,.98) 0%,rgba(14,12,10,.92) 40%,rgba(14,12,10,.3) 66%,rgba(14,12,10,0) 85%)"></div>
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,12,10,.92) 0%,rgba(14,12,10,.8) 16%,rgba(14,12,10,0) 32%)"></div>
+  <div style="position:absolute;left:var(--m);right:var(--m);top:90px;display:grid;grid-template-columns:repeat(3,1fr);gap:40px;border-top:1px solid rgba(244,238,225,.25);padding-top:22px">
+    <div><div class="label">Now · Dubai and Oslo</div><p class="small" style="margin-top:8px;font-size:22px">Live prototype at zill.itshamza.me; a pilot with one fleet and one hotel next.</p></div>
+    <div><div class="label">Next · UAE and Gulf</div><p class="small" style="margin-top:8px;font-size:22px">Abu Dhabi, Doha, Riyadh; city planners as the first B2G pilot.</p></div>
+    <div><div class="label">Then · Northern cities</div><p class="small" style="margin-top:8px;font-size:22px">A winter daylight pilot in a city like Oslo or Toronto.</p></div>
+  </div>
+  <div style="position:absolute;left:0;right:0;bottom:110px;text-align:center">
+    <h1 style="font-size:124px">Zill &amp; Shams</h1>
+    <div class="ar" style="margin-top:10px;font-size:40px;color:var(--brass)">ظل وشمس</div>
+    <p style="margin-top:22px;font-family:Fraunces,serif;font-size:40px;color:var(--ivory)">Shade when you need it. <span style="color:var(--ember)">Sun when you want it.</span></p>
+    <div style="margin:30px auto 0;width:120px" class="rule"></div>
+    <div class="label" style="margin-top:26px;color:var(--champ);font-size:19px">Abhamzay, Team 13: Mohammed Hamza Ansari · Abhay Preethan</div>
+    <div class="label" style="margin-top:14px;font-size:19px">Try it: zill.itshamza.me</div>
   </div>
 </section>
 

@@ -1,13 +1,13 @@
 # Gamma prompt: Zill & Shams pitch deck
 
-Paste everything between the two lines below into Gamma ("Paste in text" → Presentation, 13 cards).
+Paste everything between the two lines below into Gamma ("Paste in text" → Presentation, 17 cards).
 Recommended Gamma settings: theme **dark / elegant** (or a custom one with the colours below), image style
 **photographic / architectural**, text density **brief**. Then replace the AI images on slides 1, 4, 5 and 6
 with the real stills from `docs/deck_assets/stills/` (file names given per slide).
 
 ---
 
-Create a 13-slide pitch deck for hackathon judges. The audience is business-minded; keep it easy to read, with no
+Create a 17-slide pitch deck for hackathon judges. The audience is business-minded; keep it easy to read, with no
 jargon and no dense paragraphs: one idea per slide, short lines, large numbers.
 
 VISUAL STYLE (follow strictly): premium, warm, cinematic, restrained, like an architecture film. Dark background
@@ -72,51 +72,53 @@ Three short points:
 - Adapts: if you are delayed or a street is closed, it replans and asks before changing your plan.
 [Image: real still 08_an-agent-not-a-map.png]
 
-SLIDE 8: Who pays
-A clean table with 5 rows (segment / what they get / how they pay):
-- Delivery fleets (targets such as Talabat, Deliveroo, Careem): heat-aware routes and shift pacing for riders /
-  per rider per month.
-- Hotels and tourism boards: "walk there in the shade, or in the sun" guest concierge, so guests walk short distances
-  instead of booking a cab / per hotel per month.
-- Employers of outdoor workers: shift planner that respects the midday break / per site per month.
-- Corporate well-being and insurers: daylight-walk programmes for staff / per employee per year.
-- Cities with dark winters (Nordics, Canada): sunniest-route mode for residents / city licence.
-Footer: Free for individuals, which builds reach and data. Prices are hypotheses we are validating.
+SLIDE 7: Proof, sun mode (real routes, clear-sky geometry, model estimates)
+Dubai, 15 April 10:30, Business Bay Metro to Burj Park: +8.7 min more direct sun (+48%) for +4.5 min.
+Oslo, 21 June 12:00, National Museum to Byporten Shopping: +11.3 min more sun (+110%) for +2.2 min.
+Source: data/scenarios/hero.json.
 
-SLIDE 9: Four people, one product
-Four small cards:
-- Rider in Dubai, July 14:00: the coolest route, plus a rest stop in air conditioning.
-- Hotel guest at Burj Park: a 25-minute walk in the shade instead of a cab.
-- Office worker in Dubai, winter: a 15-minute sunny walk at lunch for daylight.
-- Resident of Oslo, December: the sunniest path during the few daylight hours.
-Small note: Sun mode is about daylight and well-being, not medical advice.
+SLIDE 8: Oslo, the second city
+Built with the same city-agnostic pipeline: 13,841 buildings in the shadow ring, 10,082 street segments, 20,208 trees,
+53 places. Sun is about 6.6 degrees at midwinter noon, so shadows run about 8.6x building height (tested). Honest note:
+Oslo winter weather is a labelled stand-in; about 5 h 54 min of daylight at the solstice.
 
-SLIDE 10: Business model
-- B2B software subscriptions (fleets, hotels, employers) as the main revenue.
-- A pay-per-route API for delivery and mobility apps.
-- City and tourism-board licences.
-- A free consumer app for reach.
-Line: Low cost to add a city: it is built from open data automatically.
+SLIDE 9: Well-being (NOT MEDICAL ADVICE)
+UV index with WHO band; heat stress band (indicative); daylight window (sun high, UV 3+, cloud under 70%); hydration and
+shade-break prompts. Well-being and daylight guidance only; clinicians are future partners. In Oslo winter, sun mode is
+about daylight and mood, not vitamin D.
 
-SLIDE 11: Go-to-market and roadmap
-A three-step timeline:
-1) Dubai: a pilot with one delivery fleet and one hotel. The prototype is already live.
-2) UAE and Gulf: Abu Dhabi, Doha, Riyadh; the sun mode for winter well-being.
-3) Northern cities: a winter daylight pilot in a city like Oslo or Toronto.
-[Image: real still 11_any-hot-city.png, dark globe with brass city points]
+SLIDE 10: An agent, not just a map (Plans / Checks / Adapts, as before). Pluggable LLM providers with fallback.
 
-SLIDE 12: What already works
-- A live prototype at zill.itshamza.me: 3D city, shade engine, routing and an AI agent.
-- Real data for Downtown Dubai and real sun calculations; 296 automated tests pass.
-- Honest limits: shade comes from buildings and mapped trees; field measurements are the next step.
-[Image: real still 05_the-shade-engine.png]
+SLIDE 11: Accuracy and update frequency
+Sun position exact (within 0.5 deg of reference); shadows every 10 min on a 2 m grid; route timing every 5 min; weather
+hourly; map data re-baked on demand (weekly job planned). Limits: 79% of Dubai heights estimated; trees/awnings only as
+mapped; no field validation yet, so no accuracy percentage.
 
-SLIDE 13: Closing
-Headline: Zill & Shams
-Line: Shade when you need it. Sun when you want it.
-Team: Abhamzay: Mohammed Hamza Ansari · Abhay Preethan
-Small: Try it: zill.itshamza.me
-[Image: Burj Khalifa at golden hour with long shadows. Real still: 12_the-ask.png]
+SLIDE 12: Security and privacy
+No accounts, no stored user data, location per request only; per-IP rate limits, size caps, CORS allow-list, CSP/HSTS,
+log scrubbing, key server-side. pip-audit clean; npm audit 2 findings (Next's PostCSS). PDPL/GDPR alignment is an aim, not
+a certification; pen-test before B2B launch.
+
+SLIDE 13: Who pays
+Table: delivery fleets (targets Talabat, Deliveroo, Careem); hotels and tourism boards; outdoor-work employers; cities and
+city planners (B2G planning analytics: where to plant trees or add shade); schools, elderly care, events, real estate;
+corporate well-being and insurers. Prices are hypotheses, none quoted.
+
+SLIDE 14: Freemium. No ads.
+No ads because ads would put location into an ad pipeline. Free app; optional premium (saved routes, day plans); B2B and
+B2G subscriptions as main revenue; pay-per-route API.
+
+SLIDE 15: Costs to run
+Server [TEAM TO FILL, Contabo price]; AI agent $10/month flat (OpenCode Go; about 3,630 conversations on glm-5.3-flash);
+add a city $0 (Dubai data bake 7.5 s, shade bake 487.5 s); per 1,000 users [TEAM TO FILL]. Source: docs/COSTS.md.
+
+SLIDE 16: How many users
+Market (sourced): 70,000+ Dubai delivery riders; 18.72 million visitors in 2024. Capacity (measured): local machine 26.4
+req/s at 20 users, p95 596 ms; live VM 16.9 req/s at 20 users, p95 1.6 s, 0 errors (capped at 20 users).
+
+SLIDE 17: Closing and roadmap. No funding ask.
+Headline: Zill & Shams. Team: Abhamzay, Team 13: Mohammed Hamza Ansari · Abhay Preethan. Try it: zill.itshamza.me
+[Image: real still 12_the-ask.png]
 
 Sources (put in small text on slide 3 or in speaker notes):
 BMC Research Notes 2019, vitamin D in Abu Dhabi (n=12,346): https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6693241/

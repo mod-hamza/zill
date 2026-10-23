@@ -177,3 +177,6 @@ Oslo weather was recorded: spring (2026-03-20) and summer (2026-06-21) from the 
   1 % cloud, clear-sky index 1.0.
 Monitor re-plans are now sun-aware. Tests: 373 passed (new: test_sun_mode_oslo 2, test_sun_mode_agent +2). Limits: leafless winter
 trees are still modelled as blocking (TREE_BLOCK); cold stress is not modelled (heat band "none" at −3 °C).
+
+## 2026-10-24 - Stream H (decks)
+Rebuilt `docs/pitch/deck/index.html` to 17 slides (new: sun-mode proof, Oslo, well-being, accuracy, security, costs, users; expanded who-pays with B2G/schools/elderly care/events/real estate; freemium, no ads). `render.mjs` -> `Zill-and-Shams-pitch.pdf`; `deck/build_pptx.py` -> `Zill-and-Shams-pitch.pptx` (slide images + speaker notes, not editable text). Per-slide PNGs in `docs/pitch/qa/`. `GAMMA_PROMPT.md` updated. All numbers from hero.json, COSTS.md, SECURITY.md, ACCURACY.md, PROGRESS.md. [TEAM TO FILL] kept: Contabo price, per-1,000-user cost, VM CPUs. Stills in `deck/img/` are the old ones plus Oslo shade masks; swap files of the same name for new app stills.
