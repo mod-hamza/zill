@@ -64,7 +64,9 @@ varying float vTop;`,
         `#include <begin_vertex>
 float zRise = clamp((uRevealR - aCDist) / uRevealBand, 0.0, 1.0);
 zRise = 1.0 - pow(1.0 - zRise, 3.0);
-transformed.y *= max(zRise, 0.002);
+// unrisen footprints become a thin slab 0.6 m above the ground (never coplanar with ground/roads:
+// a ~0 m footprint z-fights the ground plane and flickers); fully risen buildings are unchanged
+transformed.y = transformed.y * zRise + 0.6 * (1.0 - zRise);
 vRise = zRise;`,
       )
       .replace(
@@ -90,7 +92,14 @@ varying vec3 vZN;
 varying float vBid;
 varying float vTop;
 varying float vRise;
-${HASH}`,
+${HASH}
+// periodic pulse lit on [lo, hi) of each unit cell, box-filtered over the pixel footprint
+// (analytic integral of the step pattern) so thin window bands never snap between pixel rows
+float zPulseInt(float x, float lo, float hi) { return floor(x) * (hi - lo) + clamp(fract(x), lo, hi) - lo; }
+float zPulse(float x, float lo, float hi) {
+  float w = max(fwidth(x), 1e-4);
+  return (zPulseInt(x + 0.5 * w, lo, hi) - zPulseInt(x - 0.5 * w, lo, hi)) / w;
+}`,
       )
       .replace(
         "#include <color_fragment>",
@@ -108,7 +117,11 @@ float zCol = fract(zU / uWindowPitch);
 float zLine = smoothstep(0.0, 0.03, zCol) * (1.0 - smoothstep(0.06, 0.1, zCol));
 float zFy = fract(vZW.y / uFloorH);
 float zFloorLine = smoothstep(0.0, 0.04, zFy) * (1.0 - smoothstep(0.06, 0.1, zFy));
-diffuseColor.rgb *= 1.0 - zWall * (0.075 * zLine + 0.035 * zFloorLine) * step(4.0, vZW.y);
+// screen-space detail fade, per axis: once a window column (or floor) is under ~2-3 px it aliases
+// and shimmers as the camera moves, so that axis blends to its average (1 = detail, 0 = averaged)
+float zColD = 1.0 - smoothstep(0.2, 0.45, fwidth(zU / uWindowPitch));
+float zRowD = 1.0 - smoothstep(0.2, 0.45, fwidth(vZW.y / uFloorH));
+diffuseColor.rgb *= 1.0 - zWall * (0.075 * zLine * zColD + 0.035 * zFloorLine * zRowD) * step(4.0, vZW.y);
 // ground-contact darkening (cheap AO) on walls
 float zAo = mix(0.58, 1.0, smoothstep(0.0, uAoH, vZW.y));
 diffuseColor.rgb *= mix(1.0, zAo, zWall);
@@ -123,15 +136,21 @@ if (uDusk > 0.001) {
   float cu = floor(zU / uWindowPitch);
   float litFloor = step(zh12(vec2(vBid * 0.731 + 3.0, fl)), uLitFrac);
   float litWin = step(zh12(vec2(vBid * 1.37 + fl * 0.17, cu)), 0.55);
-  float win = smoothstep(0.2, 0.26, zFy) * (1.0 - smoothstep(0.8, 0.86, zFy))
-            * smoothstep(0.12, 0.18, zCol) * (1.0 - smoothstep(0.86, 0.92, zCol));
+  float winRow = zPulse(vZW.y / uFloorH, 0.23, 0.83);
+  float winCol = zPulse(zU / uWindowPitch, 0.15, 0.89);
   float band = step(4.0, vZW.y) * step(vZW.y, vTop - 2.5);
   float var = 0.55 + 0.9 * zh12(vec2(cu, fl + vBid));
-  totalEmissiveRadiance += uTungsten * (uDusk * litFloor * litWin * win * band * zWall * var * 0.85);
+  // anti-twinkle: window bands are box-filtered (zPulse); per-cell lit/unlit choices alias once
+  // cells are sub-pixel, so they fade to their means there (biased darker x0.6 so distant walls
+  // stay silhouettes rather than glowing evenly)
+  float colPart = winCol * mix(0.6 * 0.55, litWin * var, zColD);
+  float rowPart = winRow * mix(0.6 * uLitFrac, litFloor, zRowD);
+  float lit = colPart * rowPart;
+  totalEmissiveRadiance += uTungsten * (uDusk * lit * band * zWall * 0.85);
 }`,
       );
   };
-  m.customProgramCacheKey = () => "zill-building-v3";
+  m.customProgramCacheKey = () => "zill-building-v6";
   return m;
 }
 
