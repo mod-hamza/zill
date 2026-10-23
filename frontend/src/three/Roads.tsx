@@ -38,7 +38,7 @@ ${SHADE_GLSL}
 void main() {
   vec3 g = zillGround(vWorld.xz);
   // faint lighter ribbon with a soft edge (no hard outline)
-  float edge = smoothstep(1.0, 0.55, abs(vSide));
+  float edge = 1.0 - smoothstep(0.55, 1.0, abs(vSide));
   vec3 c = g * mix(1.0, uLift, edge) + vec3(0.004, 0.0035, 0.003) * edge;
   gl_FragColor = vec4(c, 1.0);
   #include <tonemapping_fragment>

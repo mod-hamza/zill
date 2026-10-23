@@ -54,3 +54,4 @@
 - 2026-10-23 ops: film mp4 kept at crf 20 as briefed (about 6.7 Mbit/s with film grain, roughly 650 MB for 13 min); `--crf` flag allows smaller files.
 - 2026-10-23 ops: routing perf figures in docs come from a re-run committed at `docs/qa/phase9/bench_routing.json`; the hand-off's quiet-machine figures are mentioned but marked as not stored in the repo.
 - 2026-10-23 ops: `freshclone` requires ports 3000/8000 free (next.config hard-codes the API port) and tests committed state only.
+- 2026-10-23 scene: route reveal head uses clamp-based smoothstep — smoothstep(1e9, 1e9-6, d) has equal fp32 edges (NaN alpha) and made routes invisible on SwiftShader.

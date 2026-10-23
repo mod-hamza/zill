@@ -4,9 +4,13 @@ import { chromium } from "@playwright/test";
 
 void (async () => {
   const b = await chromium.launch({
-    args: ["--use-angle=d3d11", "--ignore-gpu-blocklist"],
+    args:
+      process.env.ZILL_SWIFT === "1"
+        ? ["--disable-gpu", "--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"]
+        : ["--use-angle=d3d11", "--ignore-gpu-blocklist"],
   });
-  const p = await b.newPage({ viewport: { width: 1920, height: 1080 } });
+  const [vw, vh] = (process.env.ZILL_VIEWPORT ?? "1920x1080").split("x").map(Number);
+  const p = await b.newPage({ viewport: { width: vw!, height: vh! } });
   p.on("console", (m) => {
     if (m.type() === "error") console.log("ERR", m.text().slice(0, 400));
   });

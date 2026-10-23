@@ -44,6 +44,16 @@ function rampTexture(): DataTexture {
   return t;
 }
 const GHOST_OPACITY = 0.3;
+
+/**
+ * Film-only render-time controls (FILM stream; identity by default): `gate(key)` multiplies a
+ * route's opacity per render pass (the Film's split view shows only Fastest on the left and only
+ * Coolest on the right), `widthScale` thickens lines in aerial shots.
+ */
+export const routeFilm: {
+  gate: ((k: RouteKey) => number) | null;
+  widthScale: number;
+} = { gate: null, widthScale: 1 };
 const RAMP = typeof window !== "undefined" ? rampTexture() : null;
 
 const fragment = /* glsl */ `
@@ -61,8 +71,17 @@ uniform float uPulseW;
 uniform vec3 uPulseColor;
 uniform vec3 uBorder;
 uniform float uGain;
+uniform float uRevealD;
+uniform float uMulOpacity;
 #include <fog_pars_fragment>
 void main() {
+  // Film reveal: the line draws along its length (soft 6 m head); identity by default
+  if (vDist > uRevealD) discard;
+  // NOT smoothstep(uRevealD, uRevealD - 6.0, vDist): with the default uRevealD = 1e9 the two
+  // edges are equal in fp32 (1e9 - 6 == 1e9) -> 0/0 = NaN alpha, which SwiftShader renders as
+  // invisible (NVIDIA happened to yield 1). Reversed edges are also undefined in GLSL.
+  float hx = clamp((uRevealD - vDist) / 6.0, 0.0, 1.0);
+  float head = hx * hx * (3.0 - 2.0 * hx);
   float s = abs(vSide);
   vec3 base = uUseRamp > 0.5 ? texture2D(uRamp, vec2(clamp(vValue, 0.0, 1.0), 0.5)).rgb : uColor;
   // lift the ramp a touch so the shaded end still separates from shaded ground; a dark rim
@@ -72,7 +91,7 @@ void main() {
   c = mix(c, uBorder, rim * 0.85);
   float p = uPulseOn * exp(-pow((vDist - uPulseAt) / uPulseW, 2.0));
   c = mix(c, uPulseColor, p * 0.55 * (1.0 - rim));
-  float alpha = (1.0 - smoothstep(0.9, 1.0, s)) * uOpacity;
+  float alpha = (1.0 - smoothstep(0.9, 1.0, s)) * uOpacity * uMulOpacity * head;
   gl_FragColor = vec4(c, alpha);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -99,6 +118,8 @@ function makeMaterial(): ShaderMaterial {
         uPulseColor: { value: new Color(colors.champagne) },
         uBorder: { value: new Color(colors.ink) },
         uGain: { value: 1.25 },
+        uRevealD: { value: 1e9 },
+        uMulOpacity: { value: 1 },
       },
     ]),
     vertexShader: RIBBON_VERTEX,
@@ -123,20 +144,30 @@ type Props = {
   travellerAt?: number | null;
   /** which routes to draw in presentation view */
   presentationKeys?: RouteKey[];
+  /** Film: fraction of each route drawn (default: all) */
+  reveal?: Partial<Record<RouteKey, number>>;
+  /** Film: overall opacity multiplier (default 1) */
+  opacity?: number;
 };
 
 const ORDER: RouteKey[] = ["fastest", "balanced", "coolest"];
 
 function RouteRibbon({
+  rkey,
   route,
   poly,
   style,
   t,
+  reveal = 1,
+  opacity = 1,
 }: {
+  rkey: RouteKey;
   route: Route;
   poly: RoutePolyline;
   style: Style;
   t: number;
+  reveal?: number;
+  opacity?: number;
 }) {
   const size = useThree((s) => s.size);
   const material = useMemo(() => makeMaterial(), []);
@@ -178,12 +209,26 @@ function RouteRibbon({
     }
   }, [material, ghost, style, size.height]);
   useFrame(() => {
+    const rd = reveal >= 1 ? 1e9 : reveal * poly.length;
+    for (const m of [material, ghost]) {
+      m.uniforms.uRevealD!.value = rd;
+      m.uniforms.uMulOpacity!.value = opacity;
+    }
     if (!style.pulse) return;
     // slow travelling highlight: ~70 m/s apparent, with a pause between passes
     const span = poly.length + 400;
     material.uniforms.uPulseAt!.value = ((t * 70) % span) - 200;
   });
   void route;
+  // per render pass (Film split view / aerial width); identity unless the Film sets routeFilm
+  const gateGhost = () => {
+    ghost.uniforms.uMulOpacity!.value = opacity * (routeFilm.gate?.(rkey) ?? 1);
+    ghost.uniforms.uMinPx!.value = style.minPx * 0.8 * routeFilm.widthScale;
+  };
+  const gateMain = () => {
+    material.uniforms.uMulOpacity!.value = opacity * (routeFilm.gate?.(rkey) ?? 1);
+    material.uniforms.uMinPx!.value = style.minPx * routeFilm.widthScale;
+  };
   return (
     <>
       <mesh
@@ -191,12 +236,14 @@ function RouteRibbon({
         material={ghost}
         frustumCulled={false}
         renderOrder={style.order - 5}
+        onBeforeRender={gateGhost}
       />
       <mesh
         geometry={geometry}
         material={material}
         frustumCulled={false}
         renderOrder={style.order}
+        onBeforeRender={gateMain}
       />
     </>
   );
@@ -261,7 +308,15 @@ function styleFor(
   };
 }
 
-export function Routes({ result, view, selected, t, travellerAt }: Props) {
+export function Routes({
+  result,
+  view,
+  selected,
+  t,
+  travellerAt,
+  reveal,
+  opacity = 1,
+}: Props) {
   const polys = useMemo(() => {
     if (!result) return null;
     const out: Partial<Record<RouteKey, RoutePolyline>> = {};
@@ -282,10 +337,13 @@ export function Routes({ result, view, selected, t, travellerAt }: Props) {
         return (
           <RouteRibbon
             key={`${k}-${view}`}
+            rkey={k}
             route={r}
             poly={p}
             style={st}
             t={t}
+            reveal={reveal?.[k] ?? 1}
+            opacity={opacity}
           />
         );
       })}
