@@ -416,7 +416,7 @@ def cmd_freshclone(args: list) -> int:
     clone = tmp / "zill"
     demo = None
     try:
-        rc = subprocess.call(["git", "clone", "--quiet", "--local", str(ROOT), str(clone)])
+        rc = subprocess.call(["git", "clone", "--quiet", "--no-hardlinks", str(ROOT), str(clone)])
         if not check("git clone", rc == 0):
             return 1
         py = sys.executable
