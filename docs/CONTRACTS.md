@@ -254,3 +254,15 @@ Note for the frontend: handle 429 by honouring `Retry-After`. Other streams: kee
 - `exposure_<date_id>.npz` written from now on has an extra array `night` bool `[n_steps]` (sun ≤ `SUN_MIN_ALT_DEG`).
   Night columns are 0 meaning "no direct sun anywhere", not "shade". `shade.cache.ExposureTable` gains
   `night` (derived from `index.json` for older npz files) and `is_night(minute_of_day)`.
+
+### Stream A follow-up 2 (2026-10-23 night): Oslo sun scenarios, sun-aware re-plans
+- Oslo sun search writes `data/scenarios/hero_oslo.json["sun"]` (served by `GET /api/scenarios/oslo`; that file has only the `sun`
+  key so far). Scenarios `solstice_midday_walk` (winter 2026-12-21) and `summer_daylight_walk` (summer 2026-06-21); procedure S8,
+  per-city plan `scenarios.SUN_CITY_PLANS`. Run: `python -m zill.routing.scenarios --sun --city oslo`.
+- Weather: `data/weather_cache/oslo_{winter,spring,summer,hackathon}.json`. A future date past the forecast horizon is recorded
+  as the same date one year earlier from the Open-Meteo archive, re-dated, with `stand_in_from` and a label saying so.
+  The representative fallback uses the Dubai climate table only for latitudes 22–28° N; elsewhere it is clear-sky UV only
+  (temperatures null).
+- Monitor re-plans keep the plan's `preference`. In sun mode the routes are fastest/balanced/sunniest, and `replan` gains
+  `preference:"sun"` and `delta_sun_pct`. Auto-apply needs direct sun reduced by at most 10 % (instead of RHL up by at most
+  10 %). A heat alert keeps sun mode and switches to the balanced sun route.

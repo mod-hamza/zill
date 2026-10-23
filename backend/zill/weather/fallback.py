@@ -35,9 +35,14 @@ def apparent_temp(t_c: float, rh_pct: float, wind_ms: float) -> float:
     return t_c + 0.33 * e - 0.70 * wind_ms - 4.0
 
 
+DUBAI_LAT_RANGE = (22.0, 28.0)  # the climate table above is Dubai's; other latitudes get no temperatures
+
+
 def representative_day(day: date, lat: float, lon: float, tz: str) -> dict[str, Any]:
     from zill.weather.openmeteo import clear_sky_uv
 
+    if not DUBAI_LAT_RANGE[0] <= lat <= DUBAI_LAT_RANGE[1]:
+        return _uv_only_day(day, lat, lon, tz)
     tmin, tmax, rh_aft, rh_dawn, wind = _CLIMATE[day.month]
     rows = []
     from datetime import datetime
@@ -72,6 +77,37 @@ def representative_day(day: date, lat: float, lon: float, tz: str) -> dict[str, 
             "BoM formula; UV is a "
             "clear-sky estimate from solar altitude. Not a measurement. [TEAM TO FILL - cite source]"
         ),
+        "uv_basis": "clear_sky_estimate",
+        "hourly": rows,
+    }
+
+
+def _uv_only_day(day: date, lat: float, lon: float, tz: str) -> dict[str, Any]:
+    """Outside Dubai there is no climate table: clear-sky UV from the sun only, no temperature / sky data."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    from zill.sun.position import sun_positions
+    from zill.weather.openmeteo import clear_sky_uv
+
+    times = [datetime(day.year, day.month, day.day, h, tzinfo=ZoneInfo(tz)) for h in range(24)]
+    alts = [p.alt_deg for p in sun_positions(times, lat, lon, tz)]
+    rows = [
+        {
+            "time": t.replace(tzinfo=None).isoformat(timespec="minutes"),
+            "temperature_2m": None,
+            "apparent_temperature": None,
+            "relative_humidity_2m": None,
+            "wind_speed_10m": None,
+            "uv_index": clear_sky_uv(a),
+            "uv_index_clear_sky": clear_sky_uv(a),
+        }
+        for t, a in zip(times, alts, strict=True)
+    ]
+    return {
+        "synthetic_representative": True,
+        "basis": "No weather data for this date and no climate table for this city: clear-sky UV estimate "
+        "from solar altitude only; temperature and sky unknown. Not a measurement.",
         "uv_basis": "clear_sky_estimate",
         "hourly": rows,
     }

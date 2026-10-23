@@ -19,6 +19,22 @@ from zill.weather.fallback import representative_day
 from zill.weather.openmeteo import fetch_day
 
 
+def stand_in_record(city_id: str, day: date, info: dict) -> dict:
+    """Future date beyond the forecast horizon: the same date one year earlier from the archive, re-dated to
+    `day` and labelled (`stand_in_from`). Real measurements of another year, never invented values."""
+    prev = day.replace(year=day.year - 1)
+    fetched = fetch_day(info["lat"], info["lon"], prev, info["tz"], timeout_s=20.0)
+    for r in fetched["hourly"]:
+        r["time"] = day.isoformat() + r["time"][10:]
+    rec = build_record(city_id, day, fetched, info)
+    rec["stand_in_from"] = prev.isoformat()
+    rec["stand_in_note"] = (
+        f"No forecast exists for {day.isoformat()} yet; values are Open-Meteo archive data for "
+        f"{prev.isoformat()} (same date a year earlier), clearly labelled as a stand-in."
+    )
+    return rec
+
+
 def record(city_id: str) -> dict[str, str]:
     info = _city_info(city_id)
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
@@ -26,9 +42,15 @@ def record(city_id: str) -> dict[str, str]:
     for did, iso in info["dates"].items():
         day = date.fromisoformat(iso)
         try:
-            fetched = fetch_day(info["lat"], info["lon"], day, info["tz"], timeout_s=20.0)
-            rec = build_record(city_id, day, fetched, info)
-            out[did] = f"real ({fetched['api']}, uv: {rec['uv_basis']})"
+            try:
+                fetched = fetch_day(info["lat"], info["lon"], day, info["tz"], timeout_s=20.0)
+                rec = build_record(city_id, day, fetched, info)
+                out[did] = f"real ({fetched['api']}, uv: {rec['uv_basis']})"
+            except Exception:
+                if day <= date.today():
+                    raise
+                rec = stand_in_record(city_id, day, info)
+                out[did] = f"stand-in: archive {rec['stand_in_from']} (uv: {rec['uv_basis']})"
         except Exception as e:
             rec = {
                 "city": city_id,

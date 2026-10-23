@@ -129,6 +129,7 @@ class Monitor:
             )
             return
         rec = plan.get("recommendation") or "balanced"
+        sun = plan.get("preference") == "sun"  # re-plans keep the session's / plan's preference
         o, d, mode = plan["origin"], plan["dest"], plan["mode"]
         depart = datetime.fromisoformat(old["depart"])
         old_arrive = datetime.fromisoformat(old["arrive"])
@@ -138,7 +139,11 @@ class Monitor:
             delay_s = float(cond["minutes"]) * 60.0
             depart = depart + timedelta(seconds=delay_s)
             baseline_arrive = old_arrive + timedelta(seconds=delay_s)
-            reason = "Departure delayed; shade moved while you waited."
+            reason = (
+                "Departure delayed; the sun moved while you waited."
+                if sun
+                else "Departure delayed; shade moved while you waited."
+            )
         elif kind == "closure":
             if "edge" in cond and int(cond["edge"]) not in set(old.get("edges", [])):
                 yield emit(
@@ -152,6 +157,28 @@ class Monitor:
                 return
             baseline_arrive = old_arrive
             reason = "A closure blocks your route."
+        elif sun:  # heat_alert in sun mode: stay in sun mode, but take the balanced (less exposed) route
+            baseline_arrive = old_arrive
+            if rec in ("balanced", "fastest") and not cond.get("force"):
+                text = (
+                    "Heat alert noted: your sunny plan already avoids the most exposed route. Carry water and "
+                    "take shade breaks; I will keep watching."
+                )
+                yield emit(
+                    "monitor_tick",
+                    {
+                        "sim_time": s.clock.now().isoformat(),
+                        "status": "on_track",
+                        "note": "Heat alert: sun-mode plan already uses the balanced route.",
+                    },
+                )
+                yield emit("message", {"text": text, "resolved": [], "template": text, "source": "monitor"})
+                return
+            rec = "balanced"
+            reason = (
+                "Heat alert at your travel time; keeping your sunny preference but choosing the balanced route "
+                "with less time in direct sun."
+            )
         else:  # heat_alert
             baseline_arrive = old_arrive
             if rec == "coolest" and not cond.get("force"):
@@ -172,7 +199,16 @@ class Monitor:
             rec = "coolest"
             reason = "Heat alert at your travel time; prefer more shade and cover."
         try:
-            routes = s.backend.routes(o, d, mode, depart, plan["date_key"], dict(config.LAMBDAS), blocked)
+            routes = s.backend.routes(
+                o,
+                d,
+                mode,
+                depart,
+                plan["date_key"],
+                dict(config.LAMBDAS),
+                blocked,
+                **({"preference": "sun"} if sun else {}),
+            )
         except BackendError as exc:
             s.store.set(
                 "replan",
@@ -200,10 +236,15 @@ class Monitor:
         d_committed_s = (new_arrive - old_arrive).total_seconds()
         old_rhl, new_rhl = float(old.get("rhl") or 0.0), float(new.get("rhl") or 0.0)
         d_rhl_pct = 100.0 * (new_rhl - old_rhl) / old_rhl if old_rhl > 0 else 0.0
-        small = (
-            abs(delta_s) <= config.AUTO_APPLY_MAX_DELTA_ARRIVAL_MIN * 60.0
-            and d_rhl_pct <= config.AUTO_APPLY_MAX_RHL_INCREASE_PCT
+        old_sun, new_sun = float(old.get("sun_exposure_s") or 0.0), float(new.get("sun_exposure_s") or 0.0)
+        d_sun_pct = 100.0 * (new_sun - old_sun) / old_sun if old_sun > 0 else 0.0
+        # sun mode: "small" = arrival within limits and direct sun not cut by more than the same 10 %
+        loss_ok = (
+            -d_sun_pct <= config.AUTO_APPLY_MAX_RHL_INCREASE_PCT
+            if sun
+            else d_rhl_pct <= config.AUTO_APPLY_MAX_RHL_INCREASE_PCT
         )
+        small = abs(delta_s) <= config.AUTO_APPLY_MAX_DELTA_ARRIVAL_MIN * 60.0 and loss_ok
         auto = s.autonomy == 3 and small
         route_changed = new.get("edges") != old.get("edges")
         diff = {
@@ -225,11 +266,15 @@ class Monitor:
             "delta_arrival_s": delta_s,
             "delta_arrival_vs_committed_s": d_committed_s,
             "delta_rhl_pct": d_rhl_pct,
+            "delta_sun_pct": d_sun_pct,
             "route_changed": route_changed,
             "blocked": False,
             "baseline_rhl_basis": "committed plan as planned",
         }
-        s.store.set("replan", {"kind": kind, "reason": reason, "auto": auto, **diff})
+        s.store.set(
+            "replan",
+            {"kind": kind, "reason": reason, "auto": auto, **diff, **({"preference": "sun"} if sun else {})},
+        )
         new_plan = {
             **plan,
             "plan_id": s.new_plan_id(),

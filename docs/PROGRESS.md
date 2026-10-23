@@ -165,3 +165,15 @@ Low sun: per-city caster ring 1,500 m (117 m × 8.6 at 6.6°); night flag stored
 Route Oslo S → City Hall works in both preferences (21 Jun 13:00: fastest 1,358 m / 605 s sun, coolest 1,536 m / 331 s,
 sunniest 1,498 m / 1,063 s; 21 Dec 12:10: fastest 125 s sun, sunniest 2,321 m / 1,336 s).
 Known: frontend `state/sun.ts` hard-codes Dubai ISO dates per preset id; Oslo needs the per-city `dates` from `/api/cities`.
+
+## 2026-10-23 night - Stream A follow-up 2 (Oslo sun, sun-aware monitor)
+Oslo weather was recorded: spring (2026-03-20) and summer (2026-06-21) from the archive, hackathon day from the forecast, and winter
+(2026-12-21) as a labelled stand-in from the 2025-12-21 archive. Oslo sun search (S8):
+- **solstice_midday_walk:** Akershus Fortress → Oslo Central Station (Oslo S) 13:00, from 5,944 jobs (2,543 eligible). Fastest is
+  1,134 s with 73 s of direct sun. Sunniest is 1,391 s with 882 s of sun (+809 s) for +257 s. The sun is 6.3° high, your shadow is
+  9.1× your height and UV is 0.1, so the daylight window is closed: this is about daylight and mood, not vitamin D.
+- **summer_daylight_walk:** National Museum → Byporten Shopping 12:00, from 10,402 jobs (8,925 eligible). Fastest is 1,259 s with
+  613 s of sun. Sunniest is 1,390 s with 1,288 s of sun (+675 s, +110 %) for +131 s. The window is open: sun 51.0°, UV 6.8 (high),
+  1 % cloud, clear-sky index 1.0.
+Monitor re-plans are now sun-aware. Tests: 373 passed (new: test_sun_mode_oslo 2, test_sun_mode_agent +2). Limits: leafless winter
+trees are still modelled as blocking (TREE_BLOCK); cold stress is not modelled (heat band "none" at −3 °C).

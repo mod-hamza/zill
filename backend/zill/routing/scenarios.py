@@ -30,6 +30,10 @@ S7. spring_daylight_walk: date spring (2026-04-15), departures 10:00-11:30 every
     the daylight window is evaluated first (sun altitude at the city origin + recorded UV and sky state);
     only departures with an OPEN window are searched, same filters, ranked by sun_gained_s, pair distinct
     from the winter scenarios.
+S8. Other cities use a per-city plan (SUN_CITY_PLANS): for each scenario a date and departures; when
+    `open_window` is set only departures with an open daylight window are searched (as S7). Same place
+    filter, pair band 400-1500 m (widened to 300-1800 m if the best gain is < 90 s), same filters and
+    ranking, pairs distinct across scenarios. A closed window is reported, never tuned away.
 """
 
 from __future__ import annotations
@@ -665,11 +669,148 @@ def _full_sun(
     return out
 
 
+# S8: per-city sun-mode plans (Dubai keeps the S1-S7 procedure above)
+SUN_CITY_PLANS: dict[str, list[dict[str, Any]]] = {
+    "oslo": [
+        {
+            "id": "solstice_midday_walk",
+            "persona": "daylight_seeker",
+            "date_id": "winter",  # 2026-12-21: sun ~6.6 deg at noon; daylight and mood, not vitamin D
+            "departs": ("11:30", "12:00", "12:30", "13:00"),
+            "open_window": False,
+        },
+        {
+            "id": "summer_daylight_walk",
+            "persona": "daylight_seeker",
+            "date_id": "summer",  # 2026-06-21
+            "departs": ("11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00"),
+            "open_window": True,
+        },
+    ],
+}
+
+
+def _write_sun_block(ctx: CityContext, out_path: Path | None, block: dict[str, Any], log: Any) -> None:
+    path = out_path or (
+        config.DATA_DIR
+        / "scenarios"
+        / ("hero.json" if ctx.city_id == config.DEFAULT_CITY else f"hero_{ctx.city_id}.json")
+    )
+    path.parent.mkdir(parents=True, exist_ok=True)
+    full = _read_json(path) or {}
+    full["sun"] = block
+    path.write_text(json.dumps(full, indent=1), encoding="utf-8")
+    log(f"[scenarios:sun] wrote {path} (key 'sun')")
+
+
+def _scenario_notes(scen: list[dict[str, Any]]) -> list[str]:
+    notes = []
+    for sc in scen:
+        wb = sc["wellbeing"]
+        if wb.get("overcast"):
+            notes.append(f"{sc['id']}: recorded weather shows {wb['overcast']['text']}")
+        if not wb["daylight_window"]["active"]:
+            notes.append(f"{sc['id']}: {wb['daylight_window']['text']}")
+        if wb["uv"]["band"] in ("very high", "extreme"):
+            uv = wb["uv"]
+            notes.append(f"{sc['id']}: UV index {uv['index']} is {uv['band']}. {uv['advice']}")
+        lbl = (wb.get("weather") or {}).get("label") or ""
+        if "stand-in" in lbl or "Representative" in lbl:
+            notes.append(f"{sc['id']}: weather is {lbl}")
+    return notes
+
+
+def generate_sun_plan(
+    ctx: CityContext, plan: list[dict[str, Any]], out_path: Path | None, serial: bool, log: Any
+) -> dict[str, Any]:
+    """S8: plan-driven sun-mode search for a city (see SUN_CITY_PLANS)."""
+    places, place_filter = _places(ctx)
+    attempts: list[dict[str, Any]] = []
+    scen: list[dict[str, Any]] = []
+    notes: list[str] = []
+    cands: dict[str, list[dict[str, Any]]] = {}
+    used: set[frozenset[str]] = set()
+    for item in plan:
+        sid, date_id = item["id"], item["date_id"]
+        if not ctx.has_exposure(date_id):
+            notes.append(f"{sid}: no exposure table for {date_id}")
+            continue
+        win = {hh: window_at(ctx, date_id, hh) for hh in item["departs"]}
+        deps = (
+            tuple(hh for hh in item["departs"] if win[hh]["active"])
+            if item["open_window"]
+            else item["departs"]
+        )
+        winfo = {hh: {"active": w["active"], "reasons": w["reasons"]} for hh, w in win.items()}
+        if not deps:
+            attempts.append({"name": f"{sid}: no departure with an open window", "windows": winfo, "jobs": 0})
+            notes.append(f"{sid}: no departure on {date_id} has an open daylight window")
+            continue
+        pick = None
+        for name, lo, hi in (
+            (f"{sid}: pairs 400-1500 m", 400.0, 1500.0),
+            (f"{sid}: widened 300-1800 m", 300.0, 1800.0),
+        ):
+            rows, info = run_search(
+                ctx, places, lo, hi, deps, (date_id,), ("walk",), serial, preference="sun"
+            )
+            pool = [r for r in _rank_sun(rows, deps) if frozenset((r["origin"], r["dest"])) not in used]
+            pick = pool[0] if pool else None
+            info.update(
+                name=name,
+                windows=winfo,
+                eligible=sum(1 for r in rows if r["eligible"]),
+                best_sun_gained_s=pick["sun_gained_s"] if pick else 0.0,
+                selected=None
+                if pick is None
+                else f"{pick['origin']}->{pick['dest']} walk {pick['depart']} {date_id}",
+            )
+            attempts.append(info)
+            log(f"[scenarios:sun] {name}: {info['jobs']} jobs, eligible {info['eligible']}")
+            cands[sid] = sorted((r for r in rows if r["eligible"]), key=lambda r: -r["sun_gained_s"])[:20]
+            if pick is not None and pick["sun_gained_s"] >= MIN_SUN_GAIN_S:
+                break
+        if pick is None:
+            notes.append(f"{sid}: no eligible candidate found")
+            continue
+        used.add(frozenset((pick["origin"], pick["dest"])))
+        scen.append(_full_sun(ctx, pick, item["persona"], sid, with_departure=False))
+    notes.extend(_scenario_notes(scen))
+    doc = __doc__ or ""
+    block = {
+        "generated_at": datetime.now(ZoneInfo(ctx.tz)).isoformat(timespec="seconds"),
+        "city": ctx.city_id,
+        "search": {
+            "procedure": ("S8." + doc.split("S8.", 1)[1]).strip() if "S8." in doc else "",
+            "plan": [{**i, "departs": list(i["departs"])} for i in plan],
+            "place_filter": {"kinds": sorted(PLACE_KINDS), "snap_max_m": SNAP_MAX_M, **place_filter},
+            "filters": {
+                "max_network_ratio": MAX_NETWORK_RATIO,
+                "max_duration_s": MAX_DURATION_S,
+                "max_added_frac": MAX_ADDED_FRAC,
+                "max_detour": MAX_DETOUR,
+            },
+            "attempts": attempts,
+            "notes": notes,
+            "min_sun_gained_s": MIN_SUN_GAIN_S,
+            "lambdas": config.LAMBDAS,
+            "cost": "t + lam * SUN_WEIGHT[mode] * shade_time (shade_time = time not in direct sun)",
+            "model": "Model v1: buildings, mapped trees, covered links; clear-sky geometry",
+        },
+        "scenarios": scen,
+        "candidates": cands,
+    }
+    _write_sun_block(ctx, out_path, block, log)
+    return block
+
+
 def generate_sun(
     city_id: str = config.DEFAULT_CITY, out_path: Path | None = None, serial: bool = False, log: Any = print
 ) -> dict[str, Any]:
     """Run the sun-mode search and write it under the `sun` key of hero.json (other keys untouched)."""
     ctx = get_city(city_id)
+    if city_id in SUN_CITY_PLANS:
+        return generate_sun_plan(ctx, SUN_CITY_PLANS[city_id], out_path, serial, log)
     places, place_filter = _places(ctx)
     departs = SUN_MORNING_DEPARTS + SUN_LUNCH_DEPARTS
     attempts: list[dict[str, Any]] = []

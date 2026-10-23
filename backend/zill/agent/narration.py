@@ -245,8 +245,38 @@ def template_message(
     return " ".join(parts)
 
 
+def _replan_message_sun(rp: dict[str, Any], auto: bool, kind: str) -> str:
+    """Sun-mode re-plan text: same structure, but it reports direct sun instead of heat load."""
+    lead = {
+        "delay": "Your departure slipped by {{replan.delay_min}}, so I re-checked the sun for the new time.",
+        "closure": "A closure blocks part of your route, so I searched for another sunny way around it.",
+        "heat_alert": "A heat alert is active at your travel time, so I kept your sunny preference but chose "
+        "the balanced route with less time in direct sun. Carry water.",
+    }.get(kind, "Conditions changed, so I re-checked your plan.")
+    if rp.get("blocked"):
+        return lead + " I could not find an alternative route; please review before moving."
+    base = "your delayed plan" if kind == "delay" else "your original plan"
+    if abs(rp.get("delta_arrival_s") or 0.0) < 30:
+        arr = f" New arrival {{{{replan.new.arrive_time}}}}, the same as {base}."
+    else:
+        arr = f" New arrival {{{{replan.new.arrive_time}}}}, which is {{{{replan.delta_arrival_min}}}} against {base}."
+    sun = (
+        " Direct sun on the way is {{replan.delta_sun_pct}} against the plan as first made."
+        if abs(rp.get("delta_sun_pct") or 0.0) >= 0.5
+        else " Direct sun on the way is unchanged."
+    )
+    tail = (
+        " Applied automatically under Autopilot because the change is small. You can undo it."
+        if auto
+        else " The change is larger than my standing permission, so I need your approval before applying it."
+    )
+    return lead + arr + sun + tail + " Well-being guidance, not medical advice."
+
+
 def replan_message(store: ResultStore, auto: bool, kind: str) -> str:
     rp = store.get("replan") or {}
+    if rp.get("preference") == "sun":
+        return _replan_message_sun(rp, auto, kind)
     lead = {
         "delay": "Your departure slipped by {{replan.delay_min}}, so I re-checked the shade for the new time.",
         "closure": "A closure blocks part of your route, so I searched for a way around it.",

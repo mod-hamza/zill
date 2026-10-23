@@ -166,3 +166,37 @@ def test_shipped_daylight_seeker_replay_matches_hero_sun():
     recs = replay.load_all()
     assert replay.match_intent("I want a sunny walk with more daylight", recs) == "daylight_seeker"
     assert replay.match_intent("I'm walking and it is so hot, find me some shade", recs) == "tourist_walk"
+
+
+# ---- monitor re-plans keep the sun preference ----------------------------------------------------
+def _committed_sun_session(sess):
+    s = sess()
+    agent = Agent(s, ScriptedLLM(s, SPEC))
+    list(agent.run_turn(PROMPT))
+    list(agent.approve(s.pending["plan_id"], True))
+    assert s.active_plan["preference"] == "sun" and s.active_plan["recommendation"] == "sunniest"
+    return s, agent
+
+
+def test_monitor_delay_replan_stays_in_sun_mode(sess):
+    s, agent = _committed_sun_session(sess)
+    ev = list(agent.monitor.simulate("delay", {"minutes": 20}))
+    rp = next(e for e in ev if e["type"] == "replan")["payload"]
+    assert "sun moved" in rp["reason"]
+    assert {r["label"] for r in rp["routes"]} == {"fastest", "balanced", "sunniest"}
+    assert "delta_sun_pct" in rp["diff"]
+    new = s.plans[rp["new_plan_id"]]
+    assert new["preference"] == "sun" and new["recommendation"] == "sunniest"
+    assert s.store.get("replan.preference") == "sun"
+    msg = [e for e in ev if e["type"] == "message"][-1]["payload"]
+    assert "re-checked the sun" in msg["text"] and "Direct sun on the way" in msg["text"]
+    assert "{{" not in msg["text"] and find_violations(msg["template"], "") == []
+
+
+def test_monitor_heat_alert_in_sun_mode_takes_balanced_sun_route(sess):
+    s, agent = _committed_sun_session(sess)
+    ev = list(agent.monitor.simulate("heat_alert", {}))
+    rp = next(e for e in ev if e["type"] == "replan")["payload"]
+    new = s.plans[rp["new_plan_id"]]
+    assert new["preference"] == "sun" and new["recommendation"] == "balanced"
+    assert "keeping your sunny preference" in rp["reason"]

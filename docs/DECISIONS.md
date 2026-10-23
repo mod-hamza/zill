@@ -94,3 +94,6 @@
 - 2026-10-23 D: per-city optional `caster_buffer_m` in cities.json (default CASTER_BUFFER_M = 900, Dubai unchanged); Oslo uses 1500 (= MAX_SHADOW_M) because at midwinter noon (6.6°) its tallest building (117 m) casts ~1,010 m. Raymarch itself needed no change (it already ends rays at the scene's max height and the 1,500 m cap).
 - 2026-10-23 D: exposure npz gains a `night` bool array per step (sun ≤ SUN_MIN_ALT_DEG); ExposureTable.night/is_night() derive it from index.json for older npz files — night steps are "no sun", not "shade".
 - 2026-10-23 D: POI slugs fold ø/æ/ß (Bjørvika → bjorvika); no Dubai POI contains these letters, so Dubai ids are unchanged.
+- 2026-10-23 A: Oslo 2026-12-21 weather = Open-Meteo archive for 2025-12-21 re-dated and labelled "stand-in" — no forecast exists that far ahead and the Dubai representative profile would be fabricated for Oslo; non-Dubai representative fallback now carries no temperatures.
+- 2026-10-23 A: Oslo sun hero written to hero_oslo.json (the file the API serves for oslo), not Dubai's hero.json.
+- 2026-10-23 A: sun-mode heat alert re-plan keeps the sun preference but picks the balanced route (less direct sun) — safety first without silently switching modes; auto-apply in sun mode judged on lost sun (≤ 10 %).

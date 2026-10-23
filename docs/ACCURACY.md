@@ -27,7 +27,8 @@ What is solid:
 What is approximate (said plainly in the app and the deck):
 - **Building heights.** OpenStreetMap has no height for about 79% of Dubai's footprints, so those use typical heights
   by building type. Oslo is better tagged (about half have levels). Shadow length is only as good as the height.
-- **Trees, awnings and arcades** are only what is mapped; real shade is usually a little more than we model.
+- **Trees, awnings and arcades** are only what is mapped; real shade is usually a little more than we model. Trees
+  keep their leaves all year in the model, so in an Oslo winter they block a little sun that bare branches would let through.
 - **Clouds** come from the hourly forecast, not from a sky camera; a passing cloud is not predicted.
 - **No field validation yet.** The next step is a field test: walk the hero routes with a light sensor and a camera
   at fixed times and compare measured sun minutes with the model. Results are not in yet, so we make no accuracy

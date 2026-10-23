@@ -129,6 +129,11 @@ def _label(source: str, rec: dict[str, Any], day: date) -> str:
         return f"Representative {day.strftime('%B')} profile (not a measurement)"
     if source == "live":
         return f"Live {rec.get('source_api', 'forecast')} data (Open-Meteo)"
+    if rec.get("stand_in_from"):
+        return (
+            f"Recorded weather from {rec['stand_in_from']} (same date a year earlier, stand-in for "
+            f"{day.isoformat()}: no forecast that far ahead; Open-Meteo {rec.get('source_api', 'archive')})"
+        )
     return f"Recorded weather for {day.isoformat()} (Open-Meteo {rec.get('source_api', 'archive')})"
 
 
