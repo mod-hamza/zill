@@ -11,7 +11,7 @@ def test_health():
     assert r.status_code == 200
     j = r.json()
     assert j["ok"] is True and j["service"] == "zill"
-    assert set(j["llm"]) == {"base_url", "model", "key_present"}
+    assert set(j["llm"]) == {"providers", "model", "key_present"}
     assert isinstance(j["replay"], bool)
 
 

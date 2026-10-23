@@ -96,7 +96,9 @@ class CityContext:
         for p in self.pois:
             if p["id"] == poi_id:
                 return p
-        return None
+        from zill.places import get_place  # typed-places index ids (places stream)
+
+        return get_place(self.city_id, poi_id)
 
     def _poi_by_name(self, s: str) -> dict[str, Any] | None:
         s2 = s.strip().lower()
