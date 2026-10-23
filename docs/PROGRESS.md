@@ -79,3 +79,30 @@
 - In flight: Dubai Mall entrance connectivity fix (data) → then exposure/hero/replay regeneration; film polish round (ch7 chart legibility, ch2 framing, grade).
 - Next: regenerate hero + replays, `scripts/zill.py record` (stills + backup videos), freshclone test, final docs refresh.
 - For the humans: add `ZILL_LLM_API_KEY` to `.env` then run `backend/.venv/Scripts/python.exe scripts/record_replay.py --live` to replace scripted sessions with live ones. A stray file `D:\tmp_bench.txt` (bench log) was left outside the repo — safe to delete.
+
+## 2026-10-23 09:05 · FINAL SUMMARY (Phases 0–10 green; Phase 11 / P2 skipped)
+
+**What exists**
+- Engine on real OSM Downtown Dubai: 8,602 shadow-casting buildings (3,039 rendered), Burj 828 m, 7,659-edge walk/cycle graph, OSM Metro↔Dubai Mall AC link, linked mall entrances, 744 mapped trees, 50 POIs.
+- Sun (pvlib) + numba shadow raymarch (0.72 s/step), shade rasters for 4 preset dates, per-edge exposure; time-dependent A* (triple p95 < 70 ms), departure optimiser, planner, honest hero search.
+- Agent: Planner → tools → Verifier → Narrator with token-resolved numbers (240-case fuzz), Monitor with L1–L3 autonomy and undo, replay. Sessions are SCRIPTED (no LLM key yet) and badged so.
+- Film `/film`: 12 chapters, 780 s, deterministic, scroll + autoplay + presenter mode + stills fallback; opens on a dim skyline with a "Scroll to begin" cue (160 px of scroll per film second).
+- App `/app`: time bar, A→B routing, Fastest/Balanced/Coolest, analysis view, fly-through, agent panel, planner, fleet, crew, `/embed/hotel`, `/health`.
+- Tests: backend 222 passed, frontend 74 passed (`data/test_results.json`). Fresh-clone test PASS (clone → setup → demo → 6 Playwright specs).
+- Deck: 14 stills in `docs/deck_assets/stills/`, `architecture.svg/png`. Backup videos `backup_film.mp4` (13:11, 1080p) and `backup_app_demo.mp4` (1:19) exist LOCALLY only (git-ignored, too large).
+
+**What's cut / not done**
+- Phase 11 (P2): extra cities, Ch.4 city morph, procedural Burj, fountain shader — skipped (Ch.4 shows the pipeline card, Ch.11 marks other cities "roadmap").
+- Live LLM sessions: no key yet. Phase-1 gate "edges > 10,000" missed honestly (real OSM: 7,659).
+
+**Start command**
+`python scripts/zill.py demo` (or `make demo` with GNU make) → http://localhost:3000/film (waits for backend warm-up). Pre-flight: http://localhost:3000/health.
+
+**Top 5 risks for the presenters**
+1. Agent sessions are scripted, not live, until a key is added — the UI says so; be ready to explain (the tool calls and numbers are real engine output).
+2. 79% of building heights are fallback estimates (OSM lacks height tags) — shade is a model estimate; say so if probed.
+3. Departure optimiser says "leave now" for the hero trip (honest result) — present it as the agent checking and confirming, not as a saving.
+4. Unverified on site: Metro↔Mall AC link, 2 curated mall-entrance links, UAE midday-break policy dates — all labelled "verify".
+5. GPU/projector: run `/health` first; `L` toggles low quality; if WebGL fails the film falls back to stills; backup videos are in `docs/deck_assets/` on this laptop only.
+
+**What the humans must do** — see `docs/OPEN_ITEMS.md`. Key items: add `ZILL_LLM_API_KEY` to `.env` and run `backend/.venv/Scripts/python.exe scripts/record_replay.py --live`; re-record hackathon-day weather; fill `[TEAM TO FILL]` market/pricing items; field-test readings for Ch.10; confirm slot length; delete stray `D:\tmp_bench.txt` (safety check blocked automated removal).
