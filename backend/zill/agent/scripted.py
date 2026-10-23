@@ -92,6 +92,8 @@ class ScriptedLLM:
         done = _tool_results(messages)
         names = [n for n, _, _ in done]
         mode, depart = sp.get("mode", get_persona(s.persona).default_mode), sp["depart"]
+        sun = (sp.get("preference") or get_persona(s.persona).preference) == "sun"
+        pref = {"preference": "sun"} if sun else {}
         if names.count("resolve_place") < 1:
             return self._call(
                 "Locating where you are starting.",
@@ -105,10 +107,15 @@ class ScriptedLLM:
                 {"query": sp["dest"], "role": "dest", "mode": mode},
             )
         if "get_weather" not in names:
-            return self._call("Checking the heat at your travel time.", "get_weather", {"at": depart})
+            note = "Checking UV and the sky at your travel time."
+            if not sun:
+                note = "Checking the heat at your travel time."
+            return self._call(note, "get_weather", {"at": depart})
         if "compare_routes" not in names:
             return self._call(
-                "Comparing fastest, balanced and coolest routes.",
+                "Comparing fastest, balanced and sunniest routes."
+                if sun
+                else "Comparing fastest, balanced and coolest routes.",
                 "compare_routes",
                 {
                     "origin": "origin",
@@ -116,6 +123,7 @@ class ScriptedLLM:
                     "mode": mode,
                     "depart_at": depart,
                     "latest_arrival": sp.get("latest_arrival"),
+                    **pref,
                 },
             )
         if sp.get("flexible") and "optimise_departure" not in names:
@@ -132,12 +140,14 @@ class ScriptedLLM:
                     "mode": mode,
                     "window": win,
                     "latest_arrival": sp.get("latest_arrival"),
+                    **pref,
                 },
             )
         if sp.get("flexible") and "optimise_departure" in names and names.count("compare_routes") < 2:
             dep = s.store.get("departure") or {}
             best = (dep.get("best") or {}).get("depart")
-            if best and dep.get("rhl_saved_pct", 0) > 1.0:
+            gain = (dep.get("sun_gained_s") or 0) >= 30 if sun else dep.get("rhl_saved_pct", 0) > 1.0
+            if best and gain:
                 return self._call(
                     "Re-running the comparison at the recommended departure.",
                     "compare_routes",
@@ -148,6 +158,7 @@ class ScriptedLLM:
                         "depart_at": best,
                         "latest_arrival": sp.get("latest_arrival"),
                         "store_as": "route_best",
+                        **pref,
                     },
                 )
         if sp.get("cool_stops") and "find_cool_stops" not in names:
@@ -211,11 +222,13 @@ class ScriptedLLM:
         fast = routes.get("fastest", {})
         tol = 0.15 if s.persona == "rider" else 0.25
         rec = "fastest"
-        for label in ("coolest", "balanced"):
+        sun = plan.get("preference") == "sun"
+        gain_key = "sun_gained_s" if sun else "sun_saved_s"
+        for label in ("sunniest", "balanced") if sun else ("coolest", "balanced"):
             r = routes.get(label)
             if (
                 r
-                and (r.get("sun_saved_s") or 0) >= 30
+                and (r.get(gain_key) or 0) >= 30
                 and (r.get("added_time_s") or 0) <= tol * fast.get("duration_s", 0)
             ):
                 rec = label

@@ -122,7 +122,7 @@ def test_intent_matching(recordings):
 
 def test_intents_file_covers_all_scenarios():
     ids = {i["scenario_id"] for i in replay.load_intents()}
-    assert ids == {"tourist_walk", "rider_cycle", "crew_shuttle", "replan_demo"}
+    assert ids == {"tourist_walk", "rider_cycle", "crew_shuttle", "replan_demo", "daylight_seeker"}
 
 
 # ------------------------------------------------------------------ API

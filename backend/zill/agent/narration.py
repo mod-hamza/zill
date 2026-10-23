@@ -14,6 +14,10 @@ from .tokens import ResultStore
 MODE_WORD = {"walk": "walk", "cycle": "ride", "scooter": "ride"}
 MODE_ING = {"walk": "walking", "cycle": "cycling", "scooter": "riding"}
 LIMITS = "Shade counts buildings, mapped trees and covered links only; awnings and wind are not modelled."
+SUN_LIMITS = (
+    "Sun figures assume a clear sky and count buildings and mapped trees only. "
+    "Well-being guidance, not medical advice."
+)
 
 
 def _facts(store: ResultStore, plan: dict[str, Any] | None, rec: str) -> dict[str, Any]:
@@ -28,6 +32,10 @@ def _facts(store: ResultStore, plan: dict[str, Any] | None, rec: str) -> dict[st
         "r": r,
         "f": f,
         "c": entry.get("coolest") or {},
+        "sunny": entry.get("sunniest") or {},
+        "sun": entry.get("preference") == "sun" or (plan or {}).get("preference") == "sun",
+        "wellbeing": store.get("wellbeing") or {},
+        "dep_sun_gain": (dep.get("sun_gained_s") or 0.0) if best.get("depart") != first.get("depart") else 0.0,
         "rec": rec,
         "mode": (plan or {}).get("mode", "walk"),
         "saved_s": r.get("sun_saved_s") or 0.0,
@@ -45,7 +53,56 @@ def _facts(store: ResultStore, plan: dict[str, Any] | None, rec: str) -> dict[st
     }
 
 
+def _daylight_sentence(F: dict[str, Any]) -> str:
+    """Sun mode: how much more direct sun the recommended route gives (modest gains reported as modest)."""
+    K, rec, w = F["K"], F["rec"], MODE_WORD[F["mode"]]
+    if rec == "fastest":
+        base = f"The fastest {w} spends {{{{{K}.fastest.sun_exposure_min}}}} in direct sun."
+        sn = F.get("sunny") or {}
+        if sn and (sn.get("sun_gained_s") or 0) < 30:
+            return base + (
+                f" The sunniest option would add only {{{{{K}.sunniest.sun_gained_min}}}} of sun, so the fastest "
+                "is the better trade."
+            )
+        if sn:
+            return base + (
+                f" The sunniest option adds {{{{{K}.sunniest.sun_gained_min}}}} of sun but takes "
+                f"{{{{{K}.sunniest.added_time_min}}}} longer, which is more time than I would trade for it."
+            )
+        return base
+    return (
+        f"The {rec} {w} spends {{{{{K}.{rec}.sun_exposure_min}}}} in direct sun against "
+        f"{{{{{K}.fastest.sun_exposure_min}}}} on the fastest: {{{{{K}.{rec}.sun_gained_min}}}} more daylight "
+        "on the way."
+    )
+
+
+def _wellbeing_extras(F: dict[str, Any]) -> list[str]:
+    """Sun mode: UV band, daylight / vitamin D window, overcast and break prompts, all as tokens."""
+    wb = F["wellbeing"]
+    if not wb:
+        return []
+    out: list[str] = []
+    win = wb.get("daylight_window") or {}
+    if win.get("active"):
+        out.append("{{wellbeing.daylight_window.text}} {{wellbeing.daylight_window.shadow_text}}")
+    elif win:
+        out.append("{{wellbeing.daylight_window.text}}")
+    if (wb.get("uv") or {}).get("index") is not None:
+        out.append("UV is {{wellbeing.uv.band}} ({{wellbeing.uv.index}}): {{wellbeing.uv.advice}}")
+    if wb.get("overcast"):
+        out.append("{{wellbeing.overcast.text}}")
+    hs = wb.get("heat_stress") or {}
+    if hs.get("band") not in (None, "none", "unknown"):
+        out.append("Heat stress is {{wellbeing.heat_stress.band}} (indicative): {{wellbeing.heat_stress.advice}}")
+    if (wb.get("breaks") or {}).get("prompts"):
+        out.append("Take a water and shade break every {{wellbeing.breaks.every_sun_min}} of direct sun.")
+    return out
+
+
 def _sun_sentence(F: dict[str, Any]) -> str:
+    if F.get("sun"):
+        return _daylight_sentence(F)
     K, rec = F["K"], F["rec"]
     if rec == "fastest":
         base = (
@@ -88,6 +145,17 @@ def _extras(F: dict[str, Any]) -> list[str]:
         out.append(f"{{{{{K}.{rec}.indoor_pct}}}} of it is indoors or on air-conditioned links.")
     elif F["covered"] > 0.5:
         out.append(f"{{{{{K}.{rec}.covered_pct}}}} of it is under cover.")
+    if F.get("sun"):
+        if F["dep_sun_gain"] >= 30:
+            out.append(
+                "Leaving at {{departure.best.depart_time}} instead of {{departure.first.depart_time}} adds "
+                "{{departure.sun_gained_min}} of direct sun."
+            )
+        out.extend(_wellbeing_extras(F))
+        w = F["weather"]
+        if w.get("apparent_c") is not None:
+            out.append("It feels like {{weather.apparent_c}} then.")
+        return out
     if F["dep_gain"] > 1.0:
         out.append(
             "Leaving at {{departure.best.depart_time}} instead of {{departure.first.depart_time}} lowers the "
@@ -134,7 +202,7 @@ def draft_text(store: ResultStore, plan: dict[str, Any] | None, rec: str) -> str
         f"Recommended: the {rec} {MODE_WORD[F['mode']]} from {{{{{K}.origin}}}} to {{{{{K}.dest}}}}, leaving "
         f"{{{{{K}.{rec}.depart_time}}}}."
     )
-    return " ".join([head, _sun_sentence(F), *_extras(F), LIMITS])
+    return " ".join([head, _sun_sentence(F), *_extras(F), SUN_LIMITS if F.get("sun") else LIMITS])
 
 
 def template_message(
@@ -159,6 +227,13 @@ def template_message(
             _sun_sentence(F),
             *_extras(F),
         ]
+    elif F.get("sun"):
+        parts = [
+            f"For more daylight on the way, go {ing} from {{{{{K}.origin}}}} to {{{{{K}.dest}}}} by the {rec} "
+            f"route, leaving at {{{{{K}.{rec}.depart_time}}}}.",
+            _sun_sentence(F),
+            *_extras(F),
+        ]
     else:
         parts = [
             f"Here is what I would do. Go {ing} from {{{{{K}.origin}}}} to {{{{{K}.dest}}}} by the {rec} route, "
@@ -166,7 +241,7 @@ def template_message(
             _sun_sentence(F),
             *_extras(F),
         ]
-    parts.append(LIMITS)
+    parts.append(SUN_LIMITS if F.get("sun") else LIMITS)
     return " ".join(parts)
 
 

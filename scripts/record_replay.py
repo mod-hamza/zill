@@ -5,6 +5,10 @@ plus the proactive replan demo, and writes backend/replay/<scenario_id>.json.
 
   backend/.venv/Scripts/python scripts/record_replay.py            # scripted planner, live=false
   backend/.venv/Scripts/python scripts/record_replay.py --live     # real model (needs ZILL_LLM_API_KEY), live=true
+  backend/.venv/Scripts/python scripts/record_replay.py --only daylight_seeker   # just the sun-mode session
+
+The daylight_seeker session (sun mode) is recorded from hero.json["sun"] scenario SUN_SCENARIO_ID and checked
+against its fastest / sunniest stats.
 
 Without a key the scripted planner issues genuine tool calls (see zill/agent/scripted.py); the files carry
 "live": false and the UI badges them "Scripted session (live model not connected)".
@@ -34,6 +38,8 @@ from zill.agent.session import Session, SimClock  # noqa: E402
 HERO = config.DATA_DIR / "scenarios" / "hero.json"
 INTENTS = config.DATA_DIR / "curated" / "intents.json"
 SCENARIO_IDS = ("tourist_walk", "rider_cycle", "crew_shuttle")
+SUN_SCENARIO_ID = "spring_daylight_walk"  # hero.json["sun"]: the scenario with an open daylight window
+SUN_REPLAY_ID = "daylight_seeker"
 # Natural-feeling minimum gaps (ms) for scripted sessions; live sessions keep their real timing.
 PACING_MS = {
     "session_started": 200,
@@ -58,6 +64,8 @@ def prompt_for(sc: dict[str, Any]) -> str:
         return f"I'm cycling a delivery from {o} to {d}, leaving at {t}. Keep me out of the sun where it is cheap to."
     if persona == "crew":
         return f"My crew needs to move from {o} to {d} at {t}. Check it against the midday work policy."
+    if persona == "daylight_seeker":
+        return f"I'd like a sunny walk from {o} to {d} at {t}. I want more daylight on the way."
     return f"{o} to {d}, {t}, I'm walking. I tire easily in the heat."
 
 
@@ -72,6 +80,7 @@ def spec_for(sc: dict[str, Any]) -> dict[str, Any]:
         "flexible": persona in ("tourist", "rider"),
         "cool_stops": persona == "tourist",
         "window_min": 90,
+        **({"preference": "sun"} if persona == "daylight_seeker" else {}),
     }
 
 
@@ -115,7 +124,7 @@ class PinnedBackend:
 def check_against_hero(s: Session, sc: dict[str, Any], tol_s: float = 1.0) -> None:
     """First compare_routes (store key `route`, at the scenario's date/depart) must equal hero.json stats."""
     got = s.store.get("route") or {}
-    for label in ("fastest", "coolest"):
+    for label in ("fastest", "coolest", "sunniest"):
         want = (sc.get(label) or {}).get("stats")
         if not want or label not in got:
             continue
@@ -227,18 +236,51 @@ def update_intents(recs: list[dict[str, Any]], scenarios: dict[str, dict[str, An
     INTENTS.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
+def sun_scenario() -> dict[str, Any] | None:
+    """hero.json["sun"] scenario used for the daylight-seeker session (persona set to daylight_seeker)."""
+    if not HERO.exists():
+        return None
+    sun = json.loads(HERO.read_text(encoding="utf-8")).get("sun") or {}
+    sc = next((x for x in sun.get("scenarios", []) if x["id"] == SUN_SCENARIO_ID), None)
+    return None if sc is None else {**sc, "persona": "daylight_seeker"}
+
+
+def record_sun_only(a: argparse.Namespace) -> int:
+    sc = sun_scenario()
+    if sc is None:
+        print(f"hero.json has no sun scenario {SUN_SCENARIO_ID}; run: python -m zill.routing.scenarios --sun")
+        return 2
+    backend = ServicesBackend(config.DEFAULT_CITY)
+    backend.warm(block=True)
+    try:
+        rec = record_scenario(backend, sc, SUN_REPLAY_ID, a.live)
+    except HeroMismatch as exc:
+        print(f"ABORT (nothing written): {exc}", file=sys.stderr)
+        return 3
+    rec["source"] = f"hero.json sun/{SUN_SCENARIO_ID}"
+    out = Path(a.out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / f"{SUN_REPLAY_ID}.json").write_text(json.dumps(rec, indent=1, default=str), encoding="utf-8")
+    update_intents([rec], {SUN_REPLAY_ID: sc})
+    print(f"recorded {SUN_REPLAY_ID}: {len(rec['events'])} events, live={rec['live']}")
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--live", action="store_true", help="use the real model (needs a key) -> live=true")
     ap.add_argument("--out", default=str(config.REPLAY_DIR))
     ap.add_argument("--wait-min", type=float, default=0.0, help="poll for hero.json up to N minutes")
     ap.add_argument("--delay-min", type=float, default=20.0)
+    ap.add_argument("--only", choices=[SUN_REPLAY_ID], help="record only this session")
     a = ap.parse_args()
     if a.live:
         client = LLMClient()
         if not client.available():
             print(f"live model not available ({client.reason}); refusing to record --live", file=sys.stderr)
             return 2
+    if a.only == SUN_REPLAY_ID:
+        return record_sun_only(a)
     scenarios, source = load_scenarios(a.wait_min)
     print(f"scenarios from: {source}")
     backend = ServicesBackend(config.DEFAULT_CITY)

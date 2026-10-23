@@ -71,7 +71,7 @@ def test_daylight_window_open():
         (40.0, 7.0, 10.0, "below 45 deg"),
         (60.0, 2.4, 10.0, "UV index 2.4"),
         (60.0, 7.0, 70.0, "cloud cover 70%"),
-        (60.0, 7.0, None, "cloud cover unknown"),
+        (60.0, 7.0, None, "sky state unknown"),
         (-3.0, 0.0, 0.0, "below the horizon"),
     ],
 )
@@ -204,3 +204,47 @@ def test_merge_sky_only_adds_sky_keys():
         "shortwave_radiation": 10,
     }
     assert "cloud_cover" not in rec["hourly"][1]
+
+
+# ---- sky state: radiation (Haurwitz clear-sky index) first, cloud cover only as fallback ---------
+def test_haurwitz_clear_sky_ghi():
+    assert W.clear_sky_ghi(90.0) == pytest.approx(1098.0 * math.exp(-0.057), rel=1e-9)  # ~1037 W/m2
+    assert W.clear_sky_ghi(30.0) == pytest.approx(1098.0 * 0.5 * math.exp(-0.114), rel=1e-9)
+    assert W.clear_sky_ghi(0.0) == 0.0 and W.clear_sky_ghi(None) == 0.0
+    assert W.clear_sky_index(None, 60.0) is None
+    assert W.clear_sky_index(10.0, 1.0) is None  # clear-sky GHI below the 50 W/m2 floor: not judged
+    assert W.clear_sky_index(W.clear_sky_ghi(60.0) / 2, 60.0) == pytest.approx(0.5)
+
+
+def test_sky_state_radiation_beats_cloud_cover():
+    thin_cirrus = W.sky_state(0.9, 100.0)  # bright sun under "100 %" (thin, high) cloud
+    assert thin_cirrus["overcast"] is False and thin_cirrus["basis"] == "radiation"
+    dark = W.sky_state(0.3, 20.0)
+    assert dark["overcast"] is True and dark["basis"] == "radiation"
+    assert W.sky_state(None, 75.0) == {**W.sky_state(None, 75.0), "overcast": True, "basis": "cloud_cover"}
+    assert W.sky_state(None, None)["overcast"] is None
+
+
+def test_overcast_and_window_use_radiation():
+    assert W.overcast_note("sun", 100.0, 0.9) is None
+    note = W.overcast_note("sun", 20.0, 0.25)
+    assert note["basis"] == "radiation" and "25% of the clear-sky level" in note["text"]
+    assert W.overcast_note("sun", 80.0, None)["basis"] == "cloud_cover"
+    assert W.daylight_window(60.0, 7.0, 98.0, 0.92)["active"] is True
+    closed = W.daylight_window(60.0, 7.0, 10.0, 0.3)
+    assert closed["active"] is False and "clear-sky level" in closed["text"]
+    assert closed["sky"]["basis"] == "radiation"
+
+
+def test_recorded_winter_weather_is_bright_despite_cloud_cover():
+    from zill import weather
+
+    w = weather.get(
+        "dubai_downtown",
+        datetime.fromisoformat("2026-01-15T12:30:00" + T),
+        allow_live=False,
+        prefer_recorded=True,
+    )
+    assert w["cloud_cover_pct"] >= 90 and w["clear_sky_index"] > 0.8
+    out = W.assess("sun", 43.7, w)
+    assert out["overcast"] is None and out["daylight_window"]["sky"]["overcast"] is False

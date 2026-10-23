@@ -1,4 +1,4 @@
-"""Personas: tourist / rider / crew (PRD 11.7)."""
+"""Personas: tourist / rider / crew (PRD 11.7) + daylight seeker (sun mode, overnight Stream A)."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ class Persona:
     tone: str  # narrator guidance
     policy_pack: str | None
     guidance: str  # planner guidance
+    preference: str = "shade"  # routing preference: shade (least sun) or sun (most direct sun / daylight)
 
 
 PERSONAS: dict[str, Persona] = {
@@ -50,6 +51,22 @@ PERSONAS: dict[str, Persona] = {
             "If a movement or work block falls in the midday window, propose a compliant time instead. "
             "Never present the policy pack as legal advice; it is marked unverified."
         ),
+    ),
+    "daylight_seeker": Persona(
+        id="daylight_seeker",
+        label="Daylight seeker",
+        default_mode="walk",
+        tone="Warm and encouraging, calm and plain. Short sentences. Well-being wording only, never medical.",
+        policy_pack=None,
+        guidance=(
+            "The user wants more daylight on the way (well-being, cold or dark days, a sunny walk). Use "
+            "preference sun: compare fastest, balanced and sunniest and recommend the sunniest when the "
+            "added time is within a quarter of the fastest walk. Report the UV band and the daylight / "
+            "vitamin D "
+            "window exactly as the tools give them; if the window is closed or the sky is overcast, say so. "
+            "This is well-being guidance, not medical advice: never say it treats or prevents anything."
+        ),
+        preference="sun",
     ),
 }
 

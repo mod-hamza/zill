@@ -179,3 +179,5 @@ DAYLIGHT_MIN_UV = 3.0  # WHO "moderate" band starts at 3
 OVERCAST_CLOUD_PCT = 70.0  # cloud cover at/above which a sunny route has little direct sun
 WELLBEING_BREAK_SUN_MIN = 10.0  # hydration / shade-break prompt every N minutes of direct sun (when hot)
 WELLBEING_HOT_APPARENT_C = 32.2  # NWS heat-index "extreme caution" lower bound (90 F), indicative
+CLEAR_SKY_INDEX_OVERCAST = 0.4  # measured / Haurwitz clear-sky radiation below this = overcast (Stream A)
+CLEAR_SKY_MIN_GHI_WM2 = 50.0  # below this clear-sky irradiance (sun very low) the index is not judged

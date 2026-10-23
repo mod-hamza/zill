@@ -30,7 +30,10 @@ STAT_KEYS = (
     "sun_saved_s",
     "sun_saved_pct",
     "rhl_saved_pct",
+    "sun_gained_s",  # sun mode only (hoisted when present)
+    "sun_gained_pct",
 )
+SUN_KEYS = ("fastest", "balanced", "sunniest")
 
 
 class BackendError(Exception):
@@ -133,6 +136,16 @@ class ToolBackend(ABC):
     def city_summary(self) -> dict[str, Any]:
         return {"city_id": self.city_id}
 
+    def wellbeing(self, at: datetime, preference: str, route: dict[str, Any] | None) -> dict[str, Any]:
+        """Well-being block (UV, heat stress, daylight window, breaks, overcast) for a route at `at`."""
+        from zill import wellbeing as wb
+
+        sun = self.sun(at)
+        w = dict(self.weather(at))
+        w.setdefault("uv_index", w.get("uv"))
+        r = route or {}
+        return wb.assess(preference, sun.get("alt_deg"), w, r.get("stats") or r, r.get("segments"))
+
 
 # ------------------------------------------------------------------------------------------------
 # Real implementation
@@ -224,7 +237,9 @@ class ServicesBackend(ToolBackend):
         return placed
 
     # -- routing ------------------------------------------------------------------------------
-    def routes(self, origin, dest, mode, depart, date_key, lams, blocked_edges=frozenset()):  # type: ignore[override]
+    def routes(  # type: ignore[override]
+        self, origin, dest, mode, depart, date_key, lams, blocked_edges=frozenset(), preference="shade"
+    ):
         try:
             from zill.routing import tdsp as tdsp_mod
             from zill.routing.tdsp import route as route_fn
@@ -237,14 +252,20 @@ class ServicesBackend(ToolBackend):
         elif blocked_edges:
             raise BackendError("routing engine does not support closures")
         out: dict[str, dict[str, Any]] = {}
+        sun = preference == "sun"
+        if sun:
+            kwargs["preference"] = "sun"
         try:
             if set(lams) == {"fastest", "balanced", "coolest"} and hasattr(tdsp_mod, "compare"):
-                kw2 = {"blocked_edges": blocked_edges} if blocked_edges else {}
+                kw2: dict[str, Any] = {"blocked_edges": blocked_edges} if blocked_edges else {}
+                if sun:
+                    kw2["preference"] = "sun"
                 res = tdsp_mod.compare(
                     ctx, origin["node"], dest["node"], mode, depart, date_key,
                     (lams["fastest"], lams["balanced"], lams["coolest"]), **kw2,
                 )
-                return {k: normalise_route(res[k], k, mode) for k in ("fastest", "balanced", "coolest")}
+                keys = SUN_KEYS if sun else ("fastest", "balanced", "coolest")
+                return {k: normalise_route(res[k], k, mode) for k in keys}
             for label in sorted(lams, key=lambda k: lams[k]):
                 res1 = route_fn(
                     ctx, origin["node"], dest["node"], mode, depart, lams[label], date_key, **kwargs
@@ -254,7 +275,7 @@ class ServicesBackend(ToolBackend):
             raise BackendError(f"no {mode} route found ({type(exc).__name__}: {exc})") from exc
         return out
 
-    def departure(self, origin, dest, mode, start, end, date_key, latest_arrival):  # type: ignore[override]
+    def departure(self, origin, dest, mode, start, end, date_key, latest_arrival, preference="shade"):  # type: ignore[override]
         try:
             from zill.routing.departure import optimise_departure
         except ImportError as exc:
@@ -273,6 +294,7 @@ class ServicesBackend(ToolBackend):
                     mu=config.DEPARTURE_MU,
                     date_key=date_key,
                     requested=start,
+                    **({"preference": "sun"} if preference == "sun" else {}),
                 )
             )
         except Exception as exc:
@@ -304,6 +326,18 @@ class ServicesBackend(ToolBackend):
         except Exception as exc:
             raise BackendError(f"weather unavailable ({type(exc).__name__})") from exc
         return normalise_weather(res)
+
+    def wellbeing(self, at, preference, route):  # type: ignore[override]
+        """Real engine: recorded weather first for the date (no network wait), then live."""
+        from zill import weather as W
+        from zill import wellbeing as wb
+        from zill.sun.position import sun_position
+
+        o = self.ctx.origin
+        alt = sun_position(at, o["lat"], o["lon"], self.ctx.tz).alt_deg
+        w = W.get(self.city_id, at, prefer_recorded=True)
+        r = route or {}
+        return wb.assess(preference, alt, w, r.get("stats") or r, r.get("segments"))
 
     def cool_stops(self, near, radius_m, kind):  # type: ignore[override]
         kinds = _COOL_KINDS.get(kind, _COOL_KINDS["indoor"])
@@ -395,6 +429,9 @@ def normalise_departure(res: dict[str, Any]) -> dict[str, Any]:
         ).total_seconds()
     if best.get("constraint_met") is False:
         out["constraint_met"] = False
+    if best.get("sun_gained_s") is not None:  # sun mode
+        out["sun_gained_s"] = best["sun_gained_s"]
+        out["sun_gained_pct"] = best.get("sun_gained_pct")
     return out
 
 

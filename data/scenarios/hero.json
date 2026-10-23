@@ -19459,10 +19459,10 @@
   }
  ],
  "sun": {
-  "generated_at": "2026-10-23T22:41:16+04:00",
+  "generated_at": "2026-10-23T22:49:30+04:00",
   "city": "dubai_downtown",
   "search": {
-   "procedure": "S1. Same candidate places, same pair band (400-1500 m), walk only, date winter (2026-01-15).\nS2. Departures: winter morning 09:00-11:00 every 30 min, and office lunch 12:00-13:30 every 30 min.\nS3. Fastest vs Sunniest (sun mode, lam=3). Same network / duration / added-time (<= 25 %) / detour (<= 1.35)\n    filters; a row also needs sun actually gained (> 0 s).\nS4. Rank by sun_gained_s (ties: less added time). winter_morning_walk = best morning row;\n    office_lunch_walk = best lunch row with fastest walk <= 15 min, different pair. Pairs with both\n    endpoints curated are preferred when that tier gains >= 60 s.\nS5. If the best morning gain is < 90 s the band is widened to 300-1800 m and the attempt logged.\nS6. Each scenario carries the well-being block computed from the RECORDED weather for that date.",
+   "procedure": "S1. Same candidate places, same pair band (400-1500 m), walk only, date winter (2026-01-15).\nS2. Departures: winter morning 09:00-11:00 every 30 min, and office lunch 12:00-13:30 every 30 min.\nS3. Fastest vs Sunniest (sun mode, lam=3). Same network / duration / added-time (<= 25 %) / detour (<= 1.35)\n    filters; a row also needs sun actually gained (> 0 s).\nS4. Rank by sun_gained_s (ties: less added time). winter_morning_walk = best morning row;\n    office_lunch_walk = best lunch row with fastest walk <= 15 min, different pair. Pairs with both\n    endpoints curated are preferred when that tier gains >= 60 s.\nS5. If the best morning gain is < 90 s the band is widened to 300-1800 m and the attempt logged.\nS6. Each scenario carries the well-being block computed from the RECORDED weather for that date.\nS7. spring_daylight_walk: date spring (2026-04-15), departures 10:00-11:30 every 30 min. For each departure\n    the daylight window is evaluated first (sun altitude at the city origin + recorded UV and sky state);\n    only departures with an OPEN window are searched, same filters, ranked by sun_gained_s, pair distinct\n    from the winter scenarios.",
    "place_filter": {
     "kinds": [
      "hotel",
@@ -19506,7 +19506,7 @@
       "fastest_duration>25min": 324,
       "added_time>25%": 434
      },
-     "elapsed_s": 71.4,
+     "elapsed_s": 43.0,
      "departs": [
       "09:00",
       "09:30",
@@ -19532,13 +19532,66 @@
       "winter_morning_walk": "address_sky_view->dubai_mall walk 10:00 winter",
       "office_lunch_walk": "burj_park->boulevard_plaza walk 12:30 winter"
      }
+    },
+    {
+     "places": 36,
+     "pairs_in_band": 910,
+     "band_m": [
+      400.0,
+      1500.0
+     ],
+     "jobs": 3640,
+     "routed": 3640,
+     "unroutable": 0,
+     "rejections_first_failing_filter": {
+      "no_sun_gained": 308,
+      "network_ratio>1.6": 2016,
+      "fastest_duration>25min": 144,
+      "added_time>25%": 205
+     },
+     "elapsed_s": 15.0,
+     "departs": [
+      "10:00",
+      "10:30",
+      "11:00",
+      "11:30"
+     ],
+     "dates": [
+      "spring"
+     ],
+     "modes": [
+      "walk"
+     ],
+     "skipped_dates_no_exposure": [],
+     "name": "spring late morning, open daylight window only",
+     "windows": {
+      "10:00": {
+       "active": true,
+       "reasons": []
+      },
+      "10:30": {
+       "active": true,
+       "reasons": []
+      },
+      "11:00": {
+       "active": true,
+       "reasons": []
+      },
+      "11:30": {
+       "active": true,
+       "reasons": []
+      }
+     },
+     "eligible": 967,
+     "selected": {
+      "spring_daylight_walk": "business_bay_metro->burj_park walk 10:30 spring"
+     }
     }
    ],
    "notes": [
-    "winter_morning_walk: recorded weather shows Cloud cover is about 97% at this time, so the sunny route has little direct sun today. The sun figures assume a clear sky.",
-    "winter_morning_walk: No daylight / vitamin D window now: the sun is 31.4 deg high, below 45 deg (your shadow is longer than you are); cloud cover 97% is 70% or more.",
-    "office_lunch_walk: recorded weather shows Cloud cover is about 100% at this time, so the sunny route has little direct sun today. The sun figures assume a clear sky.",
-    "office_lunch_walk: No daylight / vitamin D window now: the sun is 43.7 deg high, below 45 deg (your shadow is longer than you are); cloud cover 100% is 70% or more."
+    "winter_morning_walk: No daylight / vitamin D window now: the sun is 31.4 deg high, below 45 deg (your shadow is longer than you are).",
+    "office_lunch_walk: No daylight / vitamin D window now: the sun is 43.7 deg high, below 45 deg (your shadow is longer than you are).",
+    "spring_daylight_walk: UV index 8.7 is very high. Extra protection: avoid being outside around midday; seek shade; shirt, sunscreen and hat are a must."
    ],
    "min_sun_gained_s": 90.0,
    "lambdas": {
@@ -27908,17 +27961,23 @@
      },
      "daylight_window": {
       "active": false,
-      "text": "No daylight / vitamin D window now: the sun is 31.4 deg high, below 45 deg (your shadow is longer than you are); cloud cover 97% is 70% or more.",
+      "text": "No daylight / vitamin D window now: the sun is 31.4 deg high, below 45 deg (your shadow is longer than you are).",
       "sun_alt_deg": 31.4,
       "shadow_ratio": 1.64,
       "shadow_text": "Your shadow is 1.6\u00d7 your height.",
       "uv_index": 2.6,
       "cloud_cover_pct": 97.0,
+      "sky": {
+       "overcast": false,
+       "basis": "radiation",
+       "clear_sky_index": 0.89,
+       "cloud_cover_pct": 97.0,
+       "rule": "overcast when measured / Haurwitz clear-sky radiation < 0.4"
+      },
       "reasons": [
-       "the sun is 31.4 deg high, below 45 deg (your shadow is longer than you are)",
-       "cloud cover 97% is 70% or more"
+       "the sun is 31.4 deg high, below 45 deg (your shadow is longer than you are)"
       ],
-      "rule": "sun altitude >= 45 deg, UV index >= 3, cloud cover < 70 % (rule of thumb)",
+      "rule": "sun altitude >= 45 deg, UV index >= 3, not overcast (rule of thumb)",
       "disclaimer": "Well-being guidance, not medical advice."
      },
      "breaks": {
@@ -27927,10 +27986,7 @@
       "prompts": [],
       "rule": "a prompt every 10 min of direct sun when the apparent temperature is >= 32.2 C"
      },
-     "overcast": {
-      "cloud_cover_pct": 97,
-      "text": "Cloud cover is about 97% at this time, so the sunny route has little direct sun today. The sun figures assume a clear sky."
-     },
+     "overcast": null,
      "weather": {
       "source": "cached",
       "label": "Recorded weather for 2026-01-15 (Open-Meteo archive)",
@@ -27938,7 +27994,8 @@
       "apparent_c": 20.9,
       "uv_index": 2.6,
       "cloud_cover_pct": 97,
-      "shortwave_wm2": 386
+      "shortwave_wm2": 386,
+      "clear_sky_index": 0.89
      },
      "disclaimer": "Well-being guidance, not medical advice."
     },
@@ -33994,17 +34051,23 @@
      },
      "daylight_window": {
       "active": false,
-      "text": "No daylight / vitamin D window now: the sun is 43.7 deg high, below 45 deg (your shadow is longer than you are); cloud cover 100% is 70% or more.",
+      "text": "No daylight / vitamin D window now: the sun is 43.7 deg high, below 45 deg (your shadow is longer than you are).",
       "sun_alt_deg": 43.7,
       "shadow_ratio": 1.05,
       "shadow_text": "Your shadow is 1.0\u00d7 your height.",
       "uv_index": 5.0,
       "cloud_cover_pct": 100.0,
+      "sky": {
+       "overcast": false,
+       "basis": "radiation",
+       "clear_sky_index": 0.92,
+       "cloud_cover_pct": 100.0,
+       "rule": "overcast when measured / Haurwitz clear-sky radiation < 0.4"
+      },
       "reasons": [
-       "the sun is 43.7 deg high, below 45 deg (your shadow is longer than you are)",
-       "cloud cover 100% is 70% or more"
+       "the sun is 43.7 deg high, below 45 deg (your shadow is longer than you are)"
       ],
-      "rule": "sun altitude >= 45 deg, UV index >= 3, cloud cover < 70 % (rule of thumb)",
+      "rule": "sun altitude >= 45 deg, UV index >= 3, not overcast (rule of thumb)",
       "disclaimer": "Well-being guidance, not medical advice."
      },
      "breaks": {
@@ -34013,10 +34076,7 @@
       "prompts": [],
       "rule": "a prompt every 10 min of direct sun when the apparent temperature is >= 32.2 C"
      },
-     "overcast": {
-      "cloud_cover_pct": 100,
-      "text": "Cloud cover is about 100% at this time, so the sunny route has little direct sun today. The sun figures assume a clear sky."
-     },
+     "overcast": null,
      "weather": {
       "source": "cached",
       "label": "Recorded weather for 2026-01-15 (Open-Meteo archive)",
@@ -34024,7 +34084,7501 @@
       "apparent_c": 24.8,
       "uv_index": 5.0,
       "cloud_cover_pct": 100,
-      "shortwave_wm2": 632
+      "shortwave_wm2": 632,
+      "clear_sky_index": 0.92
+     },
+     "disclaimer": "Well-being guidance, not medical advice."
+    },
+    "departure": null
+   },
+   {
+    "id": "spring_daylight_walk",
+    "persona": "daylight_seeker",
+    "preference": "sun",
+    "mode": "walk",
+    "origin": {
+     "name": "Business Bay Metro Station",
+     "lat": 25.1913122,
+     "lon": 55.2603981,
+     "node": 1568,
+     "x": -1410.3786736788556,
+     "z": 651.0375971999998
+    },
+    "dest": {
+     "name": "Burj Park",
+     "lat": 25.194182,
+     "lon": 55.2734241,
+     "node": 3931,
+     "x": -98.30012695733265,
+     "z": 333.7123319997015
+    },
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1349.9,
+    "fastest": {
+     "lambda": 0.0,
+     "label": "fastest",
+     "mode": "walk",
+     "depart": "2026-04-15T10:30:00+04:00",
+     "stats": {
+      "distance_m": 1899.47,
+      "duration_s": 1434.83,
+      "sun_exposure_s": 1101.2,
+      "shaded_pct": 23.25,
+      "covered_pct": 0.58,
+      "indoor_pct": 0.13,
+      "rhl": 1217.52,
+      "added_time_s": 0.0,
+      "sun_saved_s": 0.0,
+      "sun_saved_pct": 0.0,
+      "rhl_saved_pct": 0.0,
+      "sun_gained_s": 0.0,
+      "sun_gained_pct": 0.0
+     },
+     "nodes": [
+      1568,
+      1569,
+      1570,
+      1574,
+      1573,
+      2767,
+      1403,
+      109,
+      322,
+      2743,
+      559,
+      1399,
+      2740,
+      1404,
+      1405,
+      3601,
+      1194,
+      738,
+      2050,
+      693,
+      2105,
+      2103,
+      2047,
+      695,
+      988,
+      994,
+      990,
+      1935,
+      991,
+      993,
+      992,
+      652,
+      653,
+      1539,
+      1540,
+      3032,
+      2043,
+      2610,
+      3842,
+      2595,
+      3576,
+      3577,
+      3035,
+      3575,
+      762,
+      475,
+      3934,
+      1747,
+      3931
+     ],
+     "edges": [
+      1860,
+      1861,
+      1864,
+      1857,
+      1858,
+      1947,
+      126,
+      1782,
+      2020,
+      2021,
+      2019,
+      2018,
+      1783,
+      1784,
+      1785,
+      1786,
+      1787,
+      1788,
+      2009,
+      2010,
+      1814,
+      1813,
+      1812,
+      1811,
+      1831,
+      1832,
+      1833,
+      1834,
+      1835,
+      2138,
+      2098,
+      2136,
+      2097,
+      2185,
+      2111,
+      2200,
+      2195,
+      2194,
+      2193,
+      2273,
+      2272,
+      2271,
+      2270,
+      2079,
+      2078,
+      2067,
+      2066,
+      2437
+     ],
+     "arrival_s": [
+      0.0,
+      7.67,
+      9.47,
+      10.07,
+      18.81,
+      108.87,
+      115.37,
+      134.91,
+      154.39,
+      159.22,
+      161.6,
+      178.63,
+      230.0,
+      311.71,
+      372.32,
+      443.36,
+      536.65,
+      545.58,
+      571.79,
+      593.48,
+      597.11,
+      603.03,
+      624.58,
+      688.62,
+      702.38,
+      717.18,
+      723.21,
+      737.14,
+      764.11,
+      777.18,
+      782.42,
+      840.26,
+      865.62,
+      898.83,
+      974.41,
+      985.33,
+      1003.33,
+      1037.69,
+      1084.77,
+      1164.72,
+      1167.58,
+      1181.42,
+      1238.71,
+      1291.21,
+      1294.79,
+      1337.4,
+      1392.0,
+      1430.83,
+      1434.83
+     ],
+     "segments": [
+      {
+       "edge": 1860,
+       "geometry": [
+        [
+         -1430.61,
+         689.78
+        ],
+        [
+         -1434.14,
+         693.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.190962,
+         55.260197
+        ],
+        [
+         25.190925,
+         55.260162
+        ]
+       ],
+       "arrival_s": 0.0,
+       "t_s": 7.67,
+       "sun": 0.0,
+       "cls": "covered",
+       "name": null
+      },
+      {
+       "edge": 1861,
+       "geometry": [
+        [
+         -1434.14,
+         693.83
+        ],
+        [
+         -1435.58,
+         695.48
+        ]
+       ],
+       "latlon": [
+        [
+         25.190925,
+         55.260162
+        ],
+        [
+         25.19091,
+         55.260148
+        ]
+       ],
+       "arrival_s": 7.67,
+       "t_s": 1.8,
+       "sun": 0.0,
+       "cls": "indoor",
+       "name": null
+      },
+      {
+       "edge": 1864,
+       "geometry": [
+        [
+         -1435.58,
+         695.48
+        ],
+        [
+         -1434.94,
+         696.02
+        ]
+       ],
+       "latlon": [
+        [
+         25.19091,
+         55.260148
+        ],
+        [
+         25.190905,
+         55.260154
+        ]
+       ],
+       "arrival_s": 9.47,
+       "t_s": 0.6,
+       "sun": 0.0,
+       "cls": "covered",
+       "name": null
+      },
+      {
+       "edge": 1857,
+       "geometry": [
+        [
+         -1434.94,
+         696.02
+        ],
+        [
+         -1425.38,
+         703.65
+        ]
+       ],
+       "latlon": [
+        [
+         25.190905,
+         55.260154
+        ],
+        [
+         25.190836,
+         55.260249
+        ]
+       ],
+       "arrival_s": 10.07,
+       "t_s": 8.74,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1858,
+       "geometry": [
+        [
+         -1425.38,
+         703.65
+        ],
+        [
+         -1345.57,
+         606.02
+        ]
+       ],
+       "latlon": [
+        [
+         25.190836,
+         55.260249
+        ],
+        [
+         25.191719,
+         55.261042
+        ]
+       ],
+       "arrival_s": 18.81,
+       "t_s": 90.06,
+       "sun": 0.88,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1947,
+       "geometry": [
+        [
+         -1345.57,
+         606.02
+        ],
+        [
+         -1339.26,
+         612.58
+        ]
+       ],
+       "latlon": [
+        [
+         25.191719,
+         55.261042
+        ],
+        [
+         25.19166,
+         55.261104
+        ]
+       ],
+       "arrival_s": 108.87,
+       "t_s": 6.5,
+       "sun": 0.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 126,
+       "geometry": [
+        [
+         -1339.26,
+         612.58
+        ],
+        [
+         -1333.51,
+         607.85
+        ],
+        [
+         -1326.44,
+         602.76
+        ]
+       ],
+       "latlon": [
+        [
+         25.19166,
+         55.261104
+        ],
+        [
+         25.191703,
+         55.261161
+        ],
+        [
+         25.191749,
+         55.261231
+        ]
+       ],
+       "arrival_s": 115.37,
+       "t_s": 19.54,
+       "sun": 0.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1782,
+       "geometry": [
+        [
+         -1326.44,
+         602.76
+        ],
+        [
+         -1304.43,
+         586.66
+        ]
+       ],
+       "latlon": [
+        [
+         25.191749,
+         55.261231
+        ],
+        [
+         25.191894,
+         55.26145
+        ]
+       ],
+       "arrival_s": 134.91,
+       "t_s": 19.48,
+       "sun": 0.524,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2020,
+       "geometry": [
+        [
+         -1304.43,
+         586.66
+        ],
+        [
+         -1302.0,
+         584.33
+        ],
+        [
+         -1299.04,
+         582.67
+        ]
+       ],
+       "latlon": [
+        [
+         25.191894,
+         55.26145
+        ],
+        [
+         25.191915,
+         55.261474
+        ],
+        [
+         25.19193,
+         55.261503
+        ]
+       ],
+       "arrival_s": 154.39,
+       "t_s": 4.83,
+       "sun": 0.397,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2021,
+       "geometry": [
+        [
+         -1299.04,
+         582.67
+        ],
+        [
+         -1295.93,
+         581.5
+        ]
+       ],
+       "latlon": [
+        [
+         25.19193,
+         55.261503
+        ],
+        [
+         25.191941,
+         55.261534
+        ]
+       ],
+       "arrival_s": 159.22,
+       "t_s": 2.38,
+       "sun": 0.001,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2019,
+       "geometry": [
+        [
+         -1295.93,
+         581.5
+        ],
+        [
+         -1292.87,
+         579.55
+        ],
+        [
+         -1290.22,
+         577.09
+        ],
+        [
+         -1288.04,
+         574.19
+        ],
+        [
+         -1286.42,
+         570.96
+        ],
+        [
+         -1283.32,
+         562.13
+        ]
+       ],
+       "latlon": [
+        [
+         25.191941,
+         55.261534
+        ],
+        [
+         25.191959,
+         55.261565
+        ],
+        [
+         25.191981,
+         55.261591
+        ],
+        [
+         25.192007,
+         55.261613
+        ],
+        [
+         25.192036,
+         55.261629
+        ],
+        [
+         25.192116,
+         55.26166
+        ]
+       ],
+       "arrival_s": 161.6,
+       "t_s": 17.04,
+       "sun": 0.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2018,
+       "geometry": [
+        [
+         -1283.32,
+         562.13
+        ],
+        [
+         -1270.46,
+         524.01
+        ],
+        [
+         -1267.16,
+         515.66
+        ],
+        [
+         -1262.23,
+         505.27
+        ]
+       ],
+       "latlon": [
+        [
+         25.192116,
+         55.26166
+        ],
+        [
+         25.192461,
+         55.261787
+        ],
+        [
+         25.192537,
+         55.26182
+        ],
+        [
+         25.19263,
+         55.261869
+        ]
+       ],
+       "arrival_s": 178.63,
+       "t_s": 51.36,
+       "sun": 0.341,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1783,
+       "geometry": [
+        [
+         -1262.23,
+         505.27
+        ],
+        [
+         -1256.78,
+         495.19
+        ],
+        [
+         -1250.57,
+         485.52
+        ],
+        [
+         -1243.72,
+         476.29
+        ],
+        [
+         -1236.28,
+         467.53
+        ],
+        [
+         -1207.87,
+         435.03
+        ],
+        [
+         -1202.22,
+         428.77
+        ],
+        [
+         -1196.35,
+         422.72
+        ],
+        [
+         -1190.24,
+         416.92
+        ]
+       ],
+       "latlon": [
+        [
+         25.19263,
+         55.261869
+        ],
+        [
+         25.192722,
+         55.261923
+        ],
+        [
+         25.192809,
+         55.261985
+        ],
+        [
+         25.192893,
+         55.262053
+        ],
+        [
+         25.192972,
+         55.262127
+        ],
+        [
+         25.193266,
+         55.262409
+        ],
+        [
+         25.193322,
+         55.262465
+        ],
+        [
+         25.193377,
+         55.262523
+        ],
+        [
+         25.193429,
+         55.262584
+        ]
+       ],
+       "arrival_s": 230.0,
+       "t_s": 81.71,
+       "sun": 0.603,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1784,
+       "geometry": [
+        [
+         -1190.24,
+         416.92
+        ],
+        [
+         -1178.08,
+         402.62
+        ],
+        [
+         -1170.12,
+         394.45
+        ],
+        [
+         -1161.66,
+         386.8
+        ],
+        [
+         -1152.74,
+         379.68
+        ],
+        [
+         -1143.37,
+         373.14
+        ],
+        [
+         -1133.62,
+         367.21
+        ],
+        [
+         -1125.73,
+         362.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.193429,
+         55.262584
+        ],
+        [
+         25.193559,
+         55.262704
+        ],
+        [
+         25.193633,
+         55.262783
+        ],
+        [
+         25.193702,
+         55.262867
+        ],
+        [
+         25.193766,
+         55.262956
+        ],
+        [
+         25.193825,
+         55.263049
+        ],
+        [
+         25.193879,
+         55.263146
+        ],
+        [
+         25.193919,
+         55.263224
+        ]
+       ],
+       "arrival_s": 311.71,
+       "t_s": 60.61,
+       "sun": 0.478,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1785,
+       "geometry": [
+        [
+         -1125.73,
+         362.83
+        ],
+        [
+         -1037.06,
+         317.8
+        ]
+       ],
+       "latlon": [
+        [
+         25.193919,
+         55.263224
+        ],
+        [
+         25.194326,
+         55.264104
+        ]
+       ],
+       "arrival_s": 372.32,
+       "t_s": 71.04,
+       "sun": 0.592,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1786,
+       "geometry": [
+        [
+         -1037.06,
+         317.8
+        ],
+        [
+         -960.98,
+         279.0
+        ],
+        [
+         -950.99,
+         273.5
+        ],
+        [
+         -941.35,
+         267.67
+        ],
+        [
+         -932.08,
+         261.24
+        ],
+        [
+         -923.25,
+         254.26
+        ]
+       ],
+       "latlon": [
+        [
+         25.194326,
+         55.264104
+        ],
+        [
+         25.194677,
+         55.26486
+        ],
+        [
+         25.194727,
+         55.264959
+        ],
+        [
+         25.194779,
+         55.265055
+        ],
+        [
+         25.194837,
+         55.265147
+        ],
+        [
+         25.194901,
+         55.265234
+        ]
+       ],
+       "arrival_s": 443.36,
+       "t_s": 93.29,
+       "sun": 0.988,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1787,
+       "geometry": [
+        [
+         -923.25,
+         254.26
+        ],
+        [
+         -913.96,
+         245.88
+        ]
+       ],
+       "latlon": [
+        [
+         25.194901,
+         55.265234
+        ],
+        [
+         25.194976,
+         55.265326
+        ]
+       ],
+       "arrival_s": 536.65,
+       "t_s": 8.94,
+       "sun": 0.165,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1788,
+       "geometry": [
+        [
+         -913.96,
+         245.88
+        ],
+        [
+         -890.74,
+         219.52
+        ],
+        [
+         -889.72,
+         218.35
+        ]
+       ],
+       "latlon": [
+        [
+         25.194976,
+         55.265326
+        ],
+        [
+         25.195215,
+         55.265557
+        ],
+        [
+         25.195225,
+         55.265567
+        ]
+       ],
+       "arrival_s": 545.58,
+       "t_s": 26.21,
+       "sun": 0.001,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2009,
+       "geometry": [
+        [
+         -889.72,
+         218.35
+        ],
+        [
+         -870.32,
+         194.99
+        ]
+       ],
+       "latlon": [
+        [
+         25.195225,
+         55.265567
+        ],
+        [
+         25.195437,
+         55.26576
+        ]
+       ],
+       "arrival_s": 571.79,
+       "t_s": 21.69,
+       "sun": 0.873,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2010,
+       "geometry": [
+        [
+         -870.32,
+         194.99
+        ],
+        [
+         -867.07,
+         191.07
+        ]
+       ],
+       "latlon": [
+        [
+         25.195437,
+         55.26576
+        ],
+        [
+         25.195472,
+         55.265792
+        ]
+       ],
+       "arrival_s": 593.48,
+       "t_s": 3.63,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1814,
+       "geometry": [
+        [
+         -867.07,
+         191.07
+        ],
+        [
+         -858.95,
+         192.65
+        ]
+       ],
+       "latlon": [
+        [
+         25.195472,
+         55.265792
+        ],
+        [
+         25.195458,
+         55.265873
+        ]
+       ],
+       "arrival_s": 597.11,
+       "t_s": 5.91,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 1813,
+       "geometry": [
+        [
+         -858.95,
+         192.65
+        ],
+        [
+         -853.92,
+         194.5
+        ],
+        [
+         -847.74,
+         197.36
+        ],
+        [
+         -841.94,
+         200.92
+        ]
+       ],
+       "latlon": [
+        [
+         25.195458,
+         55.265873
+        ],
+        [
+         25.195441,
+         55.265922
+        ],
+        [
+         25.195415,
+         55.265984
+        ],
+        [
+         25.195383,
+         55.266041
+        ]
+       ],
+       "arrival_s": 603.03,
+       "t_s": 21.55,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 1812,
+       "geometry": [
+        [
+         -841.94,
+         200.92
+        ],
+        [
+         -832.91,
+         209.91
+        ],
+        [
+         -773.13,
+         258.3
+        ]
+       ],
+       "latlon": [
+        [
+         25.195383,
+         55.266041
+        ],
+        [
+         25.195302,
+         55.266131
+        ],
+        [
+         25.194864,
+         55.266725
+        ]
+       ],
+       "arrival_s": 624.58,
+       "t_s": 64.04,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 1811,
+       "geometry": [
+        [
+         -773.13,
+         258.3
+        ],
+        [
+         -758.21,
+         270.5
+        ]
+       ],
+       "latlon": [
+        [
+         25.194864,
+         55.266725
+        ],
+        [
+         25.194754,
+         55.266873
+        ]
+       ],
+       "arrival_s": 688.62,
+       "t_s": 13.76,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 1831,
+       "geometry": [
+        [
+         -758.21,
+         270.5
+        ],
+        [
+         -752.18,
+         263.14
+        ]
+       ],
+       "latlon": [
+        [
+         25.194754,
+         55.266873
+        ],
+        [
+         25.19482,
+         55.266933
+        ]
+       ],
+       "arrival_s": 702.38,
+       "t_s": 14.79,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1832,
+       "geometry": [
+        [
+         -752.18,
+         263.14
+        ],
+        [
+         -745.52,
+         268.33
+        ]
+       ],
+       "latlon": [
+        [
+         25.19482,
+         55.266933
+        ],
+        [
+         25.194773,
+         55.266999
+        ]
+       ],
+       "arrival_s": 717.18,
+       "t_s": 6.04,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1833,
+       "geometry": [
+        [
+         -745.52,
+         268.33
+        ],
+        [
+         -739.36,
+         273.9
+        ]
+       ],
+       "latlon": [
+        [
+         25.194773,
+         55.266999
+        ],
+        [
+         25.194723,
+         55.26706
+        ]
+       ],
+       "arrival_s": 723.21,
+       "t_s": 13.93,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1834,
+       "geometry": [
+        [
+         -739.36,
+         273.9
+        ],
+        [
+         -720.4,
+         294.47
+        ],
+        [
+         -712.8,
+         300.63
+        ]
+       ],
+       "latlon": [
+        [
+         25.194723,
+         55.26706
+        ],
+        [
+         25.194537,
+         55.267248
+        ],
+        [
+         25.194481,
+         55.267323
+        ]
+       ],
+       "arrival_s": 737.14,
+       "t_s": 26.97,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1835,
+       "geometry": [
+        [
+         -712.8,
+         300.63
+        ],
+        [
+         -707.35,
+         305.18
+        ]
+       ],
+       "latlon": [
+        [
+         25.194481,
+         55.267323
+        ],
+        [
+         25.19444,
+         55.267378
+        ]
+       ],
+       "arrival_s": 764.11,
+       "t_s": 13.07,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2138,
+       "geometry": [
+        [
+         -707.35,
+         305.18
+        ],
+        [
+         -700.25,
+         303.38
+        ]
+       ],
+       "latlon": [
+        [
+         25.19444,
+         55.267378
+        ],
+        [
+         25.194456,
+         55.267448
+        ]
+       ],
+       "arrival_s": 777.18,
+       "t_s": 5.24,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2098,
+       "geometry": [
+        [
+         -700.25,
+         303.38
+        ],
+        [
+         -698.91,
+         308.04
+        ],
+        [
+         -698.52,
+         309.39
+        ],
+        [
+         -695.83,
+         315.05
+        ],
+        [
+         -692.11,
+         319.98
+        ],
+        [
+         -676.91,
+         338.05
+        ],
+        [
+         -673.31,
+         343.22
+        ],
+        [
+         -670.07,
+         347.57
+        ],
+        [
+         -667.23,
+         351.42
+        ],
+        [
+         -665.22,
+         354.82
+        ],
+        [
+         -663.63,
+         361.64
+        ]
+       ],
+       "latlon": [
+        [
+         25.194456,
+         55.267448
+        ],
+        [
+         25.194414,
+         55.267461
+        ],
+        [
+         25.194402,
+         55.267465
+        ],
+        [
+         25.194351,
+         55.267492
+        ],
+        [
+         25.194306,
+         55.267529
+        ],
+        [
+         25.194143,
+         55.26768
+        ],
+        [
+         25.194096,
+         55.267716
+        ],
+        [
+         25.194057,
+         55.267748
+        ],
+        [
+         25.194022,
+         55.267776
+        ],
+        [
+         25.193991,
+         55.267796
+        ],
+        [
+         25.193929,
+         55.267812
+        ]
+       ],
+       "arrival_s": 782.42,
+       "t_s": 57.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2136,
+       "geometry": [
+        [
+         -663.63,
+         361.64
+        ],
+        [
+         -660.92,
+         368.17
+        ],
+        [
+         -657.8,
+         375.19
+        ],
+        [
+         -655.8,
+         382.25
+        ],
+        [
+         -652.75,
+         395.32
+        ]
+       ],
+       "latlon": [
+        [
+         25.193929,
+         55.267812
+        ],
+        [
+         25.19387,
+         55.267839
+        ],
+        [
+         25.193807,
+         55.26787
+        ],
+        [
+         25.193743,
+         55.267889
+        ],
+        [
+         25.193625,
+         55.26792
+        ]
+       ],
+       "arrival_s": 840.26,
+       "t_s": 25.36,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 2097,
+       "geometry": [
+        [
+         -652.75,
+         395.32
+        ],
+        [
+         -646.81,
+         416.76
+        ],
+        [
+         -642.27,
+         440.58
+        ]
+       ],
+       "latlon": [
+        [
+         25.193625,
+         55.26792
+        ],
+        [
+         25.193431,
+         55.267979
+        ],
+        [
+         25.193216,
+         55.268024
+        ]
+       ],
+       "arrival_s": 865.62,
+       "t_s": 33.21,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 2185,
+       "geometry": [
+        [
+         -642.27,
+         440.58
+        ],
+        [
+         -631.14,
+         438.03
+        ],
+        [
+         -592.29,
+         426.16
+        ],
+        [
+         -586.56,
+         423.76
+        ],
+        [
+         -581.24,
+         420.55
+        ],
+        [
+         -576.46,
+         416.59
+        ],
+        [
+         -572.32,
+         411.97
+        ],
+        [
+         -568.93,
+         406.78
+        ],
+        [
+         -556.53,
+         387.73
+        ]
+       ],
+       "latlon": [
+        [
+         25.193216,
+         55.268024
+        ],
+        [
+         25.193239,
+         55.268134
+        ],
+        [
+         25.193346,
+         55.26852
+        ],
+        [
+         25.193368,
+         55.268577
+        ],
+        [
+         25.193397,
+         55.26863
+        ],
+        [
+         25.193432,
+         55.268677
+        ],
+        [
+         25.193474,
+         55.268718
+        ],
+        [
+         25.193521,
+         55.268752
+        ],
+        [
+         25.193693,
+         55.268875
+        ]
+       ],
+       "arrival_s": 898.83,
+       "t_s": 75.58,
+       "sun": 0.661,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2111,
+       "geometry": [
+        [
+         -556.53,
+         387.73
+        ],
+        [
+         -542.82,
+         394.49
+        ]
+       ],
+       "latlon": [
+        [
+         25.193693,
+         55.268875
+        ],
+        [
+         25.193632,
+         55.269011
+        ]
+       ],
+       "arrival_s": 974.41,
+       "t_s": 10.92,
+       "sun": 0.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2200,
+       "geometry": [
+        [
+         -542.82,
+         394.49
+        ],
+        [
+         -537.28,
+         397.49
+        ],
+        [
+         -531.45,
+         399.87
+        ],
+        [
+         -525.39,
+         401.6
+        ],
+        [
+         -519.17,
+         402.68
+        ]
+       ],
+       "latlon": [
+        [
+         25.193632,
+         55.269011
+        ],
+        [
+         25.193605,
+         55.269066
+        ],
+        [
+         25.193584,
+         55.269124
+        ],
+        [
+         25.193568,
+         55.269184
+        ],
+        [
+         25.193558,
+         55.269246
+        ]
+       ],
+       "arrival_s": 985.33,
+       "t_s": 18.01,
+       "sun": 0.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2195,
+       "geometry": [
+        [
+         -519.17,
+         402.68
+        ],
+        [
+         -510.54,
+         399.12
+        ],
+        [
+         -473.35,
+         388.19
+        ]
+       ],
+       "latlon": [
+        [
+         25.193558,
+         55.269246
+        ],
+        [
+         25.19359,
+         55.269331
+        ],
+        [
+         25.193689,
+         55.269701
+        ]
+       ],
+       "arrival_s": 1003.33,
+       "t_s": 34.36,
+       "sun": 0.835,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2194,
+       "geometry": [
+        [
+         -473.35,
+         388.19
+        ],
+        [
+         -456.06,
+         383.33
+        ],
+        [
+         -437.63,
+         378.41
+        ],
+        [
+         -422.66,
+         374.14
+        ],
+        [
+         -420.63,
+         373.56
+        ]
+       ],
+       "latlon": [
+        [
+         25.193689,
+         55.269701
+        ],
+        [
+         25.193733,
+         55.269872
+        ],
+        [
+         25.193778,
+         55.270055
+        ],
+        [
+         25.193816,
+         55.270204
+        ],
+        [
+         25.193822,
+         55.270224
+        ]
+       ],
+       "arrival_s": 1037.69,
+       "t_s": 47.08,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2193,
+       "geometry": [
+        [
+         -420.63,
+         373.56
+        ],
+        [
+         -360.98,
+         356.58
+        ],
+        [
+         -338.07,
+         349.8
+        ],
+        [
+         -333.2,
+         349.03
+        ],
+        [
+         -328.26,
+         348.75
+        ],
+        [
+         -323.33,
+         348.96
+        ]
+       ],
+       "latlon": [
+        [
+         25.193822,
+         55.270224
+        ],
+        [
+         25.193975,
+         55.270816
+        ],
+        [
+         25.194037,
+         55.271044
+        ],
+        [
+         25.194043,
+         55.271092
+        ],
+        [
+         25.194046,
+         55.271141
+        ],
+        [
+         25.194044,
+         55.27119
+        ]
+       ],
+       "arrival_s": 1084.77,
+       "t_s": 79.95,
+       "sun": 0.619,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2273,
+       "geometry": [
+        [
+         -323.33,
+         348.96
+        ],
+        [
+         -320.1,
+         346.59
+        ]
+       ],
+       "latlon": [
+        [
+         25.194044,
+         55.27119
+        ],
+        [
+         25.194066,
+         55.271222
+        ]
+       ],
+       "arrival_s": 1164.72,
+       "t_s": 2.86,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2272,
+       "geometry": [
+        [
+         -320.1,
+         346.59
+        ],
+        [
+         -316.88,
+         343.59
+        ],
+        [
+         -314.08,
+         340.45
+        ],
+        [
+         -311.2,
+         337.33
+        ],
+        [
+         -305.7,
+         333.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.194066,
+         55.271222
+        ],
+        [
+         25.194093,
+         55.271254
+        ],
+        [
+         25.194121,
+         55.271282
+        ],
+        [
+         25.194149,
+         55.27131
+        ],
+        [
+         25.194181,
+         55.271365
+        ]
+       ],
+       "arrival_s": 1167.58,
+       "t_s": 13.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2271,
+       "geometry": [
+        [
+         -305.7,
+         333.83
+        ],
+        [
+         -299.39,
+         331.47
+        ],
+        [
+         -292.82,
+         330.02
+        ],
+        [
+         -286.1,
+         329.51
+        ],
+        [
+         -280.24,
+         329.78
+        ],
+        [
+         -274.45,
+         330.73
+        ],
+        [
+         -268.81,
+         332.3
+        ],
+        [
+         -263.87,
+         332.6
+        ],
+        [
+         -258.92,
+         332.26
+        ],
+        [
+         -254.07,
+         331.31
+        ],
+        [
+         -249.36,
+         329.75
+        ],
+        [
+         -244.78,
+         327.6
+        ],
+        [
+         -239.32,
+         325.15
+        ],
+        [
+         -233.96,
+         322.99
+        ],
+        [
+         -228.9,
+         320.19
+        ]
+       ],
+       "latlon": [
+        [
+         25.194181,
+         55.271365
+        ],
+        [
+         25.194202,
+         55.271428
+        ],
+        [
+         25.194215,
+         55.271493
+        ],
+        [
+         25.19422,
+         55.27156
+        ],
+        [
+         25.194218,
+         55.271618
+        ],
+        [
+         25.194209,
+         55.271675
+        ],
+        [
+         25.194195,
+         55.271731
+        ],
+        [
+         25.194192,
+         55.27178
+        ],
+        [
+         25.194195,
+         55.27183
+        ],
+        [
+         25.194204,
+         55.271878
+        ],
+        [
+         25.194218,
+         55.271924
+        ],
+        [
+         25.194237,
+         55.27197
+        ],
+        [
+         25.194259,
+         55.272024
+        ],
+        [
+         25.194279,
+         55.272077
+        ],
+        [
+         25.194304,
+         55.272128
+        ]
+       ],
+       "arrival_s": 1181.42,
+       "t_s": 57.29,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2270,
+       "geometry": [
+        [
+         -228.9,
+         320.19
+        ],
+        [
+         -224.89,
+         317.89
+        ],
+        [
+         -221.2,
+         315.05
+        ],
+        [
+         -219.09,
+         312.48
+        ],
+        [
+         -217.63,
+         309.51
+        ],
+        [
+         -216.91,
+         306.29
+        ],
+        [
+         -216.95,
+         302.98
+        ],
+        [
+         -217.74,
+         299.78
+        ],
+        [
+         -225.5,
+         280.69
+        ],
+        [
+         -227.09,
+         275.09
+        ],
+        [
+         -228.13,
+         269.36
+        ],
+        [
+         -228.59,
+         263.55
+        ],
+        [
+         -228.48,
+         257.75
+        ],
+        [
+         -228.11,
+         253.97
+        ]
+       ],
+       "latlon": [
+        [
+         25.194304,
+         55.272128
+        ],
+        [
+         25.194325,
+         55.272167
+        ],
+        [
+         25.194351,
+         55.272204
+        ],
+        [
+         25.194374,
+         55.272225
+        ],
+        [
+         25.194401,
+         55.272239
+        ],
+        [
+         25.19443,
+         55.272247
+        ],
+        [
+         25.19446,
+         55.272246
+        ],
+        [
+         25.194489,
+         55.272238
+        ],
+        [
+         25.194662,
+         55.272161
+        ],
+        [
+         25.194712,
+         55.272146
+        ],
+        [
+         25.194764,
+         55.272135
+        ],
+        [
+         25.194817,
+         55.272131
+        ],
+        [
+         25.194869,
+         55.272132
+        ],
+        [
+         25.194903,
+         55.272135
+        ]
+       ],
+       "arrival_s": 1238.71,
+       "t_s": 52.5,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2079,
+       "geometry": [
+        [
+         -228.11,
+         253.97
+        ],
+        [
+         -224.08,
+         250.98
+        ]
+       ],
+       "latlon": [
+        [
+         25.194903,
+         55.272135
+        ],
+        [
+         25.19493,
+         55.272175
+        ]
+       ],
+       "arrival_s": 1291.21,
+       "t_s": 3.58,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2078,
+       "geometry": [
+        [
+         -224.08,
+         250.98
+        ],
+        [
+         -221.33,
+         249.34
+        ],
+        [
+         -218.26,
+         247.03
+        ],
+        [
+         -215.34,
+         244.53
+        ],
+        [
+         -212.59,
+         241.85
+        ],
+        [
+         -210.02,
+         238.99
+        ],
+        [
+         -207.64,
+         235.98
+        ],
+        [
+         -205.22,
+         233.0
+        ],
+        [
+         -202.68,
+         230.81
+        ],
+        [
+         -199.46,
+         229.86
+        ],
+        [
+         -196.14,
+         230.35
+        ],
+        [
+         -174.09,
+         237.98
+        ]
+       ],
+       "latlon": [
+        [
+         25.19493,
+         55.272175
+        ],
+        [
+         25.194945,
+         55.272203
+        ],
+        [
+         25.194966,
+         55.272233
+        ],
+        [
+         25.194989,
+         55.272262
+        ],
+        [
+         25.195013,
+         55.272289
+        ],
+        [
+         25.195039,
+         55.272315
+        ],
+        [
+         25.195066,
+         55.272339
+        ],
+        [
+         25.195093,
+         55.272363
+        ],
+        [
+         25.195113,
+         55.272388
+        ],
+        [
+         25.195121,
+         55.27242
+        ],
+        [
+         25.195117,
+         55.272453
+        ],
+        [
+         25.195048,
+         55.272672
+        ]
+       ],
+       "arrival_s": 1294.79,
+       "t_s": 42.61,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2067,
+       "geometry": [
+        [
+         -174.09,
+         237.98
+        ],
+        [
+         -173.65,
+         260.88
+        ],
+        [
+         -172.23,
+         275.95
+        ],
+        [
+         -169.4,
+         291.1
+        ],
+        [
+         -164.52,
+         306.35
+        ],
+        [
+         -162.29,
+         312.96
+        ]
+       ],
+       "latlon": [
+        [
+         25.195048,
+         55.272672
+        ],
+        [
+         25.194841,
+         55.272676
+        ],
+        [
+         25.194704,
+         55.27269
+        ],
+        [
+         25.194567,
+         55.272718
+        ],
+        [
+         25.194429,
+         55.272767
+        ],
+        [
+         25.19437,
+         55.272789
+        ]
+       ],
+       "arrival_s": 1337.4,
+       "t_s": 54.6,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2066,
+       "geometry": [
+        [
+         -162.29,
+         312.96
+        ],
+        [
+         -160.58,
+         316.88
+        ],
+        [
+         -158.54,
+         321.77
+        ],
+        [
+         -151.29,
+         335.33
+        ],
+        [
+         -143.6,
+         349.49
+        ],
+        [
+         -135.71,
+         360.21
+        ]
+       ],
+       "latlon": [
+        [
+         25.19437,
+         55.272789
+        ],
+        [
+         25.194334,
+         55.272806
+        ],
+        [
+         25.19429,
+         55.272826
+        ],
+        [
+         25.194167,
+         55.272898
+        ],
+        [
+         25.194039,
+         55.272974
+        ],
+        [
+         25.193942,
+         55.273053
+        ]
+       ],
+       "arrival_s": 1392.0,
+       "t_s": 38.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2437,
+       "geometry": [
+        [
+         -135.71,
+         360.21
+        ],
+        [
+         -133.44,
+         358.56
+        ]
+       ],
+       "latlon": [
+        [
+         25.193942,
+         55.273053
+        ],
+        [
+         25.193957,
+         55.273075
+        ]
+       ],
+       "arrival_s": 1430.83,
+       "t_s": 4.0,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      }
+     ]
+    },
+    "sunniest": {
+     "lambda": 3.0,
+     "label": "sunniest",
+     "mode": "walk",
+     "depart": "2026-04-15T10:30:00+04:00",
+     "stats": {
+      "distance_m": 2220.19,
+      "duration_s": 1703.92,
+      "sun_exposure_s": 1625.0,
+      "shaded_pct": 4.63,
+      "covered_pct": 0.49,
+      "indoor_pct": 0.11,
+      "rhl": 1652.17,
+      "added_time_s": 269.09,
+      "sun_saved_s": -523.8,
+      "sun_saved_pct": -47.57,
+      "rhl_saved_pct": -35.7,
+      "sun_gained_s": 523.8,
+      "sun_gained_pct": 47.57
+     },
+     "nodes": [
+      1568,
+      1569,
+      1570,
+      1574,
+      1573,
+      3582,
+      841,
+      840,
+      561,
+      2124,
+      717,
+      716,
+      890,
+      883,
+      2626,
+      882,
+      889,
+      880,
+      910,
+      2813,
+      2033,
+      2031,
+      2027,
+      2021,
+      2019,
+      908,
+      909,
+      2026,
+      1417,
+      912,
+      312,
+      311,
+      5381,
+      2013,
+      2761,
+      310,
+      691,
+      935,
+      648,
+      649,
+      933,
+      2746,
+      932,
+      4140,
+      1626,
+      2062,
+      2908,
+      2042,
+      3620,
+      3036,
+      2595,
+      3576,
+      3577,
+      3035,
+      3575,
+      762,
+      475,
+      3934,
+      1747,
+      3931
+     ],
+     "edges": [
+      1860,
+      1861,
+      1864,
+      1857,
+      513,
+      512,
+      124,
+      141,
+      510,
+      511,
+      100,
+      158,
+      169,
+      170,
+      171,
+      172,
+      155,
+      156,
+      520,
+      518,
+      517,
+      516,
+      515,
+      514,
+      519,
+      224,
+      227,
+      226,
+      225,
+      210,
+      51,
+      50,
+      49,
+      48,
+      47,
+      718,
+      762,
+      761,
+      760,
+      1045,
+      684,
+      683,
+      990,
+      881,
+      2187,
+      2188,
+      2189,
+      2190,
+      2191,
+      2192,
+      2273,
+      2272,
+      2271,
+      2270,
+      2079,
+      2078,
+      2067,
+      2066,
+      2437
+     ],
+     "arrival_s": [
+      0.0,
+      7.67,
+      9.47,
+      10.07,
+      18.81,
+      33.31,
+      51.42,
+      92.28,
+      122.51,
+      155.17,
+      209.81,
+      227.23,
+      238.77,
+      246.76,
+      263.37,
+      294.08,
+      310.93,
+      317.48,
+      327.96,
+      363.13,
+      382.24,
+      389.23,
+      398.28,
+      403.98,
+      435.53,
+      451.61,
+      503.07,
+      521.13,
+      529.58,
+      580.8,
+      604.31,
+      682.71,
+      687.21,
+      740.07,
+      806.48,
+      860.61,
+      899.36,
+      923.61,
+      938.68,
+      946.91,
+      956.83,
+      974.19,
+      988.02,
+      1007.48,
+      1166.12,
+      1213.84,
+      1235.36,
+      1315.02,
+      1353.65,
+      1430.28,
+      1433.81,
+      1436.66,
+      1450.51,
+      1507.8,
+      1560.3,
+      1563.88,
+      1606.48,
+      1661.08,
+      1699.92,
+      1703.92
+     ],
+     "segments": [
+      {
+       "edge": 1860,
+       "geometry": [
+        [
+         -1430.61,
+         689.78
+        ],
+        [
+         -1434.14,
+         693.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.190962,
+         55.260197
+        ],
+        [
+         25.190925,
+         55.260162
+        ]
+       ],
+       "arrival_s": 0.0,
+       "t_s": 7.67,
+       "sun": 0.0,
+       "cls": "covered",
+       "name": null
+      },
+      {
+       "edge": 1861,
+       "geometry": [
+        [
+         -1434.14,
+         693.83
+        ],
+        [
+         -1435.58,
+         695.48
+        ]
+       ],
+       "latlon": [
+        [
+         25.190925,
+         55.260162
+        ],
+        [
+         25.19091,
+         55.260148
+        ]
+       ],
+       "arrival_s": 7.67,
+       "t_s": 1.8,
+       "sun": 0.0,
+       "cls": "indoor",
+       "name": null
+      },
+      {
+       "edge": 1864,
+       "geometry": [
+        [
+         -1435.58,
+         695.48
+        ],
+        [
+         -1434.94,
+         696.02
+        ]
+       ],
+       "latlon": [
+        [
+         25.19091,
+         55.260148
+        ],
+        [
+         25.190905,
+         55.260154
+        ]
+       ],
+       "arrival_s": 9.47,
+       "t_s": 0.6,
+       "sun": 0.0,
+       "cls": "covered",
+       "name": null
+      },
+      {
+       "edge": 1857,
+       "geometry": [
+        [
+         -1434.94,
+         696.02
+        ],
+        [
+         -1425.38,
+         703.65
+        ]
+       ],
+       "latlon": [
+        [
+         25.190905,
+         55.260154
+        ],
+        [
+         25.190836,
+         55.260249
+        ]
+       ],
+       "arrival_s": 10.07,
+       "t_s": 8.74,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 513,
+       "geometry": [
+        [
+         -1425.38,
+         703.65
+        ],
+        [
+         -1435.19,
+         715.97
+        ],
+        [
+         -1431.57,
+         718.74
+        ]
+       ],
+       "latlon": [
+        [
+         25.190836,
+         55.260249
+        ],
+        [
+         25.190725,
+         55.260152
+        ],
+        [
+         25.1907,
+         55.260188
+        ]
+       ],
+       "arrival_s": 18.81,
+       "t_s": 14.51,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 512,
+       "geometry": [
+        [
+         -1431.57,
+         718.74
+        ],
+        [
+         -1440.7,
+         729.56
+        ]
+       ],
+       "latlon": [
+        [
+         25.1907,
+         55.260188
+        ],
+        [
+         25.190602,
+         55.260097
+        ]
+       ],
+       "arrival_s": 33.31,
+       "t_s": 18.11,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 124,
+       "geometry": [
+        [
+         -1440.7,
+         729.56
+        ],
+        [
+         -1449.75,
+         741.59
+        ],
+        [
+         -1451.78,
+         745.63
+        ],
+        [
+         -1452.69,
+         750.06
+        ],
+        [
+         -1452.44,
+         754.56
+        ],
+        [
+         -1451.05,
+         758.86
+        ],
+        [
+         -1448.59,
+         762.65
+        ],
+        [
+         -1445.01,
+         766.61
+        ],
+        [
+         -1434.95,
+         776.65
+        ]
+       ],
+       "latlon": [
+        [
+         25.190602,
+         55.260097
+        ],
+        [
+         25.190493,
+         55.260007
+        ],
+        [
+         25.190457,
+         55.259987
+        ],
+        [
+         25.190417,
+         55.259978
+        ],
+        [
+         25.190376,
+         55.259981
+        ],
+        [
+         25.190337,
+         55.259994
+        ],
+        [
+         25.190303,
+         55.260019
+        ],
+        [
+         25.190267,
+         55.260054
+        ],
+        [
+         25.190176,
+         55.260154
+        ]
+       ],
+       "arrival_s": 51.42,
+       "t_s": 40.86,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 141,
+       "geometry": [
+        [
+         -1434.95,
+         776.65
+        ],
+        [
+         -1400.86,
+         801.74
+        ]
+       ],
+       "latlon": [
+        [
+         25.190176,
+         55.260154
+        ],
+        [
+         25.189949,
+         55.260493
+        ]
+       ],
+       "arrival_s": 92.28,
+       "t_s": 30.23,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Khaleej Al Tejari 1 Street"
+      },
+      {
+       "edge": 510,
+       "geometry": [
+        [
+         -1400.86,
+         801.74
+        ],
+        [
+         -1365.29,
+         830.49
+        ]
+       ],
+       "latlon": [
+        [
+         25.189949,
+         55.260493
+        ],
+        [
+         25.189689,
+         55.260846
+        ]
+       ],
+       "arrival_s": 122.51,
+       "t_s": 32.66,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Khaleej Al Tejari 1 Street"
+      },
+      {
+       "edge": 511,
+       "geometry": [
+        [
+         -1365.29,
+         830.49
+        ],
+        [
+         -1305.97,
+         878.78
+        ]
+       ],
+       "latlon": [
+        [
+         25.189689,
+         55.260846
+        ],
+        [
+         25.189253,
+         55.261435
+        ]
+       ],
+       "arrival_s": 155.17,
+       "t_s": 54.64,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Khaleej Al Tejari 1 Street"
+      },
+      {
+       "edge": 100,
+       "geometry": [
+        [
+         -1305.97,
+         878.78
+        ],
+        [
+         -1300.01,
+         879.51
+        ],
+        [
+         -1294.01,
+         879.72
+        ],
+        [
+         -1288.01,
+         879.4
+        ],
+        [
+         -1281.73,
+         878.36
+        ]
+       ],
+       "latlon": [
+        [
+         25.189253,
+         55.261435
+        ],
+        [
+         25.189246,
+         55.261494
+        ],
+        [
+         25.189244,
+         55.261553
+        ],
+        [
+         25.189247,
+         55.261613
+        ],
+        [
+         25.189256,
+         55.261675
+        ]
+       ],
+       "arrival_s": 209.81,
+       "t_s": 17.42,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 158,
+       "geometry": [
+        [
+         -1281.73,
+         878.36
+        ],
+        [
+         -1280.33,
+         883.11
+        ]
+       ],
+       "latlon": [
+        [
+         25.189256,
+         55.261675
+        ],
+        [
+         25.189213,
+         55.261689
+        ]
+       ],
+       "arrival_s": 227.23,
+       "t_s": 11.54,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 169,
+       "geometry": [
+        [
+         -1280.33,
+         883.11
+        ],
+        [
+         -1271.69,
+         890.2
+        ]
+       ],
+       "latlon": [
+        [
+         25.189213,
+         55.261689
+        ],
+        [
+         25.189149,
+         55.261775
+        ]
+       ],
+       "arrival_s": 238.77,
+       "t_s": 7.99,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 170,
+       "geometry": [
+        [
+         -1271.69,
+         890.2
+        ],
+        [
+         -1262.75,
+         898.29
+        ]
+       ],
+       "latlon": [
+        [
+         25.189149,
+         55.261775
+        ],
+        [
+         25.189076,
+         55.261864
+        ]
+       ],
+       "arrival_s": 246.76,
+       "t_s": 16.61,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 171,
+       "geometry": [
+        [
+         -1262.75,
+         898.29
+        ],
+        [
+         -1239.29,
+         919.75
+        ]
+       ],
+       "latlon": [
+        [
+         25.189076,
+         55.261864
+        ],
+        [
+         25.188882,
+         55.262097
+        ]
+       ],
+       "arrival_s": 263.37,
+       "t_s": 30.71,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 172,
+       "geometry": [
+        [
+         -1239.29,
+         919.75
+        ],
+        [
+         -1234.2,
+         924.43
+        ],
+        [
+         -1232.81,
+         926.75
+        ],
+        [
+         -1232.93,
+         929.52
+        ]
+       ],
+       "latlon": [
+        [
+         25.188882,
+         55.262097
+        ],
+        [
+         25.18884,
+         55.262147
+        ],
+        [
+         25.188819,
+         55.262161
+        ],
+        [
+         25.188794,
+         55.26216
+        ]
+       ],
+       "arrival_s": 294.08,
+       "t_s": 16.85,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 155,
+       "geometry": [
+        [
+         -1232.93,
+         929.52
+        ],
+        [
+         -1223.79,
+         928.91
+        ]
+       ],
+       "latlon": [
+        [
+         25.188794,
+         55.26216
+        ],
+        [
+         25.188799,
+         55.262251
+        ]
+       ],
+       "arrival_s": 310.93,
+       "t_s": 6.54,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 156,
+       "geometry": [
+        [
+         -1223.79,
+         928.91
+        ],
+        [
+         -1220.36,
+         928.36
+        ]
+       ],
+       "latlon": [
+        [
+         25.188799,
+         55.262251
+        ],
+        [
+         25.188804,
+         55.262285
+        ]
+       ],
+       "arrival_s": 317.48,
+       "t_s": 10.49,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 520,
+       "geometry": [
+        [
+         -1220.36,
+         928.36
+        ],
+        [
+         -1218.01,
+         933.16
+        ],
+        [
+         -1215.18,
+         937.66
+        ],
+        [
+         -1211.82,
+         941.92
+        ],
+        [
+         -1206.84,
+         947.25
+        ],
+        [
+         -1201.37,
+         952.12
+        ],
+        [
+         -1195.45,
+         956.43
+        ]
+       ],
+       "latlon": [
+        [
+         25.188804,
+         55.262285
+        ],
+        [
+         25.188761,
+         55.262308
+        ],
+        [
+         25.18872,
+         55.262336
+        ],
+        [
+         25.188682,
+         55.262369
+        ],
+        [
+         25.188633,
+         55.262419
+        ],
+        [
+         25.188589,
+         55.262473
+        ],
+        [
+         25.18855,
+         55.262532
+        ]
+       ],
+       "arrival_s": 327.96,
+       "t_s": 35.16,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 518,
+       "geometry": [
+        [
+         -1195.45,
+         956.43
+        ],
+        [
+         -1174.08,
+         972.55
+        ]
+       ],
+       "latlon": [
+        [
+         25.18855,
+         55.262532
+        ],
+        [
+         25.188405,
+         55.262744
+        ]
+       ],
+       "arrival_s": 363.13,
+       "t_s": 19.11,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 517,
+       "geometry": [
+        [
+         -1174.08,
+         972.55
+        ],
+        [
+         -1166.18,
+         978.31
+        ]
+       ],
+       "latlon": [
+        [
+         25.188405,
+         55.262744
+        ],
+        [
+         25.188352,
+         55.262822
+        ]
+       ],
+       "arrival_s": 382.24,
+       "t_s": 6.99,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 516,
+       "geometry": [
+        [
+         -1166.18,
+         978.31
+        ],
+        [
+         -1156.02,
+         985.89
+        ]
+       ],
+       "latlon": [
+        [
+         25.188352,
+         55.262822
+        ],
+        [
+         25.188284,
+         55.262923
+        ]
+       ],
+       "arrival_s": 389.23,
+       "t_s": 9.06,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 515,
+       "geometry": [
+        [
+         -1156.02,
+         985.89
+        ],
+        [
+         -1149.74,
+         990.81
+        ]
+       ],
+       "latlon": [
+        [
+         25.188284,
+         55.262923
+        ],
+        [
+         25.188239,
+         55.262986
+        ]
+       ],
+       "arrival_s": 398.28,
+       "t_s": 5.7,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 514,
+       "geometry": [
+        [
+         -1149.74,
+         990.81
+        ],
+        [
+         -1115.09,
+         1018.19
+        ]
+       ],
+       "latlon": [
+        [
+         25.188239,
+         55.262986
+        ],
+        [
+         25.187992,
+         55.26333
+        ]
+       ],
+       "arrival_s": 403.98,
+       "t_s": 31.54,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 519,
+       "geometry": [
+        [
+         -1115.09,
+         1018.19
+        ],
+        [
+         -1097.26,
+         1031.93
+        ]
+       ],
+       "latlon": [
+        [
+         25.187992,
+         55.26333
+        ],
+        [
+         25.187868,
+         55.263507
+        ]
+       ],
+       "arrival_s": 435.53,
+       "t_s": 16.08,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 224,
+       "geometry": [
+        [
+         -1097.26,
+         1031.93
+        ],
+        [
+         -1025.7,
+         1023.52
+        ]
+       ],
+       "latlon": [
+        [
+         25.187868,
+         55.263507
+        ],
+        [
+         25.187944,
+         55.264217
+        ]
+       ],
+       "arrival_s": 451.61,
+       "t_s": 51.46,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 227,
+       "geometry": [
+        [
+         -1025.7,
+         1023.52
+        ],
+        [
+         -1007.82,
+         1005.64
+        ]
+       ],
+       "latlon": [
+        [
+         25.187944,
+         55.264217
+        ],
+        [
+         25.188105,
+         55.264395
+        ]
+       ],
+       "arrival_s": 503.07,
+       "t_s": 18.06,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 226,
+       "geometry": [
+        [
+         -1007.82,
+         1005.64
+        ],
+        [
+         -998.48,
+         998.38
+        ]
+       ],
+       "latlon": [
+        [
+         25.188105,
+         55.264395
+        ],
+        [
+         25.188171,
+         55.264487
+        ]
+       ],
+       "arrival_s": 521.13,
+       "t_s": 8.44,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 225,
+       "geometry": [
+        [
+         -998.48,
+         998.38
+        ],
+        [
+         -968.63,
+         977.85
+        ],
+        [
+         -960.98,
+         973.36
+        ],
+        [
+         -952.91,
+         969.7
+        ],
+        [
+         -944.49,
+         966.88
+        ],
+        [
+         -935.83,
+         964.97
+        ]
+       ],
+       "latlon": [
+        [
+         25.188171,
+         55.264487
+        ],
+        [
+         25.188357,
+         55.264784
+        ],
+        [
+         25.188397,
+         55.26486
+        ],
+        [
+         25.18843,
+         55.26494
+        ],
+        [
+         25.188456,
+         55.265023
+        ],
+        [
+         25.188473,
+         55.265109
+        ]
+       ],
+       "arrival_s": 529.58,
+       "t_s": 51.22,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 210,
+       "geometry": [
+        [
+         -935.83,
+         964.97
+        ],
+        [
+         -909.37,
+         945.39
+        ]
+       ],
+       "latlon": [
+        [
+         25.188473,
+         55.265109
+        ],
+        [
+         25.18865,
+         55.265372
+        ]
+       ],
+       "arrival_s": 580.8,
+       "t_s": 23.51,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 51,
+       "geometry": [
+        [
+         -909.37,
+         945.39
+        ],
+        [
+         -886.57,
+         930.09
+        ],
+        [
+         -863.15,
+         915.75
+        ],
+        [
+         -839.2,
+         902.31
+        ],
+        [
+         -814.95,
+         889.6
+        ]
+       ],
+       "latlon": [
+        [
+         25.18865,
+         55.265372
+        ],
+        [
+         25.188789,
+         55.265598
+        ],
+        [
+         25.188918,
+         55.265831
+        ],
+        [
+         25.18904,
+         55.266069
+        ],
+        [
+         25.189155,
+         55.266309
+        ]
+       ],
+       "arrival_s": 604.31,
+       "t_s": 78.4,
+       "sun": 0.982,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 50,
+       "geometry": [
+        [
+         -814.95,
+         889.6
+        ],
+        [
+         -809.3,
+         886.81
+        ]
+       ],
+       "latlon": [
+        [
+         25.189155,
+         55.266309
+        ],
+        [
+         25.18918,
+         55.266365
+        ]
+       ],
+       "arrival_s": 682.71,
+       "t_s": 4.5,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 49,
+       "geometry": [
+        [
+         -809.3,
+         886.81
+        ],
+        [
+         -804.73,
+         884.36
+        ],
+        [
+         -752.65,
+         859.73
+        ]
+       ],
+       "latlon": [
+        [
+         25.18918,
+         55.266365
+        ],
+        [
+         25.189202,
+         55.266411
+        ],
+        [
+         25.189425,
+         55.266928
+        ]
+       ],
+       "arrival_s": 687.21,
+       "t_s": 52.86,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 48,
+       "geometry": [
+        [
+         -752.65,
+         859.73
+        ],
+        [
+         -666.84,
+         823.95
+        ]
+       ],
+       "latlon": [
+        [
+         25.189425,
+         55.266928
+        ],
+        [
+         25.189748,
+         55.26778
+        ]
+       ],
+       "arrival_s": 740.07,
+       "t_s": 66.41,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 47,
+       "geometry": [
+        [
+         -666.84,
+         823.95
+        ],
+        [
+         -655.24,
+         818.48
+        ],
+        [
+         -643.87,
+         812.56
+        ],
+        [
+         -632.74,
+         806.22
+        ],
+        [
+         -621.86,
+         799.45
+        ],
+        [
+         -601.42,
+         785.89
+        ]
+       ],
+       "latlon": [
+        [
+         25.189748,
+         55.26778
+        ],
+        [
+         25.189798,
+         55.267895
+        ],
+        [
+         25.189851,
+         55.268008
+        ],
+        [
+         25.189909,
+         55.268118
+        ],
+        [
+         25.18997,
+         55.268226
+        ],
+        [
+         25.190093,
+         55.268429
+        ]
+       ],
+       "arrival_s": 806.48,
+       "t_s": 54.14,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 718,
+       "geometry": [
+        [
+         -601.42,
+         785.89
+        ],
+        [
+         -591.88,
+         778.86
+        ],
+        [
+         -580.65,
+         770.27
+        ],
+        [
+         -569.72,
+         761.34
+        ],
+        [
+         -559.05,
+         752.08
+        ]
+       ],
+       "latlon": [
+        [
+         25.190093,
+         55.268429
+        ],
+        [
+         25.190156,
+         55.268524
+        ],
+        [
+         25.190234,
+         55.268635
+        ],
+        [
+         25.190315,
+         55.268744
+        ],
+        [
+         25.190398,
+         55.26885
+        ]
+       ],
+       "arrival_s": 860.61,
+       "t_s": 38.74,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 762,
+       "geometry": [
+        [
+         -559.05,
+         752.08
+        ],
+        [
+         -547.97,
+         742.99
+        ],
+        [
+         -533.32,
+         729.93
+        ]
+       ],
+       "latlon": [
+        [
+         25.190398,
+         55.26885
+        ],
+        [
+         25.190481,
+         55.26896
+        ],
+        [
+         25.190599,
+         55.269105
+        ]
+       ],
+       "arrival_s": 899.36,
+       "t_s": 24.25,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 761,
+       "geometry": [
+        [
+         -533.32,
+         729.93
+        ],
+        [
+         -526.16,
+         723.08
+        ]
+       ],
+       "latlon": [
+        [
+         25.190599,
+         55.269105
+        ],
+        [
+         25.190661,
+         55.269176
+        ]
+       ],
+       "arrival_s": 923.61,
+       "t_s": 15.08,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al A'amal Street"
+      },
+      {
+       "edge": 760,
+       "geometry": [
+        [
+         -526.16,
+         723.08
+        ],
+        [
+         -518.65,
+         731.79
+        ]
+       ],
+       "latlon": [
+        [
+         25.190661,
+         55.269176
+        ],
+        [
+         25.190582,
+         55.269251
+        ]
+       ],
+       "arrival_s": 938.68,
+       "t_s": 8.22,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 1045,
+       "geometry": [
+        [
+         -518.65,
+         731.79
+        ],
+        [
+         -508.29,
+         741.07
+        ]
+       ],
+       "latlon": [
+        [
+         25.190582,
+         55.269251
+        ],
+        [
+         25.190498,
+         55.269354
+        ]
+       ],
+       "arrival_s": 946.91,
+       "t_s": 9.93,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 684,
+       "geometry": [
+        [
+         -508.29,
+         741.07
+        ],
+        [
+         -498.9,
+         731.93
+        ]
+       ],
+       "latlon": [
+        [
+         25.190498,
+         55.269354
+        ],
+        [
+         25.190581,
+         55.269447
+        ]
+       ],
+       "arrival_s": 956.83,
+       "t_s": 17.36,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 683,
+       "geometry": [
+        [
+         -498.9,
+         731.93
+        ],
+        [
+         -493.44,
+         725.87
+        ]
+       ],
+       "latlon": [
+        [
+         25.190581,
+         55.269447
+        ],
+        [
+         25.190635,
+         55.269501
+        ]
+       ],
+       "arrival_s": 974.19,
+       "t_s": 13.83,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 990,
+       "geometry": [
+        [
+         -493.44,
+         725.87
+        ],
+        [
+         -482.22,
+         714.42
+        ]
+       ],
+       "latlon": [
+        [
+         25.190635,
+         55.269501
+        ],
+        [
+         25.190739,
+         55.269613
+        ]
+       ],
+       "arrival_s": 988.02,
+       "t_s": 19.46,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 881,
+       "geometry": [
+        [
+         -482.22,
+         714.42
+        ],
+        [
+         -498.59,
+         698.77
+        ],
+        [
+         -519.39,
+         675.96
+        ],
+        [
+         -535.07,
+         658.52
+        ],
+        [
+         -549.25,
+         638.8
+        ],
+        [
+         -561.55,
+         622.42
+        ],
+        [
+         -575.33,
+         599.48
+        ],
+        [
+         -584.64,
+         583.24
+        ],
+        [
+         -593.01,
+         567.0
+        ],
+        [
+         -596.53,
+         559.08
+        ],
+        [
+         -595.85,
+         553.05
+        ],
+        [
+         -593.96,
+         544.59
+        ],
+        [
+         -590.59,
+         535.33
+        ],
+        [
+         -593.31,
+         533.36
+        ]
+       ],
+       "latlon": [
+        [
+         25.190739,
+         55.269613
+        ],
+        [
+         25.190881,
+         55.26945
+        ],
+        [
+         25.191087,
+         55.269244
+        ],
+        [
+         25.191245,
+         55.269088
+        ],
+        [
+         25.191423,
+         55.268947
+        ],
+        [
+         25.191571,
+         55.268825
+        ],
+        [
+         25.191778,
+         55.268688
+        ],
+        [
+         25.191925,
+         55.268596
+        ],
+        [
+         25.192072,
+         55.268513
+        ],
+        [
+         25.192144,
+         55.268478
+        ],
+        [
+         25.192198,
+         55.268485
+        ],
+        [
+         25.192275,
+         55.268503
+        ],
+        [
+         25.192359,
+         55.268537
+        ],
+        [
+         25.192376,
+         55.26851
+        ]
+       ],
+       "arrival_s": 1007.48,
+       "t_s": 158.64,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2187,
+       "geometry": [
+        [
+         -593.31,
+         533.36
+        ],
+        [
+         -590.95,
+         529.79
+        ],
+        [
+         -586.73,
+         525.39
+        ],
+        [
+         -582.19,
+         522.21
+        ],
+        [
+         -577.35,
+         519.48
+        ],
+        [
+         -572.3,
+         517.17
+        ],
+        [
+         -567.42,
+         514.18
+        ],
+        [
+         -562.9,
+         510.67
+        ],
+        [
+         -558.8,
+         506.69
+        ],
+        [
+         -555.16,
+         502.28
+        ],
+        [
+         -552.04,
+         497.51
+        ]
+       ],
+       "latlon": [
+        [
+         25.192376,
+         55.26851
+        ],
+        [
+         25.192409,
+         55.268533
+        ],
+        [
+         25.192449,
+         55.268575
+        ],
+        [
+         25.192477,
+         55.26862
+        ],
+        [
+         25.192502,
+         55.268668
+        ],
+        [
+         25.192523,
+         55.268718
+        ],
+        [
+         25.19255,
+         55.268767
+        ],
+        [
+         25.192582,
+         55.268812
+        ],
+        [
+         25.192618,
+         55.268852
+        ],
+        [
+         25.192658,
+         55.268889
+        ],
+        [
+         25.192701,
+         55.268919
+        ]
+       ],
+       "arrival_s": 1166.12,
+       "t_s": 47.72,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2188,
+       "geometry": [
+        [
+         -552.04,
+         497.51
+        ],
+        [
+         -546.16,
+         483.99
+        ],
+        [
+         -541.56,
+         469.31
+        ]
+       ],
+       "latlon": [
+        [
+         25.192701,
+         55.268919
+        ],
+        [
+         25.192823,
+         55.268978
+        ],
+        [
+         25.192956,
+         55.269024
+        ]
+       ],
+       "arrival_s": 1213.84,
+       "t_s": 21.51,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2189,
+       "geometry": [
+        [
+         -541.56,
+         469.31
+        ],
+        [
+         -531.81,
+         434.74
+        ],
+        [
+         -528.47,
+         426.16
+        ],
+        [
+         -523.16,
+         418.82
+        ],
+        [
+         -515.9,
+         413.37
+        ],
+        [
+         -506.62,
+         409.07
+        ],
+        [
+         -470.3,
+         397.78
+        ]
+       ],
+       "latlon": [
+        [
+         25.192956,
+         55.269024
+        ],
+        [
+         25.193268,
+         55.26912
+        ],
+        [
+         25.193346,
+         55.269153
+        ],
+        [
+         25.193412,
+         55.269206
+        ],
+        [
+         25.193462,
+         55.269278
+        ],
+        [
+         25.1935,
+         55.26937
+        ],
+        [
+         25.193603,
+         55.269731
+        ]
+       ],
+       "arrival_s": 1235.36,
+       "t_s": 79.66,
+       "sun": 0.513,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2190,
+       "geometry": [
+        [
+         -470.3,
+         397.78
+        ],
+        [
+         -453.06,
+         392.81
+        ],
+        [
+         -434.46,
+         387.44
+        ],
+        [
+         -418.52,
+         382.2
+        ]
+       ],
+       "latlon": [
+        [
+         25.193603,
+         55.269731
+        ],
+        [
+         25.193648,
+         55.269902
+        ],
+        [
+         25.193696,
+         55.270087
+        ],
+        [
+         25.193743,
+         55.270245
+        ]
+       ],
+       "arrival_s": 1315.02,
+       "t_s": 38.63,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2191,
+       "geometry": [
+        [
+         -418.52,
+         382.2
+        ],
+        [
+         -336.55,
+         355.58
+        ],
+        [
+         -331.92,
+         353.83
+        ],
+        [
+         -327.5,
+         351.59
+        ]
+       ],
+       "latlon": [
+        [
+         25.193743,
+         55.270245
+        ],
+        [
+         25.193984,
+         55.271059
+        ],
+        [
+         25.194,
+         55.271105
+        ],
+        [
+         25.19402,
+         55.271149
+        ]
+       ],
+       "arrival_s": 1353.65,
+       "t_s": 76.64,
+       "sun": 0.626,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2192,
+       "geometry": [
+        [
+         -327.5,
+         351.59
+        ],
+        [
+         -323.33,
+         348.96
+        ]
+       ],
+       "latlon": [
+        [
+         25.19402,
+         55.271149
+        ],
+        [
+         25.194044,
+         55.27119
+        ]
+       ],
+       "arrival_s": 1430.28,
+       "t_s": 3.52,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2273,
+       "geometry": [
+        [
+         -323.33,
+         348.96
+        ],
+        [
+         -320.1,
+         346.59
+        ]
+       ],
+       "latlon": [
+        [
+         25.194044,
+         55.27119
+        ],
+        [
+         25.194066,
+         55.271222
+        ]
+       ],
+       "arrival_s": 1433.81,
+       "t_s": 2.86,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2272,
+       "geometry": [
+        [
+         -320.1,
+         346.59
+        ],
+        [
+         -316.88,
+         343.59
+        ],
+        [
+         -314.08,
+         340.45
+        ],
+        [
+         -311.2,
+         337.33
+        ],
+        [
+         -305.7,
+         333.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.194066,
+         55.271222
+        ],
+        [
+         25.194093,
+         55.271254
+        ],
+        [
+         25.194121,
+         55.271282
+        ],
+        [
+         25.194149,
+         55.27131
+        ],
+        [
+         25.194181,
+         55.271365
+        ]
+       ],
+       "arrival_s": 1436.66,
+       "t_s": 13.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2271,
+       "geometry": [
+        [
+         -305.7,
+         333.83
+        ],
+        [
+         -299.39,
+         331.47
+        ],
+        [
+         -292.82,
+         330.02
+        ],
+        [
+         -286.1,
+         329.51
+        ],
+        [
+         -280.24,
+         329.78
+        ],
+        [
+         -274.45,
+         330.73
+        ],
+        [
+         -268.81,
+         332.3
+        ],
+        [
+         -263.87,
+         332.6
+        ],
+        [
+         -258.92,
+         332.26
+        ],
+        [
+         -254.07,
+         331.31
+        ],
+        [
+         -249.36,
+         329.75
+        ],
+        [
+         -244.78,
+         327.6
+        ],
+        [
+         -239.32,
+         325.15
+        ],
+        [
+         -233.96,
+         322.99
+        ],
+        [
+         -228.9,
+         320.19
+        ]
+       ],
+       "latlon": [
+        [
+         25.194181,
+         55.271365
+        ],
+        [
+         25.194202,
+         55.271428
+        ],
+        [
+         25.194215,
+         55.271493
+        ],
+        [
+         25.19422,
+         55.27156
+        ],
+        [
+         25.194218,
+         55.271618
+        ],
+        [
+         25.194209,
+         55.271675
+        ],
+        [
+         25.194195,
+         55.271731
+        ],
+        [
+         25.194192,
+         55.27178
+        ],
+        [
+         25.194195,
+         55.27183
+        ],
+        [
+         25.194204,
+         55.271878
+        ],
+        [
+         25.194218,
+         55.271924
+        ],
+        [
+         25.194237,
+         55.27197
+        ],
+        [
+         25.194259,
+         55.272024
+        ],
+        [
+         25.194279,
+         55.272077
+        ],
+        [
+         25.194304,
+         55.272128
+        ]
+       ],
+       "arrival_s": 1450.51,
+       "t_s": 57.29,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2270,
+       "geometry": [
+        [
+         -228.9,
+         320.19
+        ],
+        [
+         -224.89,
+         317.89
+        ],
+        [
+         -221.2,
+         315.05
+        ],
+        [
+         -219.09,
+         312.48
+        ],
+        [
+         -217.63,
+         309.51
+        ],
+        [
+         -216.91,
+         306.29
+        ],
+        [
+         -216.95,
+         302.98
+        ],
+        [
+         -217.74,
+         299.78
+        ],
+        [
+         -225.5,
+         280.69
+        ],
+        [
+         -227.09,
+         275.09
+        ],
+        [
+         -228.13,
+         269.36
+        ],
+        [
+         -228.59,
+         263.55
+        ],
+        [
+         -228.48,
+         257.75
+        ],
+        [
+         -228.11,
+         253.97
+        ]
+       ],
+       "latlon": [
+        [
+         25.194304,
+         55.272128
+        ],
+        [
+         25.194325,
+         55.272167
+        ],
+        [
+         25.194351,
+         55.272204
+        ],
+        [
+         25.194374,
+         55.272225
+        ],
+        [
+         25.194401,
+         55.272239
+        ],
+        [
+         25.19443,
+         55.272247
+        ],
+        [
+         25.19446,
+         55.272246
+        ],
+        [
+         25.194489,
+         55.272238
+        ],
+        [
+         25.194662,
+         55.272161
+        ],
+        [
+         25.194712,
+         55.272146
+        ],
+        [
+         25.194764,
+         55.272135
+        ],
+        [
+         25.194817,
+         55.272131
+        ],
+        [
+         25.194869,
+         55.272132
+        ],
+        [
+         25.194903,
+         55.272135
+        ]
+       ],
+       "arrival_s": 1507.8,
+       "t_s": 52.5,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2079,
+       "geometry": [
+        [
+         -228.11,
+         253.97
+        ],
+        [
+         -224.08,
+         250.98
+        ]
+       ],
+       "latlon": [
+        [
+         25.194903,
+         55.272135
+        ],
+        [
+         25.19493,
+         55.272175
+        ]
+       ],
+       "arrival_s": 1560.3,
+       "t_s": 3.58,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2078,
+       "geometry": [
+        [
+         -224.08,
+         250.98
+        ],
+        [
+         -221.33,
+         249.34
+        ],
+        [
+         -218.26,
+         247.03
+        ],
+        [
+         -215.34,
+         244.53
+        ],
+        [
+         -212.59,
+         241.85
+        ],
+        [
+         -210.02,
+         238.99
+        ],
+        [
+         -207.64,
+         235.98
+        ],
+        [
+         -205.22,
+         233.0
+        ],
+        [
+         -202.68,
+         230.81
+        ],
+        [
+         -199.46,
+         229.86
+        ],
+        [
+         -196.14,
+         230.35
+        ],
+        [
+         -174.09,
+         237.98
+        ]
+       ],
+       "latlon": [
+        [
+         25.19493,
+         55.272175
+        ],
+        [
+         25.194945,
+         55.272203
+        ],
+        [
+         25.194966,
+         55.272233
+        ],
+        [
+         25.194989,
+         55.272262
+        ],
+        [
+         25.195013,
+         55.272289
+        ],
+        [
+         25.195039,
+         55.272315
+        ],
+        [
+         25.195066,
+         55.272339
+        ],
+        [
+         25.195093,
+         55.272363
+        ],
+        [
+         25.195113,
+         55.272388
+        ],
+        [
+         25.195121,
+         55.27242
+        ],
+        [
+         25.195117,
+         55.272453
+        ],
+        [
+         25.195048,
+         55.272672
+        ]
+       ],
+       "arrival_s": 1563.88,
+       "t_s": 42.61,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2067,
+       "geometry": [
+        [
+         -174.09,
+         237.98
+        ],
+        [
+         -173.65,
+         260.88
+        ],
+        [
+         -172.23,
+         275.95
+        ],
+        [
+         -169.4,
+         291.1
+        ],
+        [
+         -164.52,
+         306.35
+        ],
+        [
+         -162.29,
+         312.96
+        ]
+       ],
+       "latlon": [
+        [
+         25.195048,
+         55.272672
+        ],
+        [
+         25.194841,
+         55.272676
+        ],
+        [
+         25.194704,
+         55.27269
+        ],
+        [
+         25.194567,
+         55.272718
+        ],
+        [
+         25.194429,
+         55.272767
+        ],
+        [
+         25.19437,
+         55.272789
+        ]
+       ],
+       "arrival_s": 1606.48,
+       "t_s": 54.6,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2066,
+       "geometry": [
+        [
+         -162.29,
+         312.96
+        ],
+        [
+         -160.58,
+         316.88
+        ],
+        [
+         -158.54,
+         321.77
+        ],
+        [
+         -151.29,
+         335.33
+        ],
+        [
+         -143.6,
+         349.49
+        ],
+        [
+         -135.71,
+         360.21
+        ]
+       ],
+       "latlon": [
+        [
+         25.19437,
+         55.272789
+        ],
+        [
+         25.194334,
+         55.272806
+        ],
+        [
+         25.19429,
+         55.272826
+        ],
+        [
+         25.194167,
+         55.272898
+        ],
+        [
+         25.194039,
+         55.272974
+        ],
+        [
+         25.193942,
+         55.273053
+        ]
+       ],
+       "arrival_s": 1661.08,
+       "t_s": 38.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2437,
+       "geometry": [
+        [
+         -135.71,
+         360.21
+        ],
+        [
+         -133.44,
+         358.56
+        ]
+       ],
+       "latlon": [
+        [
+         25.193942,
+         55.273053
+        ],
+        [
+         25.193957,
+         55.273075
+        ]
+       ],
+       "arrival_s": 1699.92,
+       "t_s": 4.0,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      }
+     ]
+    },
+    "balanced": {
+     "lambda": 1.0,
+     "label": "balanced",
+     "mode": "walk",
+     "depart": "2026-04-15T10:30:00+04:00",
+     "stats": {
+      "distance_m": 2054.77,
+      "duration_s": 1561.76,
+      "sun_exposure_s": 1357.32,
+      "shaded_pct": 13.09,
+      "covered_pct": 0.53,
+      "indoor_pct": 0.12,
+      "rhl": 1428.43,
+      "added_time_s": 126.93,
+      "sun_saved_s": -256.12,
+      "sun_saved_pct": -23.26,
+      "rhl_saved_pct": -17.32,
+      "sun_gained_s": 256.12,
+      "sun_gained_pct": 23.26
+     },
+     "nodes": [
+      1568,
+      1569,
+      1570,
+      1574,
+      1573,
+      3582,
+      841,
+      840,
+      561,
+      2124,
+      717,
+      716,
+      715,
+      2627,
+      314,
+      647,
+      736,
+      741,
+      742,
+      700,
+      985,
+      1930,
+      984,
+      996,
+      983,
+      1926,
+      982,
+      993,
+      992,
+      652,
+      653,
+      1539,
+      1540,
+      3032,
+      2043,
+      2610,
+      3842,
+      2595,
+      3576,
+      3577,
+      3035,
+      3575,
+      762,
+      475,
+      3934,
+      1747,
+      3931
+     ],
+     "edges": [
+      1860,
+      1861,
+      1864,
+      1857,
+      513,
+      512,
+      124,
+      141,
+      510,
+      511,
+      100,
+      99,
+      507,
+      128,
+      1790,
+      1818,
+      1817,
+      1816,
+      1806,
+      1805,
+      1826,
+      1825,
+      1824,
+      1839,
+      1838,
+      1837,
+      1836,
+      2138,
+      2098,
+      2136,
+      2097,
+      2185,
+      2111,
+      2200,
+      2195,
+      2194,
+      2193,
+      2273,
+      2272,
+      2271,
+      2270,
+      2079,
+      2078,
+      2067,
+      2066,
+      2437
+     ],
+     "arrival_s": [
+      0.0,
+      7.67,
+      9.47,
+      10.07,
+      18.81,
+      33.31,
+      51.42,
+      92.28,
+      122.51,
+      155.17,
+      209.81,
+      227.23,
+      266.92,
+      293.69,
+      454.37,
+      496.81,
+      518.85,
+      681.35,
+      705.44,
+      765.42,
+      786.98,
+      819.74,
+      835.73,
+      847.49,
+      857.48,
+      874.81,
+      887.92,
+      904.11,
+      909.35,
+      967.18,
+      992.55,
+      1025.76,
+      1101.33,
+      1112.26,
+      1130.26,
+      1164.62,
+      1211.7,
+      1291.65,
+      1294.51,
+      1308.35,
+      1365.64,
+      1418.14,
+      1421.72,
+      1464.33,
+      1518.93,
+      1557.76,
+      1561.76
+     ],
+     "segments": [
+      {
+       "edge": 1860,
+       "geometry": [
+        [
+         -1430.61,
+         689.78
+        ],
+        [
+         -1434.14,
+         693.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.190962,
+         55.260197
+        ],
+        [
+         25.190925,
+         55.260162
+        ]
+       ],
+       "arrival_s": 0.0,
+       "t_s": 7.67,
+       "sun": 0.0,
+       "cls": "covered",
+       "name": null
+      },
+      {
+       "edge": 1861,
+       "geometry": [
+        [
+         -1434.14,
+         693.83
+        ],
+        [
+         -1435.58,
+         695.48
+        ]
+       ],
+       "latlon": [
+        [
+         25.190925,
+         55.260162
+        ],
+        [
+         25.19091,
+         55.260148
+        ]
+       ],
+       "arrival_s": 7.67,
+       "t_s": 1.8,
+       "sun": 0.0,
+       "cls": "indoor",
+       "name": null
+      },
+      {
+       "edge": 1864,
+       "geometry": [
+        [
+         -1435.58,
+         695.48
+        ],
+        [
+         -1434.94,
+         696.02
+        ]
+       ],
+       "latlon": [
+        [
+         25.19091,
+         55.260148
+        ],
+        [
+         25.190905,
+         55.260154
+        ]
+       ],
+       "arrival_s": 9.47,
+       "t_s": 0.6,
+       "sun": 0.0,
+       "cls": "covered",
+       "name": null
+      },
+      {
+       "edge": 1857,
+       "geometry": [
+        [
+         -1434.94,
+         696.02
+        ],
+        [
+         -1425.38,
+         703.65
+        ]
+       ],
+       "latlon": [
+        [
+         25.190905,
+         55.260154
+        ],
+        [
+         25.190836,
+         55.260249
+        ]
+       ],
+       "arrival_s": 10.07,
+       "t_s": 8.74,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 513,
+       "geometry": [
+        [
+         -1425.38,
+         703.65
+        ],
+        [
+         -1435.19,
+         715.97
+        ],
+        [
+         -1431.57,
+         718.74
+        ]
+       ],
+       "latlon": [
+        [
+         25.190836,
+         55.260249
+        ],
+        [
+         25.190725,
+         55.260152
+        ],
+        [
+         25.1907,
+         55.260188
+        ]
+       ],
+       "arrival_s": 18.81,
+       "t_s": 14.51,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 512,
+       "geometry": [
+        [
+         -1431.57,
+         718.74
+        ],
+        [
+         -1440.7,
+         729.56
+        ]
+       ],
+       "latlon": [
+        [
+         25.1907,
+         55.260188
+        ],
+        [
+         25.190602,
+         55.260097
+        ]
+       ],
+       "arrival_s": 33.31,
+       "t_s": 18.11,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 124,
+       "geometry": [
+        [
+         -1440.7,
+         729.56
+        ],
+        [
+         -1449.75,
+         741.59
+        ],
+        [
+         -1451.78,
+         745.63
+        ],
+        [
+         -1452.69,
+         750.06
+        ],
+        [
+         -1452.44,
+         754.56
+        ],
+        [
+         -1451.05,
+         758.86
+        ],
+        [
+         -1448.59,
+         762.65
+        ],
+        [
+         -1445.01,
+         766.61
+        ],
+        [
+         -1434.95,
+         776.65
+        ]
+       ],
+       "latlon": [
+        [
+         25.190602,
+         55.260097
+        ],
+        [
+         25.190493,
+         55.260007
+        ],
+        [
+         25.190457,
+         55.259987
+        ],
+        [
+         25.190417,
+         55.259978
+        ],
+        [
+         25.190376,
+         55.259981
+        ],
+        [
+         25.190337,
+         55.259994
+        ],
+        [
+         25.190303,
+         55.260019
+        ],
+        [
+         25.190267,
+         55.260054
+        ],
+        [
+         25.190176,
+         55.260154
+        ]
+       ],
+       "arrival_s": 51.42,
+       "t_s": 40.86,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 141,
+       "geometry": [
+        [
+         -1434.95,
+         776.65
+        ],
+        [
+         -1400.86,
+         801.74
+        ]
+       ],
+       "latlon": [
+        [
+         25.190176,
+         55.260154
+        ],
+        [
+         25.189949,
+         55.260493
+        ]
+       ],
+       "arrival_s": 92.28,
+       "t_s": 30.23,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Khaleej Al Tejari 1 Street"
+      },
+      {
+       "edge": 510,
+       "geometry": [
+        [
+         -1400.86,
+         801.74
+        ],
+        [
+         -1365.29,
+         830.49
+        ]
+       ],
+       "latlon": [
+        [
+         25.189949,
+         55.260493
+        ],
+        [
+         25.189689,
+         55.260846
+        ]
+       ],
+       "arrival_s": 122.51,
+       "t_s": 32.66,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Khaleej Al Tejari 1 Street"
+      },
+      {
+       "edge": 511,
+       "geometry": [
+        [
+         -1365.29,
+         830.49
+        ],
+        [
+         -1305.97,
+         878.78
+        ]
+       ],
+       "latlon": [
+        [
+         25.189689,
+         55.260846
+        ],
+        [
+         25.189253,
+         55.261435
+        ]
+       ],
+       "arrival_s": 155.17,
+       "t_s": 54.64,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Khaleej Al Tejari 1 Street"
+      },
+      {
+       "edge": 100,
+       "geometry": [
+        [
+         -1305.97,
+         878.78
+        ],
+        [
+         -1300.01,
+         879.51
+        ],
+        [
+         -1294.01,
+         879.72
+        ],
+        [
+         -1288.01,
+         879.4
+        ],
+        [
+         -1281.73,
+         878.36
+        ]
+       ],
+       "latlon": [
+        [
+         25.189253,
+         55.261435
+        ],
+        [
+         25.189246,
+         55.261494
+        ],
+        [
+         25.189244,
+         55.261553
+        ],
+        [
+         25.189247,
+         55.261613
+        ],
+        [
+         25.189256,
+         55.261675
+        ]
+       ],
+       "arrival_s": 209.81,
+       "t_s": 17.42,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 99,
+       "geometry": [
+        [
+         -1281.73,
+         878.36
+        ],
+        [
+         -1277.66,
+         876.72
+        ],
+        [
+         -1275.84,
+         875.98
+        ],
+        [
+         -1270.58,
+         872.37
+        ],
+        [
+         -1264.15,
+         867.76
+        ],
+        [
+         -1257.47,
+         863.53
+        ],
+        [
+         -1250.56,
+         859.68
+        ],
+        [
+         -1243.43,
+         856.24
+        ]
+       ],
+       "latlon": [
+        [
+         25.189256,
+         55.261675
+        ],
+        [
+         25.189271,
+         55.261716
+        ],
+        [
+         25.189278,
+         55.261734
+        ],
+        [
+         25.189311,
+         55.261786
+        ],
+        [
+         25.189352,
+         55.26185
+        ],
+        [
+         25.18939,
+         55.261916
+        ],
+        [
+         25.189425,
+         55.261985
+        ],
+        [
+         25.189456,
+         55.262056
+        ]
+       ],
+       "arrival_s": 227.23,
+       "t_s": 39.69,
+       "sun": 0.361,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 507,
+       "geometry": [
+        [
+         -1243.43,
+         856.24
+        ],
+        [
+         -1218.76,
+         828.02
+        ]
+       ],
+       "latlon": [
+        [
+         25.189456,
+         55.262056
+        ],
+        [
+         25.189712,
+         55.2623
+        ]
+       ],
+       "arrival_s": 266.92,
+       "t_s": 26.77,
+       "sun": 0.496,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 128,
+       "geometry": [
+        [
+         -1218.76,
+         828.02
+        ],
+        [
+         -1169.89,
+         772.12
+        ],
+        [
+         -1070.32,
+         659.01
+        ]
+       ],
+       "latlon": [
+        [
+         25.189712,
+         55.2623
+        ],
+        [
+         25.190217,
+         55.262786
+        ],
+        [
+         25.19124,
+         55.263774
+        ]
+       ],
+       "arrival_s": 293.69,
+       "t_s": 160.68,
+       "sun": 0.756,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 1790,
+       "geometry": [
+        [
+         -1070.32,
+         659.01
+        ],
+        [
+         -1034.08,
+         611.93
+        ]
+       ],
+       "latlon": [
+        [
+         25.19124,
+         55.263774
+        ],
+        [
+         25.191666,
+         55.264134
+        ]
+       ],
+       "arrival_s": 454.37,
+       "t_s": 42.44,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 1818,
+       "geometry": [
+        [
+         -1034.08,
+         611.93
+        ],
+        [
+         -1014.79,
+         587.86
+        ]
+       ],
+       "latlon": [
+        [
+         25.191666,
+         55.264134
+        ],
+        [
+         25.191884,
+         55.264325
+        ]
+       ],
+       "arrival_s": 496.81,
+       "t_s": 22.04,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 1817,
+       "geometry": [
+        [
+         -1014.79,
+         587.86
+        ],
+        [
+         -971.88,
+         541.04
+        ],
+        [
+         -954.01,
+         522.3
+        ],
+        [
+         -936.73,
+         503.02
+        ],
+        [
+         -920.05,
+         483.22
+        ],
+        [
+         -866.54,
+         415.49
+        ]
+       ],
+       "latlon": [
+        [
+         25.191884,
+         55.264325
+        ],
+        [
+         25.192307,
+         55.264751
+        ],
+        [
+         25.192476,
+         55.264929
+        ],
+        [
+         25.192651,
+         55.2651
+        ],
+        [
+         25.19283,
+         55.265266
+        ],
+        [
+         25.193442,
+         55.265797
+        ]
+       ],
+       "arrival_s": 518.85,
+       "t_s": 162.5,
+       "sun": 0.832,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 1816,
+       "geometry": [
+        [
+         -866.54,
+         415.49
+        ],
+        [
+         -844.93,
+         389.6
+        ]
+       ],
+       "latlon": [
+        [
+         25.193442,
+         55.265797
+        ],
+        [
+         25.193677,
+         55.266012
+        ]
+       ],
+       "arrival_s": 681.35,
+       "t_s": 24.09,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 1806,
+       "geometry": [
+        [
+         -844.93,
+         389.6
+        ],
+        [
+         -791.1,
+         325.15
+        ]
+       ],
+       "latlon": [
+        [
+         25.193677,
+         55.266012
+        ],
+        [
+         25.194259,
+         55.266546
+        ]
+       ],
+       "arrival_s": 705.44,
+       "t_s": 59.98,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 1805,
+       "geometry": [
+        [
+         -791.1,
+         325.15
+        ],
+        [
+         -771.93,
+         301.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.194259,
+         55.266546
+        ],
+        [
+         25.19447,
+         55.266736
+        ]
+       ],
+       "arrival_s": 765.42,
+       "t_s": 21.56,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Al Mustaqbal Street"
+      },
+      {
+       "edge": 1826,
+       "geometry": [
+        [
+         -771.93,
+         301.83
+        ],
+        [
+         -745.54,
+         324.3
+        ]
+       ],
+       "latlon": [
+        [
+         25.19447,
+         55.266736
+        ],
+        [
+         25.194267,
+         55.266998
+        ]
+       ],
+       "arrival_s": 786.98,
+       "t_s": 32.76,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1825,
+       "geometry": [
+        [
+         -745.54,
+         324.3
+        ],
+        [
+         -736.74,
+         331.2
+        ]
+       ],
+       "latlon": [
+        [
+         25.194267,
+         55.266998
+        ],
+        [
+         25.194205,
+         55.267086
+        ]
+       ],
+       "arrival_s": 819.74,
+       "t_s": 15.99,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1824,
+       "geometry": [
+        [
+         -736.74,
+         331.2
+        ],
+        [
+         -732.7,
+         334.59
+        ]
+       ],
+       "latlon": [
+        [
+         25.194205,
+         55.267086
+        ],
+        [
+         25.194174,
+         55.267126
+        ]
+       ],
+       "arrival_s": 835.73,
+       "t_s": 11.76,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1839,
+       "geometry": [
+        [
+         -732.7,
+         334.59
+        ],
+        [
+         -729.91,
+         335.98
+        ],
+        [
+         -726.79,
+         336.14
+        ],
+        [
+         -723.86,
+         335.05
+        ],
+        [
+         -720.8,
+         331.6
+        ]
+       ],
+       "latlon": [
+        [
+         25.194174,
+         55.267126
+        ],
+        [
+         25.194161,
+         55.267154
+        ],
+        [
+         25.19416,
+         55.267185
+        ],
+        [
+         25.19417,
+         55.267214
+        ],
+        [
+         25.194201,
+         55.267244
+        ]
+       ],
+       "arrival_s": 847.49,
+       "t_s": 9.99,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1838,
+       "geometry": [
+        [
+         -720.8,
+         331.6
+        ],
+        [
+         -712.78,
+         321.31
+        ]
+       ],
+       "latlon": [
+        [
+         25.194201,
+         55.267244
+        ],
+        [
+         25.194294,
+         55.267324
+        ]
+       ],
+       "arrival_s": 857.48,
+       "t_s": 17.32,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1837,
+       "geometry": [
+        [
+         -712.78,
+         321.31
+        ],
+        [
+         -708.56,
+         315.52
+        ]
+       ],
+       "latlon": [
+        [
+         25.194294,
+         55.267324
+        ],
+        [
+         25.194347,
+         55.267366
+        ]
+       ],
+       "arrival_s": 874.81,
+       "t_s": 13.11,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 1836,
+       "geometry": [
+        [
+         -708.56,
+         315.52
+        ],
+        [
+         -706.42,
+         312.73
+        ],
+        [
+         -705.75,
+         308.63
+        ],
+        [
+         -707.35,
+         305.18
+        ]
+       ],
+       "latlon": [
+        [
+         25.194347,
+         55.267366
+        ],
+        [
+         25.194372,
+         55.267387
+        ],
+        [
+         25.194409,
+         55.267393
+        ],
+        [
+         25.19444,
+         55.267378
+        ]
+       ],
+       "arrival_s": 887.92,
+       "t_s": 16.19,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2138,
+       "geometry": [
+        [
+         -707.35,
+         305.18
+        ],
+        [
+         -700.25,
+         303.38
+        ]
+       ],
+       "latlon": [
+        [
+         25.19444,
+         55.267378
+        ],
+        [
+         25.194456,
+         55.267448
+        ]
+       ],
+       "arrival_s": 904.11,
+       "t_s": 5.24,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2098,
+       "geometry": [
+        [
+         -700.25,
+         303.38
+        ],
+        [
+         -698.91,
+         308.04
+        ],
+        [
+         -698.52,
+         309.39
+        ],
+        [
+         -695.83,
+         315.05
+        ],
+        [
+         -692.11,
+         319.98
+        ],
+        [
+         -676.91,
+         338.05
+        ],
+        [
+         -673.31,
+         343.22
+        ],
+        [
+         -670.07,
+         347.57
+        ],
+        [
+         -667.23,
+         351.42
+        ],
+        [
+         -665.22,
+         354.82
+        ],
+        [
+         -663.63,
+         361.64
+        ]
+       ],
+       "latlon": [
+        [
+         25.194456,
+         55.267448
+        ],
+        [
+         25.194414,
+         55.267461
+        ],
+        [
+         25.194402,
+         55.267465
+        ],
+        [
+         25.194351,
+         55.267492
+        ],
+        [
+         25.194306,
+         55.267529
+        ],
+        [
+         25.194143,
+         55.26768
+        ],
+        [
+         25.194096,
+         55.267716
+        ],
+        [
+         25.194057,
+         55.267748
+        ],
+        [
+         25.194022,
+         55.267776
+        ],
+        [
+         25.193991,
+         55.267796
+        ],
+        [
+         25.193929,
+         55.267812
+        ]
+       ],
+       "arrival_s": 909.35,
+       "t_s": 57.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2136,
+       "geometry": [
+        [
+         -663.63,
+         361.64
+        ],
+        [
+         -660.92,
+         368.17
+        ],
+        [
+         -657.8,
+         375.19
+        ],
+        [
+         -655.8,
+         382.25
+        ],
+        [
+         -652.75,
+         395.32
+        ]
+       ],
+       "latlon": [
+        [
+         25.193929,
+         55.267812
+        ],
+        [
+         25.19387,
+         55.267839
+        ],
+        [
+         25.193807,
+         55.26787
+        ],
+        [
+         25.193743,
+         55.267889
+        ],
+        [
+         25.193625,
+         55.26792
+        ]
+       ],
+       "arrival_s": 967.18,
+       "t_s": 25.36,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 2097,
+       "geometry": [
+        [
+         -652.75,
+         395.32
+        ],
+        [
+         -646.81,
+         416.76
+        ],
+        [
+         -642.27,
+         440.58
+        ]
+       ],
+       "latlon": [
+        [
+         25.193625,
+         55.26792
+        ],
+        [
+         25.193431,
+         55.267979
+        ],
+        [
+         25.193216,
+         55.268024
+        ]
+       ],
+       "arrival_s": 992.55,
+       "t_s": 33.21,
+       "sun": 1.0,
+       "cls": "open",
+       "name": "Burj Khalifa Street"
+      },
+      {
+       "edge": 2185,
+       "geometry": [
+        [
+         -642.27,
+         440.58
+        ],
+        [
+         -631.14,
+         438.03
+        ],
+        [
+         -592.29,
+         426.16
+        ],
+        [
+         -586.56,
+         423.76
+        ],
+        [
+         -581.24,
+         420.55
+        ],
+        [
+         -576.46,
+         416.59
+        ],
+        [
+         -572.32,
+         411.97
+        ],
+        [
+         -568.93,
+         406.78
+        ],
+        [
+         -556.53,
+         387.73
+        ]
+       ],
+       "latlon": [
+        [
+         25.193216,
+         55.268024
+        ],
+        [
+         25.193239,
+         55.268134
+        ],
+        [
+         25.193346,
+         55.26852
+        ],
+        [
+         25.193368,
+         55.268577
+        ],
+        [
+         25.193397,
+         55.26863
+        ],
+        [
+         25.193432,
+         55.268677
+        ],
+        [
+         25.193474,
+         55.268718
+        ],
+        [
+         25.193521,
+         55.268752
+        ],
+        [
+         25.193693,
+         55.268875
+        ]
+       ],
+       "arrival_s": 1025.76,
+       "t_s": 75.58,
+       "sun": 0.681,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2111,
+       "geometry": [
+        [
+         -556.53,
+         387.73
+        ],
+        [
+         -542.82,
+         394.49
+        ]
+       ],
+       "latlon": [
+        [
+         25.193693,
+         55.268875
+        ],
+        [
+         25.193632,
+         55.269011
+        ]
+       ],
+       "arrival_s": 1101.33,
+       "t_s": 10.92,
+       "sun": 0.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2200,
+       "geometry": [
+        [
+         -542.82,
+         394.49
+        ],
+        [
+         -537.28,
+         397.49
+        ],
+        [
+         -531.45,
+         399.87
+        ],
+        [
+         -525.39,
+         401.6
+        ],
+        [
+         -519.17,
+         402.68
+        ]
+       ],
+       "latlon": [
+        [
+         25.193632,
+         55.269011
+        ],
+        [
+         25.193605,
+         55.269066
+        ],
+        [
+         25.193584,
+         55.269124
+        ],
+        [
+         25.193568,
+         55.269184
+        ],
+        [
+         25.193558,
+         55.269246
+        ]
+       ],
+       "arrival_s": 1112.26,
+       "t_s": 18.01,
+       "sun": 0.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2195,
+       "geometry": [
+        [
+         -519.17,
+         402.68
+        ],
+        [
+         -510.54,
+         399.12
+        ],
+        [
+         -473.35,
+         388.19
+        ]
+       ],
+       "latlon": [
+        [
+         25.193558,
+         55.269246
+        ],
+        [
+         25.19359,
+         55.269331
+        ],
+        [
+         25.193689,
+         55.269701
+        ]
+       ],
+       "arrival_s": 1130.26,
+       "t_s": 34.36,
+       "sun": 0.822,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2194,
+       "geometry": [
+        [
+         -473.35,
+         388.19
+        ],
+        [
+         -456.06,
+         383.33
+        ],
+        [
+         -437.63,
+         378.41
+        ],
+        [
+         -422.66,
+         374.14
+        ],
+        [
+         -420.63,
+         373.56
+        ]
+       ],
+       "latlon": [
+        [
+         25.193689,
+         55.269701
+        ],
+        [
+         25.193733,
+         55.269872
+        ],
+        [
+         25.193778,
+         55.270055
+        ],
+        [
+         25.193816,
+         55.270204
+        ],
+        [
+         25.193822,
+         55.270224
+        ]
+       ],
+       "arrival_s": 1164.62,
+       "t_s": 47.08,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2193,
+       "geometry": [
+        [
+         -420.63,
+         373.56
+        ],
+        [
+         -360.98,
+         356.58
+        ],
+        [
+         -338.07,
+         349.8
+        ],
+        [
+         -333.2,
+         349.03
+        ],
+        [
+         -328.26,
+         348.75
+        ],
+        [
+         -323.33,
+         348.96
+        ]
+       ],
+       "latlon": [
+        [
+         25.193822,
+         55.270224
+        ],
+        [
+         25.193975,
+         55.270816
+        ],
+        [
+         25.194037,
+         55.271044
+        ],
+        [
+         25.194043,
+         55.271092
+        ],
+        [
+         25.194046,
+         55.271141
+        ],
+        [
+         25.194044,
+         55.27119
+        ]
+       ],
+       "arrival_s": 1211.7,
+       "t_s": 79.95,
+       "sun": 0.627,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2273,
+       "geometry": [
+        [
+         -323.33,
+         348.96
+        ],
+        [
+         -320.1,
+         346.59
+        ]
+       ],
+       "latlon": [
+        [
+         25.194044,
+         55.27119
+        ],
+        [
+         25.194066,
+         55.271222
+        ]
+       ],
+       "arrival_s": 1291.65,
+       "t_s": 2.86,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2272,
+       "geometry": [
+        [
+         -320.1,
+         346.59
+        ],
+        [
+         -316.88,
+         343.59
+        ],
+        [
+         -314.08,
+         340.45
+        ],
+        [
+         -311.2,
+         337.33
+        ],
+        [
+         -305.7,
+         333.83
+        ]
+       ],
+       "latlon": [
+        [
+         25.194066,
+         55.271222
+        ],
+        [
+         25.194093,
+         55.271254
+        ],
+        [
+         25.194121,
+         55.271282
+        ],
+        [
+         25.194149,
+         55.27131
+        ],
+        [
+         25.194181,
+         55.271365
+        ]
+       ],
+       "arrival_s": 1294.51,
+       "t_s": 13.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2271,
+       "geometry": [
+        [
+         -305.7,
+         333.83
+        ],
+        [
+         -299.39,
+         331.47
+        ],
+        [
+         -292.82,
+         330.02
+        ],
+        [
+         -286.1,
+         329.51
+        ],
+        [
+         -280.24,
+         329.78
+        ],
+        [
+         -274.45,
+         330.73
+        ],
+        [
+         -268.81,
+         332.3
+        ],
+        [
+         -263.87,
+         332.6
+        ],
+        [
+         -258.92,
+         332.26
+        ],
+        [
+         -254.07,
+         331.31
+        ],
+        [
+         -249.36,
+         329.75
+        ],
+        [
+         -244.78,
+         327.6
+        ],
+        [
+         -239.32,
+         325.15
+        ],
+        [
+         -233.96,
+         322.99
+        ],
+        [
+         -228.9,
+         320.19
+        ]
+       ],
+       "latlon": [
+        [
+         25.194181,
+         55.271365
+        ],
+        [
+         25.194202,
+         55.271428
+        ],
+        [
+         25.194215,
+         55.271493
+        ],
+        [
+         25.19422,
+         55.27156
+        ],
+        [
+         25.194218,
+         55.271618
+        ],
+        [
+         25.194209,
+         55.271675
+        ],
+        [
+         25.194195,
+         55.271731
+        ],
+        [
+         25.194192,
+         55.27178
+        ],
+        [
+         25.194195,
+         55.27183
+        ],
+        [
+         25.194204,
+         55.271878
+        ],
+        [
+         25.194218,
+         55.271924
+        ],
+        [
+         25.194237,
+         55.27197
+        ],
+        [
+         25.194259,
+         55.272024
+        ],
+        [
+         25.194279,
+         55.272077
+        ],
+        [
+         25.194304,
+         55.272128
+        ]
+       ],
+       "arrival_s": 1308.35,
+       "t_s": 57.29,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2270,
+       "geometry": [
+        [
+         -228.9,
+         320.19
+        ],
+        [
+         -224.89,
+         317.89
+        ],
+        [
+         -221.2,
+         315.05
+        ],
+        [
+         -219.09,
+         312.48
+        ],
+        [
+         -217.63,
+         309.51
+        ],
+        [
+         -216.91,
+         306.29
+        ],
+        [
+         -216.95,
+         302.98
+        ],
+        [
+         -217.74,
+         299.78
+        ],
+        [
+         -225.5,
+         280.69
+        ],
+        [
+         -227.09,
+         275.09
+        ],
+        [
+         -228.13,
+         269.36
+        ],
+        [
+         -228.59,
+         263.55
+        ],
+        [
+         -228.48,
+         257.75
+        ],
+        [
+         -228.11,
+         253.97
+        ]
+       ],
+       "latlon": [
+        [
+         25.194304,
+         55.272128
+        ],
+        [
+         25.194325,
+         55.272167
+        ],
+        [
+         25.194351,
+         55.272204
+        ],
+        [
+         25.194374,
+         55.272225
+        ],
+        [
+         25.194401,
+         55.272239
+        ],
+        [
+         25.19443,
+         55.272247
+        ],
+        [
+         25.19446,
+         55.272246
+        ],
+        [
+         25.194489,
+         55.272238
+        ],
+        [
+         25.194662,
+         55.272161
+        ],
+        [
+         25.194712,
+         55.272146
+        ],
+        [
+         25.194764,
+         55.272135
+        ],
+        [
+         25.194817,
+         55.272131
+        ],
+        [
+         25.194869,
+         55.272132
+        ],
+        [
+         25.194903,
+         55.272135
+        ]
+       ],
+       "arrival_s": 1365.64,
+       "t_s": 52.5,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2079,
+       "geometry": [
+        [
+         -228.11,
+         253.97
+        ],
+        [
+         -224.08,
+         250.98
+        ]
+       ],
+       "latlon": [
+        [
+         25.194903,
+         55.272135
+        ],
+        [
+         25.19493,
+         55.272175
+        ]
+       ],
+       "arrival_s": 1418.14,
+       "t_s": 3.58,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2078,
+       "geometry": [
+        [
+         -224.08,
+         250.98
+        ],
+        [
+         -221.33,
+         249.34
+        ],
+        [
+         -218.26,
+         247.03
+        ],
+        [
+         -215.34,
+         244.53
+        ],
+        [
+         -212.59,
+         241.85
+        ],
+        [
+         -210.02,
+         238.99
+        ],
+        [
+         -207.64,
+         235.98
+        ],
+        [
+         -205.22,
+         233.0
+        ],
+        [
+         -202.68,
+         230.81
+        ],
+        [
+         -199.46,
+         229.86
+        ],
+        [
+         -196.14,
+         230.35
+        ],
+        [
+         -174.09,
+         237.98
+        ]
+       ],
+       "latlon": [
+        [
+         25.19493,
+         55.272175
+        ],
+        [
+         25.194945,
+         55.272203
+        ],
+        [
+         25.194966,
+         55.272233
+        ],
+        [
+         25.194989,
+         55.272262
+        ],
+        [
+         25.195013,
+         55.272289
+        ],
+        [
+         25.195039,
+         55.272315
+        ],
+        [
+         25.195066,
+         55.272339
+        ],
+        [
+         25.195093,
+         55.272363
+        ],
+        [
+         25.195113,
+         55.272388
+        ],
+        [
+         25.195121,
+         55.27242
+        ],
+        [
+         25.195117,
+         55.272453
+        ],
+        [
+         25.195048,
+         55.272672
+        ]
+       ],
+       "arrival_s": 1421.72,
+       "t_s": 42.61,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2067,
+       "geometry": [
+        [
+         -174.09,
+         237.98
+        ],
+        [
+         -173.65,
+         260.88
+        ],
+        [
+         -172.23,
+         275.95
+        ],
+        [
+         -169.4,
+         291.1
+        ],
+        [
+         -164.52,
+         306.35
+        ],
+        [
+         -162.29,
+         312.96
+        ]
+       ],
+       "latlon": [
+        [
+         25.195048,
+         55.272672
+        ],
+        [
+         25.194841,
+         55.272676
+        ],
+        [
+         25.194704,
+         55.27269
+        ],
+        [
+         25.194567,
+         55.272718
+        ],
+        [
+         25.194429,
+         55.272767
+        ],
+        [
+         25.19437,
+         55.272789
+        ]
+       ],
+       "arrival_s": 1464.33,
+       "t_s": 54.6,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2066,
+       "geometry": [
+        [
+         -162.29,
+         312.96
+        ],
+        [
+         -160.58,
+         316.88
+        ],
+        [
+         -158.54,
+         321.77
+        ],
+        [
+         -151.29,
+         335.33
+        ],
+        [
+         -143.6,
+         349.49
+        ],
+        [
+         -135.71,
+         360.21
+        ]
+       ],
+       "latlon": [
+        [
+         25.19437,
+         55.272789
+        ],
+        [
+         25.194334,
+         55.272806
+        ],
+        [
+         25.19429,
+         55.272826
+        ],
+        [
+         25.194167,
+         55.272898
+        ],
+        [
+         25.194039,
+         55.272974
+        ],
+        [
+         25.193942,
+         55.273053
+        ]
+       ],
+       "arrival_s": 1518.93,
+       "t_s": 38.84,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      },
+      {
+       "edge": 2437,
+       "geometry": [
+        [
+         -135.71,
+         360.21
+        ],
+        [
+         -133.44,
+         358.56
+        ]
+       ],
+       "latlon": [
+        [
+         25.193942,
+         55.273053
+        ],
+        [
+         25.193957,
+         55.273075
+        ]
+       ],
+       "arrival_s": 1557.76,
+       "t_s": 4.0,
+       "sun": 1.0,
+       "cls": "open",
+       "name": null
+      }
+     ]
+    },
+    "wellbeing": {
+     "preference": "sun",
+     "uv": {
+      "index": 8.7,
+      "band": "very high",
+      "advice": "Extra protection: avoid being outside around midday; seek shade; shirt, sunscreen and hat are a must.",
+      "basis": "clear_sky_estimate",
+      "source": "WHO Global Solar UV Index bands"
+     },
+     "heat_stress": {
+      "apparent_c": 27.2,
+      "band": "caution",
+      "advice": "Warm: fatigue is possible with long exposure; carry water.",
+      "indicative": true,
+      "source": "US NWS heat-index categories applied to apparent temperature (indicative)",
+      "route_rhl": 1652.2
+     },
+     "daylight_window": {
+      "active": true,
+      "text": "Daylight / vitamin D window. Well-being guidance, not medical advice.",
+      "sun_alt_deg": 59.9,
+      "shadow_ratio": 0.58,
+      "shadow_text": "Your shadow is 0.6\u00d7 your height.",
+      "uv_index": 8.7,
+      "cloud_cover_pct": 98.0,
+      "sky": {
+       "overcast": false,
+       "basis": "radiation",
+       "clear_sky_index": 0.91,
+       "cloud_cover_pct": 98.0,
+       "rule": "overcast when measured / Haurwitz clear-sky radiation < 0.4"
+      },
+      "reasons": [],
+      "rule": "sun altitude >= 45 deg, UV index >= 3, not overcast (rule of thumb)",
+      "disclaimer": "Well-being guidance, not medical advice."
+     },
+     "breaks": {
+      "hot": false,
+      "every_sun_min": 10.0,
+      "prompts": [],
+      "rule": "a prompt every 10 min of direct sun when the apparent temperature is >= 32.2 C"
+     },
+     "overcast": null,
+     "weather": {
+      "source": "cached",
+      "label": "Recorded weather for 2026-04-15 (Open-Meteo archive)",
+      "at": "2026-04-15T10:30:00+04:00",
+      "apparent_c": 27.2,
+      "uv_index": 8.7,
+      "cloud_cover_pct": 98,
+      "shortwave_wm2": 744,
+      "clear_sky_index": 0.91
      },
      "disclaimer": "Well-being guidance, not medical advice."
     },
@@ -34508,6 +42062,488 @@
     "added_time_s": 100.77,
     "added_frac": 0.0687,
     "detour_ratio": 1.0609,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   }
+  ],
+  "candidates_spring": [
+   {
+    "origin": "taj_dubai_hotel",
+    "dest": "the_address_dubai_mall",
+    "origin_name": "Taj Dubai Hotel",
+    "dest_name": "The Address - Dubai Mall",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:00",
+    "straight_m": 1316.6,
+    "network_ratio": 1.343,
+    "fastest_distance_m": 1767.85,
+    "fastest_duration_s": 1414.75,
+    "fastest_sun_s": 982.01,
+    "sunniest_duration_s": 1726.61,
+    "sunniest_sun_s": 1640.57,
+    "sun_gained_s": 658.56,
+    "sun_gained_pct": 67.06,
+    "added_time_s": 311.86,
+    "added_frac": 0.2204,
+    "detour_ratio": 1.2723,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "the_address_dubai_mall",
+    "dest": "taj_dubai_hotel",
+    "origin_name": "The Address - Dubai Mall",
+    "dest_name": "Taj Dubai Hotel",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:00",
+    "straight_m": 1316.6,
+    "network_ratio": 1.343,
+    "fastest_distance_m": 1767.85,
+    "fastest_duration_s": 1414.75,
+    "fastest_sun_s": 1059.6,
+    "sunniest_duration_s": 1726.61,
+    "sunniest_sun_s": 1707.22,
+    "sun_gained_s": 647.62,
+    "sun_gained_pct": 61.12,
+    "added_time_s": 311.86,
+    "added_frac": 0.2204,
+    "detour_ratio": 1.2723,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "the_address_dubai_mall",
+    "dest": "taj_dubai_hotel",
+    "origin_name": "The Address - Dubai Mall",
+    "dest_name": "Taj Dubai Hotel",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:00",
+    "straight_m": 1316.6,
+    "network_ratio": 1.343,
+    "fastest_distance_m": 1767.85,
+    "fastest_duration_s": 1414.75,
+    "fastest_sun_s": 990.36,
+    "sunniest_duration_s": 1726.61,
+    "sunniest_sun_s": 1629.61,
+    "sun_gained_s": 639.25,
+    "sun_gained_pct": 64.55,
+    "added_time_s": 311.86,
+    "added_frac": 0.2204,
+    "detour_ratio": 1.2723,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "taj_dubai_hotel",
+    "dest": "the_address_dubai_mall",
+    "origin_name": "Taj Dubai Hotel",
+    "dest_name": "The Address - Dubai Mall",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:00",
+    "straight_m": 1316.6,
+    "network_ratio": 1.343,
+    "fastest_distance_m": 1767.85,
+    "fastest_duration_s": 1414.75,
+    "fastest_sun_s": 1070.59,
+    "sunniest_duration_s": 1726.61,
+    "sunniest_sun_s": 1702.68,
+    "sun_gained_s": 632.09,
+    "sun_gained_pct": 59.04,
+    "added_time_s": 311.86,
+    "added_frac": 0.2204,
+    "detour_ratio": 1.2723,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "the_address_dubai_mall",
+    "dest": "taj_dubai_hotel",
+    "origin_name": "The Address - Dubai Mall",
+    "dest_name": "Taj Dubai Hotel",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1316.6,
+    "network_ratio": 1.343,
+    "fastest_distance_m": 1767.85,
+    "fastest_duration_s": 1414.75,
+    "fastest_sun_s": 1089.87,
+    "sunniest_duration_s": 1726.61,
+    "sunniest_sun_s": 1709.99,
+    "sun_gained_s": 620.12,
+    "sun_gained_pct": 56.9,
+    "added_time_s": 311.86,
+    "added_frac": 0.2204,
+    "detour_ratio": 1.2723,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "taj_dubai_hotel",
+    "dest": "the_address_dubai_mall",
+    "origin_name": "Taj Dubai Hotel",
+    "dest_name": "The Address - Dubai Mall",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1316.6,
+    "network_ratio": 1.343,
+    "fastest_distance_m": 1767.85,
+    "fastest_duration_s": 1414.75,
+    "fastest_sun_s": 1066.2,
+    "sunniest_duration_s": 1726.61,
+    "sunniest_sun_s": 1664.46,
+    "sun_gained_s": 598.26,
+    "sun_gained_pct": 56.11,
+    "added_time_s": 311.86,
+    "added_frac": 0.2204,
+    "detour_ratio": 1.2723,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "diplodocus",
+    "dest": "sofitel_dubai_downtown",
+    "origin_name": "Diplodocus",
+    "dest_name": "Sofitel Dubai Downtown",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:00",
+    "straight_m": 1128.4,
+    "network_ratio": 1.529,
+    "fastest_distance_m": 1725.53,
+    "fastest_duration_s": 1400.32,
+    "fastest_sun_s": 658.07,
+    "sunniest_duration_s": 1450.94,
+    "sunniest_sun_s": 1239.78,
+    "sun_gained_s": 581.71,
+    "sun_gained_pct": 88.4,
+    "added_time_s": 50.62,
+    "added_frac": 0.0361,
+    "detour_ratio": 1.0999,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "sofitel_dubai_downtown",
+    "dest": "diplodocus",
+    "origin_name": "Sofitel Dubai Downtown",
+    "dest_name": "Diplodocus",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:00",
+    "straight_m": 1128.4,
+    "network_ratio": 1.529,
+    "fastest_distance_m": 1725.53,
+    "fastest_duration_s": 1400.32,
+    "fastest_sun_s": 679.18,
+    "sunniest_duration_s": 1450.94,
+    "sunniest_sun_s": 1248.47,
+    "sun_gained_s": 569.29,
+    "sun_gained_pct": 83.82,
+    "added_time_s": 50.62,
+    "added_frac": 0.0361,
+    "detour_ratio": 1.0999,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "dubai_mall",
+    "dest": "sofitel_dubai_downtown",
+    "origin_name": "The Dubai Mall",
+    "dest_name": "Sofitel Dubai Downtown",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:00",
+    "straight_m": 1043.6,
+    "network_ratio": 1.523,
+    "fastest_distance_m": 1589.0,
+    "fastest_duration_s": 1296.39,
+    "fastest_sun_s": 661.09,
+    "sunniest_duration_s": 1467.99,
+    "sunniest_sun_s": 1202.65,
+    "sun_gained_s": 541.56,
+    "sun_gained_pct": 81.92,
+    "added_time_s": 171.6,
+    "added_frac": 0.1324,
+    "detour_ratio": 1.2082,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "diplodocus",
+    "dest": "sofitel_dubai_downtown",
+    "origin_name": "Diplodocus",
+    "dest_name": "Sofitel Dubai Downtown",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1128.4,
+    "network_ratio": 1.529,
+    "fastest_distance_m": 1725.53,
+    "fastest_duration_s": 1400.32,
+    "fastest_sun_s": 709.3,
+    "sunniest_duration_s": 1450.94,
+    "sunniest_sun_s": 1247.98,
+    "sun_gained_s": 538.68,
+    "sun_gained_pct": 75.95,
+    "added_time_s": 50.62,
+    "added_frac": 0.0361,
+    "detour_ratio": 1.0999,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "sofitel_dubai_downtown",
+    "dest": "diplodocus",
+    "origin_name": "Sofitel Dubai Downtown",
+    "dest_name": "Diplodocus",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:30",
+    "straight_m": 1128.4,
+    "network_ratio": 1.529,
+    "fastest_distance_m": 1725.53,
+    "fastest_duration_s": 1400.32,
+    "fastest_sun_s": 696.51,
+    "sunniest_duration_s": 1450.94,
+    "sunniest_sun_s": 1231.68,
+    "sun_gained_s": 535.17,
+    "sun_gained_pct": 76.84,
+    "added_time_s": 50.62,
+    "added_frac": 0.0361,
+    "detour_ratio": 1.0999,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "taj_dubai_hotel",
+    "dest": "the_address_dubai_mall",
+    "origin_name": "Taj Dubai Hotel",
+    "dest_name": "The Address - Dubai Mall",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:30",
+    "straight_m": 1316.6,
+    "network_ratio": 1.343,
+    "fastest_distance_m": 1767.85,
+    "fastest_duration_s": 1414.75,
+    "fastest_sun_s": 1162.69,
+    "sunniest_duration_s": 1726.61,
+    "sunniest_sun_s": 1696.31,
+    "sun_gained_s": 533.62,
+    "sun_gained_pct": 45.9,
+    "added_time_s": 311.86,
+    "added_frac": 0.2204,
+    "detour_ratio": 1.2723,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "sofitel_dubai_downtown",
+    "dest": "dubai_mall",
+    "origin_name": "Sofitel Dubai Downtown",
+    "dest_name": "The Dubai Mall",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:00",
+    "straight_m": 1043.6,
+    "network_ratio": 1.523,
+    "fastest_distance_m": 1589.0,
+    "fastest_duration_s": 1296.39,
+    "fastest_sun_s": 679.18,
+    "sunniest_duration_s": 1467.99,
+    "sunniest_sun_s": 1209.66,
+    "sun_gained_s": 530.48,
+    "sun_gained_pct": 78.11,
+    "added_time_s": 171.6,
+    "added_frac": 0.1324,
+    "detour_ratio": 1.2082,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "sofitel_dubai_downtown",
+    "dest": "diplodocus",
+    "origin_name": "Sofitel Dubai Downtown",
+    "dest_name": "Diplodocus",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1128.4,
+    "network_ratio": 1.529,
+    "fastest_distance_m": 1725.53,
+    "fastest_duration_s": 1400.32,
+    "fastest_sun_s": 714.83,
+    "sunniest_duration_s": 1450.94,
+    "sunniest_sun_s": 1243.03,
+    "sun_gained_s": 528.2,
+    "sun_gained_pct": 73.89,
+    "added_time_s": 50.62,
+    "added_frac": 0.0361,
+    "detour_ratio": 1.0999,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "business_bay_metro",
+    "dest": "burj_park",
+    "origin_name": "Business Bay Metro Station",
+    "dest_name": "Burj Park",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1349.9,
+    "network_ratio": 1.407,
+    "fastest_distance_m": 1899.47,
+    "fastest_duration_s": 1434.83,
+    "fastest_sun_s": 1101.2,
+    "sunniest_duration_s": 1703.92,
+    "sunniest_sun_s": 1625.0,
+    "sun_gained_s": 523.8,
+    "sun_gained_pct": 47.57,
+    "added_time_s": 269.09,
+    "added_frac": 0.1875,
+    "detour_ratio": 1.1688,
+    "both_curated": true,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "business_bay_metro",
+    "dest": "dubai_opera_garden",
+    "origin_name": "Business Bay Metro Station",
+    "dest_name": "Dubai Opera Garden",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1383.3,
+    "network_ratio": 1.336,
+    "fastest_distance_m": 1848.18,
+    "fastest_duration_s": 1414.61,
+    "fastest_sun_s": 1080.98,
+    "sunniest_duration_s": 1683.7,
+    "sunniest_sun_s": 1604.77,
+    "sun_gained_s": 523.79,
+    "sun_gained_pct": 48.46,
+    "added_time_s": 269.09,
+    "added_frac": 0.1902,
+    "detour_ratio": 1.1735,
+    "both_curated": true,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "swissotel_al_murooj",
+    "dest": "ramada_downtown_dubai",
+    "origin_name": "Swissotel Al Murooj",
+    "dest_name": "Ramada Downtown Dubai",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:00",
+    "straight_m": 1194.4,
+    "network_ratio": 1.58,
+    "fastest_distance_m": 1886.92,
+    "fastest_duration_s": 1479.91,
+    "fastest_sun_s": 951.7,
+    "sunniest_duration_s": 1617.81,
+    "sunniest_sun_s": 1474.57,
+    "sun_gained_s": 522.87,
+    "sun_gained_pct": 54.94,
+    "added_time_s": 137.9,
+    "added_frac": 0.0932,
+    "detour_ratio": 1.1041,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "business_bay_metro",
+    "dest": "ramada_downtown_dubai",
+    "origin_name": "Business Bay Metro Station",
+    "dest_name": "Ramada Downtown Dubai",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1244.6,
+    "network_ratio": 1.361,
+    "fastest_distance_m": 1693.41,
+    "fastest_duration_s": 1289.76,
+    "fastest_sun_s": 955.58,
+    "sunniest_duration_s": 1554.47,
+    "sunniest_sun_s": 1475.26,
+    "sun_gained_s": 519.68,
+    "sun_gained_pct": 54.38,
+    "added_time_s": 264.71,
+    "added_frac": 0.2052,
+    "detour_ratio": 1.1858,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "sofitel_dubai_downtown",
+    "dest": "dubai_mall",
+    "origin_name": "Sofitel Dubai Downtown",
+    "dest_name": "The Dubai Mall",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "11:30",
+    "straight_m": 1043.6,
+    "network_ratio": 1.523,
+    "fastest_distance_m": 1589.0,
+    "fastest_duration_s": 1296.39,
+    "fastest_sun_s": 696.51,
+    "sunniest_duration_s": 1453.14,
+    "sunniest_sun_s": 1211.1,
+    "sun_gained_s": 514.59,
+    "sun_gained_pct": 73.88,
+    "added_time_s": 156.75,
+    "added_frac": 0.1209,
+    "detour_ratio": 1.1951,
+    "both_curated": false,
+    "reject": null,
+    "eligible": true
+   },
+   {
+    "origin": "ramada_downtown_dubai",
+    "dest": "business_bay_metro",
+    "origin_name": "Ramada Downtown Dubai",
+    "dest_name": "Business Bay Metro Station",
+    "mode": "walk",
+    "date_id": "spring",
+    "depart": "10:30",
+    "straight_m": 1244.6,
+    "network_ratio": 1.361,
+    "fastest_distance_m": 1693.41,
+    "fastest_duration_s": 1289.76,
+    "fastest_sun_s": 942.03,
+    "sunniest_duration_s": 1554.47,
+    "sunniest_sun_s": 1453.27,
+    "sun_gained_s": 511.24,
+    "sun_gained_pct": 54.27,
+    "added_time_s": 264.71,
+    "added_frac": 0.2052,
+    "detour_ratio": 1.1858,
     "both_curated": false,
     "reject": null,
     "eligible": true

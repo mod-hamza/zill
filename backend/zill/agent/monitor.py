@@ -250,7 +250,7 @@ class Monitor:
                 "diff": diff,
                 "auto": auto,
                 "new_plan_id": new_plan["plan_id"],
-                "routes": [routes[k] for k in ("fastest", "balanced", "coolest") if k in routes],
+                "routes": [routes[k] for k in ("fastest", "balanced", "coolest", "sunniest") if k in routes],
             },
         )
         msg_auto = auto

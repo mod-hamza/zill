@@ -204,6 +204,10 @@ def format_value(value: Any, leaf: str, tz: ZoneInfo) -> str:
         return f"{_fmt_num(v, 0)} s"
     if leaf.endswith("_c"):
         return f"{_fmt_num(v, 1)} °C"
+    if leaf.endswith("_deg"):  # sun altitude / azimuth
+        return f"{_fmt_num(v, 0)}°"
+    if leaf.endswith("_wm2"):  # irradiance
+        return f"{_fmt_num(v, 0)} W/m²"
     if float(v).is_integer():
         return str(int(v))
     return _fmt_num(v, 1)

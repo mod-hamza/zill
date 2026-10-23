@@ -132,6 +132,29 @@ def _label(source: str, rec: dict[str, Any], day: date) -> str:
     return f"Recorded weather for {day.isoformat()} (Open-Meteo {rec.get('source_api', 'archive')})"
 
 
+def _clear_sky_index_at(rows: list[dict[str, Any]], at: datetime, info: dict[str, Any]) -> float | None:
+    """Clear-sky index (measured / Haurwitz clear-sky GHI) per hourly row, interpolated at `at`.
+
+    Open-Meteo `shortwave_radiation` is the mean over the PRECEDING hour, so each row is compared with
+    the clear-sky GHI at the middle of that hour (row time - 30 min).
+    """
+    from datetime import timedelta
+
+    from zill.sun.position import sun_positions
+    from zill.wellbeing import clear_sky_index
+
+    if not any(r.get("shortwave_radiation") is not None for r in rows):
+        return None
+    tz = ZoneInfo(info["tz"])
+    mids = [datetime.fromisoformat(r["time"]).replace(tzinfo=tz) - timedelta(minutes=30) for r in rows]
+    alts = [p.alt_deg for p in sun_positions(mids, info["lat"], info["lon"], info["tz"])]
+    pts = [
+        {"time": r["time"], "kt": clear_sky_index(r.get("shortwave_radiation"), a)}
+        for r, a in zip(rows, alts, strict=True)
+    ]
+    return _interp(pts, at, "kt")
+
+
 def get(
     city_id: str,
     at: datetime | None = None,
@@ -188,6 +211,7 @@ def get(
     wind = _interp(rows, at, "wind_speed_10m")
     cloud = _interp(rows, at, "cloud_cover")
     sw = _interp(rows, at, "shortwave_radiation")
+    kt = _clear_sky_index_at(rows, at, info)
     alert = bool((app is not None and app >= HEAT_APPARENT_C) or (uv is not None and uv >= HEAT_UV))
     out = {
         "city": city_id,
@@ -201,6 +225,7 @@ def get(
         "wind_ms": None if wind is None else round(wind, 1),
         "cloud_cover_pct": None if cloud is None else round(cloud),
         "shortwave_wm2": None if sw is None else round(sw),
+        "clear_sky_index": None if kt is None else round(kt, 2),
         "heat_alert": alert,
         "label": _label(source, rec, day),
         "hourly": rows,

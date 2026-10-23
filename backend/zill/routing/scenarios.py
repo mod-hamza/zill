@@ -26,6 +26,10 @@ S4. Rank by sun_gained_s (ties: less added time). winter_morning_walk = best mor
     endpoints curated are preferred when that tier gains >= 60 s.
 S5. If the best morning gain is < 90 s the band is widened to 300-1800 m and the attempt logged.
 S6. Each scenario carries the well-being block computed from the RECORDED weather for that date.
+S7. spring_daylight_walk: date spring (2026-04-15), departures 10:00-11:30 every 30 min. For each departure
+    the daylight window is evaluated first (sun altitude at the city origin + recorded UV and sky state);
+    only departures with an OPEN window are searched, same filters, ranked by sun_gained_s, pair distinct
+    from the winter scenarios.
 """
 
 from __future__ import annotations
@@ -575,6 +579,21 @@ SUN_MORNING_DEPARTS = ("09:00", "09:30", "10:00", "10:30", "11:00")
 SUN_LUNCH_DEPARTS = ("12:00", "12:30", "13:00", "13:30")
 MIN_SUN_GAIN_S = 90.0
 LUNCH_MAX_DURATION_S = 15 * 60.0
+SPRING_DATE = "spring"
+SPRING_DEPARTS = ("10:00", "10:30", "11:00", "11:30")
+
+
+def window_at(ctx: CityContext, date_id: str, hhmm: str) -> dict[str, Any]:
+    """Daylight-window state at the city origin from the recorded weather (no network)."""
+    from zill import weather, wellbeing
+    from zill.sun.position import sun_position
+
+    dep = ctx.at(date_id, hhmm)
+    alt = sun_position(dep, ctx.origin["lat"], ctx.origin["lon"], ctx.tz).alt_deg
+    w = weather.get(ctx.city_id, dep, allow_live=False, prefer_recorded=True)
+    return wellbeing.daylight_window(
+        alt, w.get("uv_index"), w.get("cloud_cover_pct"), w.get("clear_sky_index")
+    )
 
 
 def _rank_sun(rows: list[dict[str, Any]], departs: tuple[str, ...]) -> list[dict[str, Any]]:
@@ -691,12 +710,54 @@ def generate_sun(
             notes.append(f"{sid}: no eligible candidate found")
             continue
         scen.append(_full_sun(ctx, row, persona, sid, with_departure=(sid == "winter_morning_walk")))
+    # S7: spring late morning, only departures whose daylight window is open
+    spring_rows: list[dict[str, Any]] = []
+    if ctx.has_exposure(SPRING_DATE):
+        win = {hh: window_at(ctx, SPRING_DATE, hh) for hh in SPRING_DEPARTS}
+        open_deps = tuple(hh for hh in SPRING_DEPARTS if win[hh]["active"])
+        info_w = {hh: {"active": w["active"], "reasons": w["reasons"]} for hh, w in win.items()}
+        if open_deps:
+            spring_rows, info = run_search(
+                ctx, places, 400.0, 1500.0, open_deps, (SPRING_DATE,), ("walk",), serial, preference="sun"
+            )
+            used = {frozenset((r["origin"], r["dest"])) for r in (sel.get(k) for k in sel) if r}
+            pool = [
+                r
+                for r in _rank_sun(spring_rows, open_deps)
+                if frozenset((r["origin"], r["dest"])) not in used
+            ]
+            info.update(
+                name="spring late morning, open daylight window only",
+                windows=info_w,
+                eligible=sum(1 for r in spring_rows if r["eligible"]),
+                selected={
+                    "spring_daylight_walk": None
+                    if not pool
+                    else f"{pool[0]['origin']}->{pool[0]['dest']} walk {pool[0]['depart']} {SPRING_DATE}"
+                },
+            )
+            attempts.append(info)
+            log(f"[scenarios:sun] spring: {info['jobs']} jobs, eligible {info['eligible']}")
+            if pool:
+                scen.append(
+                    _full_sun(ctx, pool[0], "daylight_seeker", "spring_daylight_walk", with_departure=False)
+                )
+            else:
+                notes.append("spring_daylight_walk: no eligible candidate found")
+        else:
+            attempts.append({"name": "spring late morning", "windows": info_w, "jobs": 0})
+            notes.append("spring_daylight_walk: no spring late-morning departure has an open daylight window")
+    else:
+        notes.append("spring_daylight_walk: no spring exposure table")
     for sc in scen:
         wb = sc["wellbeing"]
         if wb.get("overcast"):
             notes.append(f"{sc['id']}: recorded weather shows {wb['overcast']['text']}")
         if not wb["daylight_window"]["active"]:
             notes.append(f"{sc['id']}: {wb['daylight_window']['text']}")
+        if wb["uv"]["band"] in ("very high", "extreme"):
+            uv = wb["uv"]
+            notes.append(f"{sc['id']}: UV index {uv['index']} is {uv['band']}. {uv['advice']}")
     ranked = sorted((r for r in rows if r["eligible"]), key=lambda r: -r["sun_gained_s"])[:20]
     doc = __doc__ or ""
     block = {
@@ -721,6 +782,9 @@ def generate_sun(
         },
         "scenarios": scen,
         "candidates": ranked,
+        "candidates_spring": sorted(
+            (r for r in spring_rows if r["eligible"]), key=lambda r: -r["sun_gained_s"]
+        )[:20],
     }
     path = out_path or (
         config.DATA_DIR

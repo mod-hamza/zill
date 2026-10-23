@@ -70,7 +70,7 @@ def live_available() -> bool:
 
 # Models --------------------------------------------------------------------------------------------
 class SessionIn(BaseModel):
-    persona: Literal["tourist", "rider", "crew"] = "tourist"
+    persona: Literal["tourist", "rider", "crew", "daylight_seeker"] = "tourist"
     city: str = config.DEFAULT_CITY
     date_id: str = "summer"
     clock: str | None = Field(default=None, description="HH:MM or ISO start of the simulated clock")

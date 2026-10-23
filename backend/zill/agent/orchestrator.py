@@ -201,7 +201,7 @@ class Agent:
         s = self.s
         if plan is None:
             return
-        routes = [r for r in (plan["routes"].get(k) for k in ("fastest", "balanced", "coolest")) if r]
+        routes = [r for r in (plan["routes"].get(k) for k in ("fastest", "balanced", "coolest", "sunniest")) if r]
         tokens = {t["token"]: t["value"] for t in s.store.resolve(draft.text).resolved}
         weather = s.store.get("weather") or {}
         high = bool(plan.get("policy_acknowledged")) or bool(weather.get("heat_alert"))

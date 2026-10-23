@@ -33,6 +33,12 @@ PlaceArg = {
     "type": "string",
     "description": "Place name, POI id, or a role already resolved: 'origin'/'dest'.",
 }
+PrefArg = {
+    "type": "string",
+    "enum": ["shade", "sun"],
+    "description": "shade = least direct sun (default); sun = most direct sun / daylight (well-being). "
+    "Defaults to the persona's preference.",
+}
 
 
 @dataclass
@@ -110,6 +116,25 @@ def _mode(s: Session, args: dict[str, Any]) -> str:
     return m
 
 
+def _pref(s: Session, args: dict[str, Any]) -> str:
+    """Routing preference: the tool argument, else the persona's default (daylight seeker = sun)."""
+    from .personas import get_persona
+
+    p = args.get("preference") or get_persona(s.persona).preference
+    if p not in ("shade", "sun"):
+        raise BackendError(f"unknown preference '{p}' (use shade or sun)")
+    return p
+
+
+def _pkw(pref: str) -> dict[str, Any]:
+    """Backend kwargs: only sun mode passes `preference`, so shade calls stay exactly as before."""
+    return {"preference": "sun"} if pref == "sun" else {}
+
+
+def best_label(pref: str) -> str:
+    return "sunniest" if pref == "sun" else "coolest"
+
+
 def _when(s: Session, value: Any | None) -> datetime:
     if value in (None, ""):
         return s.clock.now() if s.clock else s.parse_time("13:00")
@@ -125,10 +150,13 @@ def _latest(s: Session, args: dict[str, Any]) -> datetime | None:
 
 
 def _route_line(r: dict[str, Any]) -> str:
-    return (
+    line = (
         f"{r['label']}: {r['duration_s'] / 60:.1f} min, {r.get('shaded_pct', 0):.0f}% shaded, "
         f"sun {r.get('sun_exposure_s', 0) / 60:.1f} min, RHL {r.get('rhl', 0):.0f}"
     )
+    if r.get("sun_gained_s"):
+        line += f", sun gained {r['sun_gained_s'] / 60:.1f} min"
+    return line
 
 
 def _new_plan(
@@ -220,13 +248,23 @@ def t_compare_routes(s: Session, a: dict[str, Any]) -> dict[str, Any]:
         mode = _mode(s, a)
         o, d = _place(s, a.get("origin"), mode), _place(s, a.get("dest"), mode)
         dep = _when(s, a.get("depart_at"))
-        routes = s.backend.routes(o, d, mode, dep, s.date_key, dict(config.LAMBDAS))
+        pref = _pref(s, a)
+        routes = s.backend.routes(o, d, mode, dep, s.date_key, dict(config.LAMBDAS), **_pkw(pref))
     except BackendError as exc:
         return fail(str(exc))
     latest = _latest(s, a)
     key = a.get("store_as") or "route"
+    extra = {"preference": "sun"} if pref == "sun" else {}
     plan = _new_plan(
-        s, "journey", mode, routes, o, d, latest_arrival=latest.isoformat() if latest else None, route_key=key
+        s,
+        "journey",
+        mode,
+        routes,
+        o,
+        d,
+        latest_arrival=latest.isoformat() if latest else None,
+        route_key=key,
+        **extra,
     )
     entry = {
         **routes,
@@ -235,14 +273,25 @@ def t_compare_routes(s: Session, a: dict[str, Any]) -> dict[str, Any]:
         "origin": o["name"],
         "dest": d["name"],
         "plan_id": plan["plan_id"],
+        **extra,
     }
     s.store.set(key, entry)
     s.store.set("plan", plan_summary(plan) | {"id": plan["plan_id"]})
-    lines = "; ".join(_route_line(routes[k]) for k in ("fastest", "balanced", "coolest") if k in routes)
-    return ok(
-        {"plan_id": plan["plan_id"], "stored_as": key, "routes": {k: digest(v) for k, v in routes.items()}},
-        f"{o['name']} to {d['name']} by {mode} at {dep.strftime('%H:%M')}. {lines}.",
-    )
+    data: dict[str, Any] = {
+        "plan_id": plan["plan_id"],
+        "stored_as": key,
+        "routes": {k: digest(v) for k, v in routes.items()},
+    }
+    if pref == "sun":  # well-being block for the sunniest route (UV, heat, daylight window, overcast)
+        try:
+            wb = s.backend.wellbeing(dep, "sun", routes.get("sunniest"))
+            s.store.set("wellbeing", wb)
+            data.update(preference="sun", wellbeing=digest(wb))
+        except Exception as exc:  # well-being context must never break routing
+            data["wellbeing_error"] = type(exc).__name__
+    labels = ("fastest", "balanced", "sunniest") if pref == "sun" else ("fastest", "balanced", "coolest")
+    lines = "; ".join(_route_line(routes[k]) for k in labels if k in routes)
+    return ok(data, f"{o['name']} to {d['name']} by {mode} at {dep.strftime('%H:%M')}. {lines}.")
 
 
 def t_plan_route(s: Session, a: dict[str, Any]) -> dict[str, Any]:
@@ -253,7 +302,7 @@ def t_plan_route(s: Session, a: dict[str, Any]) -> dict[str, Any]:
         lam = float(a.get("lambda", config.LAMBDAS["balanced"]))
         if not 0 <= lam <= 10:
             return fail("lambda must be between 0 and 10")
-        routes = s.backend.routes(o, d, mode, dep, s.date_key, {"custom": lam})
+        routes = s.backend.routes(o, d, mode, dep, s.date_key, {"custom": lam}, **_pkw(_pref(s, a)))
     except (BackendError, ValueError) as exc:
         return fail(str(exc))
     r = routes["custom"]
@@ -270,7 +319,8 @@ def t_optimise_departure(s: Session, a: dict[str, Any]) -> dict[str, Any]:
         end = _when(s, win.get("end")) if win.get("end") else start + timedelta(minutes=90)
         if end <= start:
             return fail("window end must be after window start")
-        res = s.backend.departure(o, d, mode, start, end, s.date_key, _latest(s, a))
+        pref = _pref(s, a)
+        res = s.backend.departure(o, d, mode, start, end, s.date_key, _latest(s, a), **_pkw(pref))
     except BackendError as exc:
         return fail(str(exc))
     best = res["best"]
@@ -279,6 +329,8 @@ def t_optimise_departure(s: Session, a: dict[str, Any]) -> dict[str, Any]:
             datetime.fromisoformat(best["depart"]) + timedelta(seconds=best["duration_s"])
         ).isoformat()
     res["window"] = {"start": start.isoformat(), "end": end.isoformat()}
+    if pref == "sun":
+        res["preference"] = "sun"
     s.store.set("departure", res)
     bt = best.get("depart", "")
     hm = datetime.fromisoformat(bt).strftime("%H:%M") if bt else "?"
@@ -338,13 +390,14 @@ def t_plan_day(s: Session, a: dict[str, Any]) -> dict[str, Any]:
                 {"place": p, "dwell_min": float(st.get("dwell_min", 10)) if isinstance(st, dict) else 10.0}
             )
         fixed_first = bool(a.get("keep_first", True))
+        pkw = _pkw(_pref(s, a))
         cache: dict[tuple[str, str, int], dict[str, Any]] = {}
 
         def leg(p: dict, q: dict, t: datetime) -> dict[str, Any]:
             k = (p["name"], q["name"], int(t.timestamp() // 600))
             if k not in cache:
                 cache[k] = s.backend.routes(
-                    p, q, mode, t, s.date_key, {"balanced": config.LAMBDAS["balanced"]}
+                    p, q, mode, t, s.date_key, {"balanced": config.LAMBDAS["balanced"]}, **pkw
                 )["balanced"]
             return cache[k]
 
@@ -366,7 +419,10 @@ def t_plan_day(s: Session, a: dict[str, Any]) -> dict[str, Any]:
                             "outdoor_work": True,
                         }
                     )
-                    score += r["duration_s"] + r.get("rhl", 0.0)
+                    if pkw:  # sun mode: time not in direct sun instead of heat load
+                        score += r["duration_s"] + (r["duration_s"] - r.get("sun_exposure_s", 0.0))
+                    else:
+                        score += r["duration_s"] + r.get("rhl", 0.0)
                     since_break += r.get("rhl", 0.0)
                     t = t_end
                     if since_break > config.RHL_BREAK_THRESHOLD:
@@ -485,7 +541,7 @@ def t_explain_segment(s: Session, a: dict[str, Any]) -> dict[str, Any]:
     plan = s.plans.get(a.get("plan_id") or s.draft_plan_id or "")
     if plan is None:
         return fail("no plan to explain")
-    label = a.get("route", "coolest")
+    label = a.get("route") or best_label(plan.get("preference", "shade"))
     r = plan["routes"].get(label)
     if r is None:
         return fail(f"plan has no '{label}' route")
@@ -548,6 +604,7 @@ def _tools() -> list[Tool]:
                     "mode": Mode,
                     "depart_at": {"type": "string"},
                     "lambda": {"type": "number"},
+                    "preference": PrefArg,
                 },
                 ["origin", "dest"],
             ),
@@ -555,7 +612,8 @@ def _tools() -> list[Tool]:
         ),
         T(
             "compare_routes",
-            "Compute Fastest, Balanced and Coolest routes with computed stats. Creates a draft plan.",
+            "Compute Fastest, Balanced and Coolest routes (or, with preference sun, Fastest, Balanced and "
+            "Sunniest plus a well-being block) with computed stats. Creates a draft plan.",
             obj(
                 {
                     "origin": PlaceArg,
@@ -564,6 +622,7 @@ def _tools() -> list[Tool]:
                     "depart_at": {"type": "string"},
                     "latest_arrival": {"type": "string"},
                     "store_as": {"type": "string"},
+                    "preference": PrefArg,
                 },
                 ["origin", "dest"],
             ),
@@ -579,6 +638,7 @@ def _tools() -> list[Tool]:
                     "mode": Mode,
                     "window": obj({"start": {"type": "string"}, "end": {"type": "string"}}),
                     "latest_arrival": {"type": "string"},
+                    "preference": PrefArg,
                 },
                 ["origin", "dest"],
             ),
@@ -612,6 +672,7 @@ def _tools() -> list[Tool]:
                     "mode": Mode,
                     "start": {"type": "string"},
                     "keep_first": {"type": "boolean"},
+                    "preference": PrefArg,
                 },
                 ["stops"],
             ),

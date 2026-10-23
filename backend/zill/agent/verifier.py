@@ -67,6 +67,11 @@ def parse_draft(content: str) -> Draft:
 
 _SAVES = re.compile(r"\b(saves?|less sun|cooler|shadier|more shade|spares?)\b", re.I)
 _QUICKER = re.compile(r"\b(faster|quicker|shorter|no extra time|no added time)\b", re.I)
+_SUNNIER = re.compile(r"\b(sunnier|more (?:direct )?sun|more daylight|more sunshine)\b", re.I)
+# medical claims are never allowed (well-being guidance only); "not medical advice" is fine
+_MEDICAL = re.compile(
+    r"\b(treats?|treatment|cures?|heals?|prevents?|prescri\w*|diagnos\w*|deficiency)\b", re.I
+)
 
 
 def verify_deterministic(s: Session, draft: Draft, user_text: str) -> VerifyResult:
@@ -127,7 +132,22 @@ def verify_deterministic(s: Session, draft: Draft, user_text: str) -> VerifyResu
     # 6. qualitative claims vs computed stats
     if route is not None:
         res.checked += 1
-        if _SAVES.search(draft.text) and rec != "fastest" and (route.get("sun_saved_s") or 0) <= 0:
+        sun_mode = plan.get("preference") == "sun"
+        if (
+            sun_mode
+            and _SUNNIER.search(draft.text)
+            and rec != "fastest"
+            and (route.get("sun_gained_s") or 0) <= 0
+        ):
+            res.defects.append("text claims more sun but the recommended route gains no sun versus fastest")
+        if _MEDICAL.search(draft.text):
+            res.defects.append("medical claim: Zill & Shams gives well-being guidance, not medical advice")
+        if (
+            not sun_mode
+            and _SAVES.search(draft.text)
+            and rec != "fastest"
+            and (route.get("sun_saved_s") or 0) <= 0
+        ):
             res.defects.append(
                 "text claims sun savings but the recommended route saves no sun versus fastest"
             )
