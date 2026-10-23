@@ -158,6 +158,17 @@ def http_ok(url: str) -> bool:
         return False
 
 
+def api_ready() -> bool:
+    """Backend is up AND its startup warm-up (city load, exposure, numba JIT, first route) has finished."""
+    try:
+        with urllib.request.urlopen(f"http://127.0.0.1:{API_PORT}/api/health", timeout=3) as r:
+            body = json.loads(r.read().decode("utf-8"))
+        warm = body.get("warm")
+        return not isinstance(warm, dict) or bool(warm.get("done"))
+    except Exception:
+        return False
+
+
 def uvicorn_cmd(reload: bool) -> list:
     cmd = [VENV_PY, "-m", "uvicorn", "zill.api.main:app", "--port", str(API_PORT), "--host", "127.0.0.1"]
     if reload:
@@ -182,7 +193,7 @@ def cmd_demo(_args: list) -> int:
     def waiter() -> None:
         deadline = time.time() + 120
         while time.time() < deadline:
-            if http_ok(f"http://127.0.0.1:{API_PORT}/api/health") and http_ok(
+            if api_ready() and http_ok(
                 f"http://localhost:{WEB_PORT}/film"
             ):
                 say(f"Zill ready -> http://localhost:{WEB_PORT}/film")
@@ -292,7 +303,7 @@ class DemoServers:
         self.procs = [spawn("api", uvicorn_cmd(False), BACKEND), spawn("web", [NPM, "run", "start"], FRONTEND)]
         deadline = time.time() + 120
         while time.time() < deadline:
-            if http_ok(f"http://127.0.0.1:{API_PORT}/api/health") and http_ok(f"http://localhost:{WEB_PORT}/film"):
+            if api_ready() and http_ok(f"http://localhost:{WEB_PORT}/film"):
                 say("servers ready")
                 return self
             for p in self.procs:
@@ -429,7 +440,7 @@ def cmd_freshclone(args: list) -> int:
         while time.time() < deadline:
             if demo.poll() is not None:
                 break
-            if http_ok(f"http://127.0.0.1:{API_PORT}/api/health") and http_ok(f"http://localhost:{WEB_PORT}/film"):
+            if api_ready() and http_ok(f"http://localhost:{WEB_PORT}/film"):
                 up = True
                 break
             time.sleep(2)

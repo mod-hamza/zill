@@ -24,7 +24,9 @@ core = APIRouter(prefix="/api")
 def health() -> dict:
     from zill.api.routes_misc import health_payload  # api stream: extended health (city, shade, replay, llm)
 
-    return health_payload()
+    payload = health_payload()
+    payload["warm"] = dict(WARM_STATE)
+    return payload
 
 
 @core.get("/config")
@@ -50,3 +52,43 @@ ROUTERS: list[APIRouter] = [
 ]
 for _r in ROUTERS:
     app.include_router(_r)
+
+# --- appended by orchestrator: startup warm-up ---
+# The first route on a cold process loads the city, the exposure tables and JIT-compiles numba;
+# that can exceed the Next proxy's socket timeout. Warm the exact request path in the background.
+WARM_STATE: dict[str, object] = {"done": False, "error": None}
+
+
+def _warm() -> None:
+    import json
+
+    from fastapi.testclient import TestClient
+
+    try:
+        hero = json.loads((config.DATA_DIR / "scenarios" / "hero.json").read_text(encoding="utf-8"))
+        s = hero["scenarios"][0]
+        client = TestClient(app)  # no context manager → no lifespan → no recursion
+        client.post(
+            "/api/route",
+            json={
+                "city": config.DEFAULT_CITY,
+                "mode": s["mode"],
+                "origin": {"lat": s["origin"]["lat"], "lon": s["origin"]["lon"]},
+                "dest": {"lat": s["dest"]["lat"], "lon": s["dest"]["lon"]},
+                "depart_at": s["depart"],
+                "date_key": s["date_id"],
+            },
+        )
+        from zill.agent.backend import ServicesBackend
+
+        ServicesBackend().warm(block=True)
+    except Exception as exc:  # warm-up is best effort; never block startup
+        WARM_STATE["error"] = repr(exc)
+    WARM_STATE["done"] = True
+
+
+@app.on_event("startup")
+def _start_warm() -> None:
+    import threading
+
+    threading.Thread(target=_warm, daemon=True, name="zill-startup-warm").start()
