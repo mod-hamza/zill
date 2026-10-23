@@ -68,3 +68,14 @@
 - Visual QA: phase7 iter0→iter2 (ch1–7: sunrise recomposed west→east, POV street shot, plinth/edge hidden, film look, scrims/panels for legibility, steeper street, split view shows only Fastest | Coolest), phase8 iter1→iter2 (ch8–12: replan panel, compact feed, globe size/labels, golden-hour framing).
 - Perf (RTX 4070 laptop, ANGLE D3D11, 1080p, high): p95 ch4 5.9 ms, ch5 5.9 ms, ch6 feed 10.3 ms, ch6 fly 6.7 ms, ch6 split 7.7 ms (`docs/qa/phase8/perf.json`).
 - Known: Ch.5 street labels sit in a tower cluster (readable but towers crowd the frame); Ch.4 build reveal + Ch.11 globe are stylised; AC-link card has no dedicated camera move onto the link interior.
+- 2026-10-23 DATA follow-up: entrance links + entrance-aware POI snapping; graph now 7,659 edges (indices changed again, exposure re-run with `--exposure-only`, shapes 7659×steps). Burj Khalifa → Dubai Mall walk = 447 m indoor. Full backend suite 222 passed.
+
+## 2026-10-23 08:05 · Orchestrator checkpoint (Phases 6–8 green)
+- Phase 6 scene + /app: tagged. Route-ribbon NaN-alpha bug (invisible on SwiftShader) found via APP QA and fixed.
+- APP: agent panel (streamed feed, approvals, L1–L3, simulated replan), planner, fleet, crew, hotel embed, /health — committed.
+- Phase 7–8 Film: all 12 chapters, 780 s, deterministic; vitest 74, film e2e full autoplay with no console errors; p95 frame ≤ 10.3 ms on RTX 4070 (ch4–6). Tagged phase-7/8-green.
+- Ops/docs: record/deck/freshclone tooling, architecture diagram, VALIDATION, RUNBOOK, SPEAKER_NOTES, OPEN_ITEMS — committed.
+- Repo hygiene: per-iteration QA images (phase7/8) git-ignored; best stills in docs/qa/best/. Note: phase6 + app QA images (~116 MB) are already in history.
+- In flight: Dubai Mall entrance connectivity fix (data) → then exposure/hero/replay regeneration; film polish round (ch7 chart legibility, ch2 framing, grade).
+- Next: regenerate hero + replays, `scripts/zill.py record` (stills + backup videos), freshclone test, final docs refresh.
+- For the humans: add `ZILL_LLM_API_KEY` to `.env` then run `backend/.venv/Scripts/python.exe scripts/record_replay.py --live` to replace scripted sessions with live ones. A stray file `D:\tmp_bench.txt` (bench log) was left outside the repo — safe to delete.
