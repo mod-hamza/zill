@@ -66,3 +66,22 @@
 - 2026-10-23 data: OSM `entrance=*` nodes that have only indoor edges (outdoor path unmapped) get one straight walk-only `entrance_link` edge to the nearest outdoor walk node ≤ 40 m, unless the link passes > 2 m through a building or the door is on a bridge/upper floor (2 links added; 7 Dubai Mall car-park/upper-floor doors left unlinked). No curated `entrances.json` was needed: The Dubai Mall has 7 OSM doors connecting it to outdoor paths.
 - 2026-10-23 data: POIs whose nearest walk node is outdoor-only snap to a mapped entrance of their own OSM building (≤ 10 m from its outline, ≤ 150 m from the POI) — Burj Khalifa (tower door with the indoor link to the mall), Dubai Opera, Souk Al Bahar. Changes their graph node ids (hero/replays need regeneration).
 - 2026-10-23 orchestrator: backup videos (docs/deck_assets/*.mp4, hundreds of MB) are git-ignored and kept locally only — too large for the repo; regenerate with `python scripts/zill.py record`. Stills + architecture diagram are committed.
+- 2026-10-23 B: LLM provider chain in LLMClient (one class; no-arg = config chain, args = single provider) — keeps old tests/API; sessions via for_session()
+- 2026-10-23 B: opencode availability probe uses its separate /inference/go/v1/models URL — chat base returns 404 on /models
+- 2026-10-23 E: places index reuses the POI bake's cached `nwr["name"]` Overpass dump (scene bbox) instead of a new query — no extra network, same data; streets merged by name into one place; places > 150 m from the walk graph dropped.
+- 2026-10-23 E: curated POIs (pois.json) are merged into the search index and replace same-named indexed places, so existing ids (dubai_mall, burj_khalifa) stay stable; other places get `<slug>_<osm type letter><id>` ids.
+- 2026-10-23 E: `/api/route` accepts index ids through `CityContext.poi()` falling back to `zill.places.get_place` (one 3-line edit in services.py, no route/schema change); online results get `online_<n|w|r><osmid>` ids remembered in a bounded in-process registry.
+- 2026-10-23 E: online fallback fires only when the best local score < 80; each online hit must snap to the walk graph (<= 400 m); `ZILL_ONLINE_GEOCODE=0` disables; 1 req/s process-wide, skipped (not queued) if the wait would exceed 1.5 s.
+- 2026-10-23 A: sun-mode cost = t + λ·SUN_WEIGHT[mode]·shade_time with no UV factor and no comfort bonus for indoor/covered links — mirrors the brief and keeps edge costs ≥ t (admissible A*).
+- 2026-10-23 A: `sunniest` honesty rule = most direct-sun seconds among {λ3, λ1, fastest}, with a note on fallback — the sun analogue of the coolest rule.
+- 2026-10-23 A: sun-mode planner still inserts heat-load cool-down breaks — a safety rule, not a preference.
+- 2026-10-23 A: two response models (RouteResponse / SunRouteResponse) instead of exclude_none — sun mode has no `coolest` key while shade output stays as it was (stats `note: null` kept).
+- 2026-10-23 A: heat-stress bands = US NWS heat-index categories (80/90/103/125 °F) applied to the BoM apparent temperature, labelled "indicative" — no published band set exists for BoM AT.
+- 2026-10-23 A: daylight window uses the WHO-rounded UV index (2.6 reads as 3, as in the UV band) and stays closed when cloud cover is unknown — the conservative choice.
+- 2026-10-23 A: route responses read weather with `prefer_recorded=True` (recorded file first, then live) so routing never waits up to 2 s on Open-Meteo for preset dates.
+- 2026-10-23 A: recorded Dubai weather files gained hourly cloud_cover/shortwave_radiation by merge (other fields untouched, provenance in `sky_source_api`/`sky_fetched_at`); hackathon-day sky is from today's forecast.
+- 2026-10-23 A: sun hero search = winter (2026-01-15) only, walk, mornings 09:00–11:00 and lunch 12:00–13:30 every 30 min, same filters as shade; Dubai winter noon sun is 43.6° so the ≥ 45° window can never open on that date: reported, not tuned.
+- 2026-10-23 C: rate limiting is in-process token buckets per IP, not Caddy/Redis — the VM runs one API worker, so memory is the correct scope; revisit if scaled out.
+- 2026-10-23 C: XFF trusted only from private peers and only its last entry — Caddy appends the real client; earlier entries are spoofable.
+- 2026-10-23 C: CSP keeps script 'unsafe-inline' (no nonce middleware) — nonces make every page dynamic; 'unsafe-eval' dev-only, verified absent in production build.
+- 2026-10-23 C: LLM token costs measured by running the real orchestrator with the scripted planner and counting chars/4 on llm.chat inputs — replays store UI events, not model messages.

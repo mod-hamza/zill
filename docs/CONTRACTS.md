@@ -216,3 +216,13 @@ files gained them via `python -m zill.weather.record --add-sky`, other values un
 "scenarios":[{"id":"winter_morning_walk"|"office_lunch_walk","persona","preference":"sun","mode","origin","dest","date_id","depart",
 "straight_m","fastest","balanced","sunniest","wellbeing","departure"}],"candidates":[top 20 rows]}`. Run: `python -m zill.routing.scenarios --sun`.
 The shade search keeps an existing `sun` block when it rewrites the file.
+
+## Overnight additions — Stream C (security layer)
+
+Every `/api/*` request passes `zill.api.security.SecurityMiddleware` before the routes. New responses any client may see:
+`429 {"error":{"code":"rate_limited",...}}` with `Retry-After: <s>` (per-IP buckets; agent tier tightest), `413 payload_too_large`
+(body > 64 KB), `422 validation_error` (any JSON string > 1,000 chars, agent `text` > 1,000, any query value > 200).
+Buckets: agent 8 burst / 10 per min; `/api/shade/compute` and `/api/cities/build` 3 / 2; `/api/route|departure|plan` 30 / 90;
+shade tiles and city files 300 / 1,800; other 60 / 240; `/api/health` exempt. `ZILL_RATE_LIMIT=0` disables limiting.
+CORS allows only the two production origins and localhost/127.0.0.1/[::1] on any port; methods GET, POST, OPTIONS.
+Note for the frontend: handle 429 by honouring `Retry-After`. Other streams: keep new free-text fields short (1,000 chars max).

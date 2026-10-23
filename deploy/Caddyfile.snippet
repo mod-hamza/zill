@@ -2,6 +2,11 @@
 # /api goes straight to the API container (agent SSE streams unbuffered); everything else to Next.
 zill.itshamza.me, zill.169-58-66-146.sslip.io {
     handle /api/* {
+        header {
+            X-Content-Type-Options nosniff
+            Referrer-Policy strict-origin-when-cross-origin
+            -Server
+        }
         reverse_proxy zill-api:8000 {
             flush_interval -1
         }

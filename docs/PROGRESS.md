@@ -106,3 +106,38 @@
 5. GPU/projector: run `/health` first; `L` toggles low quality; if WebGL fails the film falls back to stills; backup videos are in `docs/deck_assets/` on this laptop only.
 
 **What the humans must do** — see `docs/OPEN_ITEMS.md`. Key items: add `ZILL_LLM_API_KEY` to `.env` and run `backend/.venv/Scripts/python.exe scripts/record_replay.py --live`; re-record hackathon-day weather; fill `[TEAM TO FILL]` market/pricing items; field-test readings for Ch.10; confirm slot length; delete stray `D:\tmp_bench.txt` (safety check blocked automated removal).
+
+## 2026-10-23 night - Stream B (LLM providers)
+Pluggable provider chain (OpenCode Go + Voke) in `agent/llm.py`, config in `config.py`, `.env.example`, `docs/LLM.md`.
+Tests: `tests/test_llm_providers.py` (stub HTTP servers, real openai SDK): fallback order, 401/403/429/5xx/connect, model walk,
+tool_choice retry, reasoning/think handling, session + UA headers, no key in logs/errors/status. Full backend suite 263 passed; ruff clean.
+Not done: no live call (no key); replays not re-recorded. Open: routes_agent should call `get_llm().for_session(session.id)`.
+
+## 2026-10-23 night - Stream E (typed places)
+New `backend/zill/places/` (fold, build, index, parse, online, service) + `api/routes_places.py` (`GET /api/places/search`, `GET /api/places/stats`, `POST /api/places/parse`). Dubai `data/cities/dubai_downtown/places.json`: 1,066 places (amenity 203, building 267, food 223, shop 165, hotel 41, stop 43, street 64, landmark 25, park 15, mall 7, station 8, square 5), 11 dropped as > 150 m from the walk graph. Search 6-8 ms per query on the real index (local machine). `/api/route` accepts index ids and online ids.
+Tests: `tests/test_places.py` 30 passed; ruff clean. Full suite: 305 passed, 1 failed (`test_smoke.py::test_health`, caused by Stream B's health payload change, not places).
+Oslo index: not built yet (`data/cities/oslo/graph.json` did not exist when Stream E finished). Run `python -m zill.places.build oslo` after the Oslo bake.
+Known limits: Arabic names exist only where OSM has `name:ar`, so Arabic transliterations of English names do not match; the online fallback was only exercised against a fake transport (no network in tests).
+
+## 2026-10-23 night - Stream A (sun mode, well-being, UV and clouds)
+`preference: shade|sun` through tdsp/compare/departure/planner and `/api/route|departure|plan`; new `zill/wellbeing.py`
+(WHO UV bands, indicative heat stress, daylight / vitamin D window with shadow ratio, break prompts, overcast note) returned as
+`wellbeing`; weather adds hourly cloud cover + shortwave radiation; sun hero search writes `hero.json["sun"]`.
+Shade mode verified identical: all 3 hero scenarios + the departure table recomputed equal to hero.json.
+Sun hero (real, Dubai 2026-01-15, 8,190 jobs, 2,289 eligible): winter_morning_walk Address Sky View → The Dubai Mall 10:00:
+fastest 1,204 s with 214 s direct sun; sunniest 1,347 s with 851 s sun (+637 s, +299 %) for +143 s. office_lunch_walk Burj Park →
+Boulevard Plaza 12:30: 847 s/314 s sun vs 908 s/689 s sun (+375 s, +119 %) for +61 s. Both clear-sky geometry; the recorded
+weather says 97 % / 100 % cloud cover and the sun is below 45° (31.4°, 43.7°), so the daylight window is closed and the overcast note shows.
+Tests: `test_sun_mode.py` 14 + `test_wellbeing.py` 30 = 44 new; full backend suite 351 passed; ruff clean on Stream A files.
+Known issues: ERA5 total cloud cover includes thin high cloud (632 W/m² shortwave at "100 %" on 2026-01-15 12:30), so `overcast` may
+overstate; a clear spring/hackathon-date sun scenario could be added; frontend does not yet show sun mode / wellbeing.
+
+## 2026-10-23 night — Stream C (security, load test, costs)
+Exists: `backend/zill/api/security.py` (token buckets, XFF only from private peers, 64 KB / 1,000 / 200 caps, CORS allow-list, log scrubbing),
+wired in `api/main.py`; `tests/test_security.py` (16) + `tests/conftest.py` (rate limit off by default in tests); security headers in
+`frontend/next.config.ts` (CSP, HSTS, nosniff, Referrer-Policy, Permissions-Policy, X-Frame-Options except /embed); `deploy/Caddyfile.snippet` API headers
+(not deployed); `docs/SECURITY.md`, `docs/COSTS.md`, `scripts/loadtest.py`.
+Results: full backend suite green at last run (238 passed before other streams' tests landed), ruff clean. Production build: /film, /app, /embed/hotel render with
+0 CSP violations. pip-audit clean; npm audit 2 findings (PostCSS inside next, fix = next 16).
+Load (local, 1 worker, no limiter): peak ~26 req/s at 20 users, p95 596 ms; 40 users p95 2.6 s. Live VM (20 users max, 48 s): 16.9 req/s, p95 1.6 s, 0 errors.
+Known issues: script-src still needs 'unsafe-inline' (Next bootstrap); Caddy/API changes take effect only after deploy; Next dev server sets its own CSP with unsafe-eval.

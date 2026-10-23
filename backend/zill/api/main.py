@@ -3,19 +3,15 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
 from zill import config
+from zill.api import security
 
 VERSION = "0.1.0"
 
 app = FastAPI(title="Zill API", version=VERSION)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+security.install_log_scrubbing()
+security.install(app)  # CORS allow-list, rate limits, body/string caps, response headers (docs/SECURITY.md)
 
 core = APIRouter(prefix="/api")
 
@@ -52,6 +48,9 @@ ROUTERS: list[APIRouter] = [
 ]
 for _r in ROUTERS:
     app.include_router(_r)
+from zill.api import routes_places as _routes_places  # noqa: E402  (places stream)
+
+app.include_router(_routes_places.router)
 
 # --- appended by orchestrator: startup warm-up ---
 # The first route on a cold process loads the city, the exposure tables and JIT-compiles numba;
