@@ -11,6 +11,7 @@ import { SCENE, TIERS } from "./sceneConfig";
 import { shadeUniforms } from "./shadeUniforms";
 import { currentLighting } from "./useLighting";
 import { cameraFocus } from "./focus";
+import { sceneOverrides } from "./sceneOverrides";
 
 export function SunLight() {
   const quality = useStage((s) => s.quality);
@@ -66,7 +67,7 @@ export function SunLight() {
       l.color.setRGB(...L.sunColor);
       const up = v[1] > 0.02;
       l.intensity = up ? L.sunIntensity : 0;
-      l.castShadow = tier.shadows && up;
+      l.castShadow = tier.shadows && up && sceneOverrides.shadows;
     }
     const h = hemi.current;
     if (h) {
@@ -77,6 +78,7 @@ export function SunLight() {
     shadeUniforms.uGroundSun.value.setRGB(...L.groundSun);
     shadeUniforms.uGroundShade.value.setRGB(...L.groundShade);
     shadeUniforms.uSunDir.value.set(v[0], v[1], v[2]);
+    shadeUniforms.uBlackout.value = sceneOverrides.blackout;
     // the plinth beyond the modelled area: dark warm stone, quieter than any modelled ground
     // (a muted mid tone so it melts into the horizon haze instead of reading as a dark band)
     shadeUniforms.uOutside.value.setRGB(
@@ -84,6 +86,17 @@ export function SunLight() {
       (L.groundSun[1] * 0.35 + L.groundShade[1] * 0.65) * 0.7,
       (L.groundSun[2] * 0.35 + L.groundShade[2] * 0.65) * 0.7,
     );
+    // Film: plinth continues as sunlit paving (hides the edge of the modelled area)
+    const pl = sceneOverrides.plinth;
+    if (pl > 0) {
+      const o = shadeUniforms.uOutside.value;
+      o.setRGB(
+        o.r + (L.groundSun[0] * 0.92 - o.r) * pl,
+        o.g + (L.groundSun[1] * 0.92 - o.g) * pl,
+        o.b + (L.groundSun[2] * 0.92 - o.b) * pl,
+      );
+    }
+    shadeUniforms.uEdgeSoft.value = sceneOverrides.edgeSoft;
   });
 
   return (

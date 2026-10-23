@@ -1,0 +1,83 @@
+{
+ "1": [
+  "Dubai in summer is built for people who walk, and the sun decides where they can.",
+  "Midday heat in these districts is routinely above 40 degrees [TEAM TO FILL — cite source].",
+  "We are Abhamzay. This is Zill: the agent that routes you through the shade.",
+  "Transition: \"To see why that matters, let's stand in the street at one thirty.\""
+ ],
+ "2": [
+  "Every map you use optimises time or distance. None of them optimises shade.",
+  "This walker takes the fastest route from the Opera to Business Bay Metro in July at 15:30: 24.3 minutes, 15.2 of them in direct sun.",
+  "A static shady route cannot exist, because shade moves every minute and changes with the season.",
+  "Transition: \"So we asked: can we compute where the shade is, for any minute?\""
+ ],
+ "3": [
+  "This is Downtown on a July day, from early morning to evening. The Burj's shadow crosses the lake and rotates.",
+  "At noon the shade is thin; by 16:00 tower shadows swallow whole streets.",
+  "A shade map is only true for one minute, so Zill computes it for every ten minutes of the day.",
+  "Transition: \"Where does that map come from? From open data, and we can build it in front of you.\""
+ ],
+ "4": [
+  "We type \"Downtown Dubai\" and the pipeline pulls OpenStreetMap: 8,602 buildings in the shadow-casting area, 3,039 of them in the rendered scene.",
+  "It builds a walking and cycling network of 7,657 street segments, 744 mapped trees, and finds covered and air-conditioned links, 15 segments tagged as enclosed bridges or passages.",
+  "This is a cached build of the real bake, labelled as such. The pipeline takes only a name, a box and an origin, so another hot city is the same code.",
+  "Be upfront: 79 % of building heights are not in OpenStreetMap and use sensible defaults. We say that on the validation page.",
+  "Transition: \"Now the engine that turns buildings into shade.\""
+ ],
+ "5": [
+  "Sun position from a solar model, then a ray from every two-metre cell toward the sun; if a building top is higher than the ray, the cell is in shade.",
+  "That gives a shade raster per ten-minute step, and an exposure number for every street segment.",
+  "Routing is time-aware: a street's shade is looked up for the minute the walker arrives, not the minute they leave.",
+  "It is tested: 221 backend tests and 69 frontend tests pass, including shadow-length geometry checks.",
+  "Say the limits: buildings, mapped trees and covered links only. Awnings, unmapped trees and wind are not modelled.",
+  "Transition: \"Let's use it. A tourist at the Opera wants to get to the metro.\""
+ ],
+ "6": [
+  "The user types a sentence. The agent resolves the places, checks the weather, compares routes, and a separate verifier checks its claims.",
+  "Fastest versus Coolest, same start, same time: Coolest is 26.4 minutes against 24.3, so 2.2 minutes longer, but sun exposure drops from 15.2 to 9.0 minutes. That is 6.2 minutes less sun, 41 percent, and our heat-load index falls 17.8 percent.",
+  "Every number in the agent's sentence is a token filled in from the tool result. The model cannot invent a figure.",
+  "These are model estimates, not measurements. We say so on the card.",
+  "The agent session you see is a scripted recording against the real engine, not a live model, and the badge says so. [If a live key was added and sessions re-recorded, change this line.]",
+  "Transition: \"A better route is one answer. The other is to leave at a different time.\""
+ ],
+ "7": [
+  "The agent also scans departures every five minutes from 15:30 to 17:00.",
+  "For this trip, honestly, leaving later does not help enough: sun exposure of the balanced route falls from 569 s at 15:30 to 515 s at 16:30, about 54 seconds, for a one-hour wait. The optimiser recommends leaving now.",
+  "That is the point of an optimiser: it can say \"go now\". On other trips and dates it will recommend a different time and show which streets turn to shade.",
+  "The agent asks approval before committing the plan. Autonomy is a setting, not a surprise.",
+  "Transition: \"That was one traveller. Let's talk about what makes this an agent.\""
+ ],
+ "8": [
+  "Same engine, three goals: a tourist, a delivery rider, an outdoor crew lead.",
+  "The monitor watches a simulated clock. A 20-minute delay is injected, labelled a simulated event; it replans and shows the difference.",
+  "At autonomy level 3 small changes are applied by itself and can be undone; larger ones need approval.",
+  "Four roles: planner, verifier, monitor, narrator, with deterministic tools underneath.",
+  "Transition: \"Who would pay for this?\""
+ ],
+ "9": [
+  "Problem: heat costs real people time, comfort and safety, and nobody sells a shade-aware route.",
+  "Buyers, our hypotheses to validate with mentors: hotels and tourism boards (per-property subscription or annual licence), delivery fleets (per active rider or per route call), outdoor-worker employers (per site). Individuals use it free.",
+  "Our engine numbers for the wedges: rider route 38 percent less sun for 1.6 minutes more; crew shuttle 40 percent less sun for 0.7 minutes more. The crew policy pack for the UAE midday break is marked \"verify\".",
+  "Market size [TEAM TO FILL — cite source]. Pricing [TEAM TO FILL — validate with mentors].",
+  "Go-to-market: start with a few hotels in Downtown as a concierge widget, use the free app for distribution and data, then fleets.",
+  "Why we win: real shade computed per minute from open data, an agent that verifies its own numbers, and a pipeline that is city-agnostic. [TEAM TO FILL — competitors, cite sources]",
+  "Transition: \"You should ask: does it actually work?\""
+ ],
+ "10": [
+  "What is real: open data with counts, a tested engine, a verifier that rejects invented numbers.",
+  "What is not proven yet: field measurements. Our plan is shaded versus sunny surface readings on the Boulevard with an infrared thermometer. [If done, quote `data/validation/field_test.json`; if not, say the result is pending.]",
+  "Limits again in one breath: heights, trees, awnings, and the air-conditioned link needs an on-site check.",
+  "Transition: \"And it is not only Dubai.\""
+ ],
+ "11": [
+  "Only Downtown Dubai is baked. The others on the globe are the roadmap, shown hollow.",
+  "Roadmap: Downtown prototype, then UAE cities, then a global open-data pipeline.",
+  "The pipeline needs a name, a bounding box, an origin and a timezone; there is a test that bakes a tiny synthetic city to prove it.",
+  "Transition: \"To close.\""
+ ],
+ "12": [
+  "Zill: the agent that routes you through the shade.",
+  "What we want today: feedback on the buyer and the pricing, and introductions to a hotel group or fleet operator. [TEAM TO FILL — the specific ask]",
+  "Press `A` and take any trip the judges want to try."
+ ]
+}

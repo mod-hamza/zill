@@ -1,0 +1,4697 @@
+{
+ "scenario_id": "crew_shuttle",
+ "persona": "crew",
+ "prompt": "My crew needs to move from Address Boulevard to Address Sky View at 14:30. Check it against the midday work policy.",
+ "recorded_at": "2026-10-22T21:20:45+00:00",
+ "model": "zill-scripted-planner",
+ "live": false,
+ "autonomy_level": 2,
+ "city": "dubai_downtown",
+ "date_id": "summer",
+ "pacing": "scripted-minimum",
+ "events": [
+  {
+   "dt_ms": 200,
+   "event": {
+    "id": "evt_0001",
+    "ts": "2026-10-22T21:20:45.114+00:00",
+    "type": "session_started",
+    "payload": {
+     "session_id": "s_152f7b3e93",
+     "persona": "crew",
+     "city": "dubai_downtown",
+     "date_key": "summer",
+     "autonomy_level": 2,
+     "autonomy": "planner",
+     "sim_time": "2026-07-15T14:30:00+04:00",
+     "active_plan_id": null,
+     "llm_scripted": true
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0002",
+    "ts": "2026-10-22T21:20:45.114+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Locating where you are starting."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0003",
+    "ts": "2026-10-22T21:20:45.115+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "resolve_place",
+     "args": {
+      "query": "Address Boulevard",
+      "role": "origin",
+      "mode": "walk"
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0004",
+    "ts": "2026-10-22T21:20:45.115+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "resolve_place",
+     "ok": true,
+     "summary": "Resolved 'Address Boulevard' as Address Boulevard (origin).",
+     "duration_ms": 0
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0005",
+    "ts": "2026-10-22T21:20:45.115+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Locating your destination."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0006",
+    "ts": "2026-10-22T21:20:45.115+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "resolve_place",
+     "args": {
+      "query": "Address Sky View",
+      "role": "dest",
+      "mode": "walk"
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0007",
+    "ts": "2026-10-22T21:20:45.115+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "resolve_place",
+     "ok": true,
+     "summary": "Resolved 'Address Sky View' as Address Sky View (dest).",
+     "duration_ms": 0
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0008",
+    "ts": "2026-10-22T21:20:45.115+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Checking the heat at your travel time."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0009",
+    "ts": "2026-10-22T21:20:45.115+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "get_weather",
+     "args": {
+      "at": "14:30"
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0010",
+    "ts": "2026-10-22T21:20:45.117+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "get_weather",
+     "ok": true,
+     "summary": "Weather (live): apparent 47.9 C, UV 9.0, heat alert True.",
+     "duration_ms": 1
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0011",
+    "ts": "2026-10-22T21:20:45.118+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Comparing fastest, balanced and coolest routes."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0012",
+    "ts": "2026-10-22T21:20:45.118+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "compare_routes",
+     "args": {
+      "origin": "origin",
+      "dest": "dest",
+      "mode": "walk",
+      "depart_at": "14:30",
+      "latest_arrival": null
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0013",
+    "ts": "2026-10-22T21:20:45.124+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "compare_routes",
+     "ok": true,
+     "summary": "Address Boulevard to Address Sky View by walk at 14:30. fastest: 10.0 min, 36% shaded, sun 6.4 min, RHL 460; balanced: 10.7 min, 64% shaded, sun 3.8 min, RHL 375; coolest: 10.7 min, 64% shaded, sun 3.8 min, RHL 375.",
+     "duration_ms": 6,
+     "data": {
+      "plan_id": "plan_1",
+      "routes": {
+       "fastest": {
+        "depart": "2026-07-15T14:30:00+04:00",
+        "stats": {
+         "distance_m": 794.59,
+         "duration_s": 599.56,
+         "sun_exposure_s": 385.14,
+         "shaded_pct": 35.76,
+         "covered_pct": 2.54,
+         "indoor_pct": 0.0,
+         "rhl": 460.19,
+         "added_time_s": 0.0,
+         "sun_saved_s": 0.0,
+         "sun_saved_pct": 0.0,
+         "rhl_saved_pct": 0.0
+        }
+       },
+       "balanced": {
+        "depart": "2026-07-15T14:30:00+04:00",
+        "stats": {
+         "distance_m": 889.38,
+         "duration_s": 643.27,
+         "sun_exposure_s": 229.88,
+         "shaded_pct": 64.26,
+         "covered_pct": 25.66,
+         "indoor_pct": 0.0,
+         "rhl": 374.57,
+         "added_time_s": 43.71,
+         "sun_saved_s": 155.26,
+         "sun_saved_pct": 40.31,
+         "rhl_saved_pct": 18.61
+        }
+       },
+       "coolest": {
+        "depart": "2026-07-15T14:30:00+04:00",
+        "stats": {
+         "distance_m": 889.38,
+         "duration_s": 643.27,
+         "sun_exposure_s": 229.88,
+         "shaded_pct": 64.26,
+         "covered_pct": 25.66,
+         "indoor_pct": 0.0,
+         "rhl": 374.57,
+         "added_time_s": 43.71,
+         "sun_saved_s": 155.26,
+         "sun_saved_pct": 40.31,
+         "rhl_saved_pct": 18.61
+        }
+       }
+      }
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0014",
+    "ts": "2026-10-22T21:20:45.125+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Checking the plan against the midday-break policy pack."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0015",
+    "ts": "2026-10-22T21:20:45.125+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "check_policy",
+     "args": {}
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0016",
+    "ts": "2026-10-22T21:20:45.126+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "check_policy",
+     "ok": true,
+     "summary": "Policy pack: UAE midday break (v1, verify): 1 conflict(s) (pack unverified).",
+     "duration_ms": 0
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0017",
+    "ts": "2026-10-22T21:20:45.126+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "The plan falls inside the midday window; searching compliant departures."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0018",
+    "ts": "2026-10-22T21:20:45.126+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "optimise_departure",
+     "args": {
+      "origin": "origin",
+      "dest": "dest",
+      "mode": "walk",
+      "window": {
+       "start": "2026-07-15T15:00:00+04:00",
+       "end": "2026-07-15T16:00:00+04:00"
+      }
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0019",
+    "ts": "2026-10-22T21:20:45.149+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "optimise_departure",
+     "ok": true,
+     "summary": "Best departure 15:00 out of 13 evaluated.",
+     "duration_ms": 23
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0020",
+    "ts": "2026-10-22T21:20:45.151+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Planning the move at the compliant departure."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0021",
+    "ts": "2026-10-22T21:20:45.151+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "compare_routes",
+     "args": {
+      "origin": "origin",
+      "dest": "dest",
+      "mode": "walk",
+      "depart_at": "2026-07-15T15:00:00+04:00",
+      "store_as": "route_compliant"
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0022",
+    "ts": "2026-10-22T21:20:45.158+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "compare_routes",
+     "ok": true,
+     "summary": "Address Boulevard to Address Sky View by walk at 15:00. fastest: 10.0 min, 43% shaded, sun 5.7 min, RHL 432; balanced: 10.7 min, 67% shaded, sun 3.5 min, RHL 363; coolest: 10.7 min, 67% shaded, sun 3.5 min, RHL 363.",
+     "duration_ms": 6,
+     "data": {
+      "plan_id": "plan_2",
+      "routes": {
+       "fastest": {
+        "depart": "2026-07-15T15:00:00+04:00",
+        "stats": {
+         "distance_m": 794.59,
+         "duration_s": 599.56,
+         "sun_exposure_s": 342.3,
+         "shaded_pct": 42.91,
+         "covered_pct": 2.54,
+         "indoor_pct": 0.0,
+         "rhl": 432.34,
+         "added_time_s": 0.0,
+         "sun_saved_s": 0.0,
+         "sun_saved_pct": 0.0,
+         "rhl_saved_pct": 0.0
+        }
+       },
+       "balanced": {
+        "depart": "2026-07-15T15:00:00+04:00",
+        "stats": {
+         "distance_m": 889.38,
+         "duration_s": 643.27,
+         "sun_exposure_s": 212.37,
+         "shaded_pct": 66.99,
+         "covered_pct": 25.66,
+         "indoor_pct": 0.0,
+         "rhl": 363.18,
+         "added_time_s": 43.71,
+         "sun_saved_s": 129.93,
+         "sun_saved_pct": 37.96,
+         "rhl_saved_pct": 16.0
+        }
+       },
+       "coolest": {
+        "depart": "2026-07-15T15:00:00+04:00",
+        "stats": {
+         "distance_m": 889.38,
+         "duration_s": 643.27,
+         "sun_exposure_s": 212.37,
+         "shaded_pct": 66.99,
+         "covered_pct": 25.66,
+         "indoor_pct": 0.0,
+         "rhl": 363.18,
+         "added_time_s": 43.71,
+         "sun_saved_s": 129.93,
+         "sun_saved_pct": 37.96,
+         "rhl_saved_pct": 16.0
+        }
+       }
+      }
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0023",
+    "ts": "2026-10-22T21:20:45.158+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Planning the move at the compliant departure."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0024",
+    "ts": "2026-10-22T21:20:45.158+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "compare_routes",
+     "args": {
+      "origin": "origin",
+      "dest": "dest",
+      "mode": "walk",
+      "depart_at": "2026-07-15T15:00:00+04:00",
+      "store_as": "route_compliant"
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0025",
+    "ts": "2026-10-22T21:20:45.167+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "compare_routes",
+     "ok": true,
+     "summary": "Address Boulevard to Address Sky View by walk at 15:00. fastest: 10.0 min, 43% shaded, sun 5.7 min, RHL 432; balanced: 10.7 min, 67% shaded, sun 3.5 min, RHL 363; coolest: 10.7 min, 67% shaded, sun 3.5 min, RHL 363.",
+     "duration_ms": 8,
+     "data": {
+      "plan_id": "plan_3",
+      "routes": {
+       "fastest": {
+        "depart": "2026-07-15T15:00:00+04:00",
+        "stats": {
+         "distance_m": 794.59,
+         "duration_s": 599.56,
+         "sun_exposure_s": 342.3,
+         "shaded_pct": 42.91,
+         "covered_pct": 2.54,
+         "indoor_pct": 0.0,
+         "rhl": 432.34,
+         "added_time_s": 0.0,
+         "sun_saved_s": 0.0,
+         "sun_saved_pct": 0.0,
+         "rhl_saved_pct": 0.0
+        }
+       },
+       "balanced": {
+        "depart": "2026-07-15T15:00:00+04:00",
+        "stats": {
+         "distance_m": 889.38,
+         "duration_s": 643.27,
+         "sun_exposure_s": 212.37,
+         "shaded_pct": 66.99,
+         "covered_pct": 25.66,
+         "indoor_pct": 0.0,
+         "rhl": 363.18,
+         "added_time_s": 43.71,
+         "sun_saved_s": 129.93,
+         "sun_saved_pct": 37.96,
+         "rhl_saved_pct": 16.0
+        }
+       },
+       "coolest": {
+        "depart": "2026-07-15T15:00:00+04:00",
+        "stats": {
+         "distance_m": 889.38,
+         "duration_s": 643.27,
+         "sun_exposure_s": 212.37,
+         "shaded_pct": 66.99,
+         "covered_pct": 25.66,
+         "indoor_pct": 0.0,
+         "rhl": 363.18,
+         "added_time_s": 43.71,
+         "sun_saved_s": 129.93,
+         "sun_saved_pct": 37.96,
+         "rhl_saved_pct": 16.0
+        }
+       }
+      }
+     }
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 650,
+   "event": {
+    "id": "evt_0026",
+    "ts": "2026-10-22T21:20:45.169+00:00",
+    "type": "thought",
+    "payload": {
+     "text": "Re-checking the policy for the revised plan."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 350,
+   "event": {
+    "id": "evt_0027",
+    "ts": "2026-10-22T21:20:45.169+00:00",
+    "type": "tool_call",
+    "payload": {
+     "name": "check_policy",
+     "args": {}
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 450,
+   "event": {
+    "id": "evt_0028",
+    "ts": "2026-10-22T21:20:45.169+00:00",
+    "type": "tool_result",
+    "payload": {
+     "name": "check_policy",
+     "ok": true,
+     "summary": "Policy pack: UAE midday break (v1, verify): no conflicts (pack unverified).",
+     "duration_ms": 0
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 800,
+   "event": {
+    "id": "evt_0029",
+    "ts": "2026-10-22T21:20:45.171+00:00",
+    "type": "verifier",
+    "payload": {
+     "checked": 18,
+     "passed": 18,
+     "defects": [],
+     "layers": [
+      "deterministic"
+     ]
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 700,
+   "event": {
+    "id": "evt_0030",
+    "ts": "2026-10-22T21:20:45.172+00:00",
+    "type": "proposal",
+    "payload": {
+     "plan_id": "plan_3",
+     "kind": "journey",
+     "mode": "walk",
+     "routes": [
+      {
+       "lambda": 0.0,
+       "label": "fastest",
+       "mode": "walk",
+       "depart": "2026-07-15T15:00:00+04:00",
+       "stats": {
+        "distance_m": 794.59,
+        "duration_s": 599.56,
+        "sun_exposure_s": 342.3,
+        "shaded_pct": 42.91,
+        "covered_pct": 2.54,
+        "indoor_pct": 0.0,
+        "rhl": 432.34,
+        "added_time_s": 0.0,
+        "sun_saved_s": 0.0,
+        "sun_saved_pct": 0.0,
+        "rhl_saved_pct": 0.0
+       },
+       "nodes": [
+        5272,
+        5273,
+        3893,
+        3892,
+        1792,
+        1319,
+        1795,
+        2064,
+        2067,
+        2063,
+        97,
+        99,
+        3060,
+        3059,
+        590,
+        3044,
+        3043,
+        1375,
+        4185,
+        1945,
+        1967,
+        1953,
+        1954,
+        1955
+       ],
+       "edges": [
+        6148,
+        5422,
+        6150,
+        4749,
+        4750,
+        4650,
+        4651,
+        4806,
+        4807,
+        4858,
+        4526,
+        4527,
+        4528,
+        4529,
+        4530,
+        4531,
+        4532,
+        4533,
+        4968,
+        4763,
+        4797,
+        4798,
+        4796
+       ],
+       "arrival_s": [
+        0.0,
+        19.33,
+        109.01,
+        111.44,
+        204.3,
+        226.4,
+        238.49,
+        242.43,
+        349.83,
+        353.74,
+        366.93,
+        402.99,
+        415.45,
+        440.37,
+        453.34,
+        463.19,
+        492.81,
+        494.6,
+        544.34,
+        550.02,
+        572.16,
+        582.65,
+        584.31,
+        599.56
+       ],
+       "segments": [
+        {
+         "edge": 6148,
+         "geometry": [
+          [
+           168.99,
+           -446.2
+          ],
+          [
+           170.36,
+           -448.05
+          ],
+          [
+           171.13,
+           -450.2
+          ],
+          [
+           171.21,
+           -452.49
+          ],
+          [
+           170.6,
+           -454.7
+          ],
+          [
+           169.37,
+           -456.64
+          ],
+          [
+           164.88,
+           -461.39
+          ],
+          [
+           163.22,
+           -462.93
+          ],
+          [
+           161.18,
+           -463.91
+          ],
+          [
+           158.95,
+           -464.27
+          ],
+          [
+           156.7,
+           -463.96
+          ]
+         ],
+         "latlon": [
+          [
+           25.201235,
+           55.276078
+          ],
+          [
+           25.201252,
+           55.276091
+          ],
+          [
+           25.201271,
+           55.276099
+          ],
+          [
+           25.201292,
+           55.2761
+          ],
+          [
+           25.201312,
+           55.276094
+          ],
+          [
+           25.20133,
+           55.276081
+          ],
+          [
+           25.201373,
+           55.276037
+          ],
+          [
+           25.201387,
+           55.27602
+          ],
+          [
+           25.201395,
+           55.276
+          ],
+          [
+           25.201399,
+           55.275978
+          ],
+          [
+           25.201396,
+           55.275956
+          ]
+         ],
+         "arrival_s": 0.0,
+         "t_s": 19.33,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 5422,
+         "geometry": [
+          [
+           156.7,
+           -463.96
+          ],
+          [
+           152.42,
+           -467.68
+          ],
+          [
+           147.66,
+           -470.85
+          ],
+          [
+           142.52,
+           -473.36
+          ],
+          [
+           139.68,
+           -474.41
+          ],
+          [
+           136.66,
+           -474.65
+          ],
+          [
+           133.68,
+           -474.09
+          ],
+          [
+           130.97,
+           -472.74
+          ],
+          [
+           128.72,
+           -470.71
+          ],
+          [
+           127.11,
+           -468.16
+          ],
+          [
+           126.25,
+           -465.27
+          ],
+          [
+           126.2,
+           -462.27
+          ],
+          [
+           126.88,
+           -459.32
+          ],
+          [
+           140.77,
+           -398.56
+          ],
+          [
+           141.72,
+           -393.92
+          ],
+          [
+           142.06,
+           -389.2
+          ],
+          [
+           141.76,
+           -384.47
+          ],
+          [
+           140.72,
+           -379.89
+          ]
+         ],
+         "latlon": [
+          [
+           25.201396,
+           55.275956
+          ],
+          [
+           25.20143,
+           55.275913
+          ],
+          [
+           25.201458,
+           55.275866
+          ],
+          [
+           25.201481,
+           55.275815
+          ],
+          [
+           25.20149,
+           55.275787
+          ],
+          [
+           25.201493,
+           55.275757
+          ],
+          [
+           25.201488,
+           55.275727
+          ],
+          [
+           25.201475,
+           55.2757
+          ],
+          [
+           25.201457,
+           55.275678
+          ],
+          [
+           25.201434,
+           55.275662
+          ],
+          [
+           25.201408,
+           55.275653
+          ],
+          [
+           25.201381,
+           55.275653
+          ],
+          [
+           25.201354,
+           55.27566
+          ],
+          [
+           25.200804,
+           55.275798
+          ],
+          [
+           25.200763,
+           55.275807
+          ],
+          [
+           25.20072,
+           55.27581
+          ],
+          [
+           25.200677,
+           55.275807
+          ],
+          [
+           25.200636,
+           55.275797
+          ]
+         ],
+         "arrival_s": 19.33,
+         "t_s": 89.68,
+         "sun": 0.023,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 6150,
+         "geometry": [
+          [
+           140.72,
+           -379.89
+          ],
+          [
+           137.33,
+           -379.47
+          ]
+         ],
+         "latlon": [
+          [
+           25.200636,
+           55.275797
+          ],
+          [
+           25.200632,
+           55.275763
+          ]
+         ],
+         "arrival_s": 109.01,
+         "t_s": 2.44,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4749,
+         "geometry": [
+          [
+           137.33,
+           -379.47
+          ],
+          [
+           133.84,
+           -380.03
+          ],
+          [
+           130.62,
+           -381.5
+          ],
+          [
+           127.9,
+           -383.75
+          ],
+          [
+           125.88,
+           -386.62
+          ],
+          [
+           124.68,
+           -389.93
+          ],
+          [
+           117.44,
+           -423.02
+          ],
+          [
+           113.61,
+           -436.79
+          ],
+          [
+           108.81,
+           -450.27
+          ],
+          [
+           103.05,
+           -463.37
+          ],
+          [
+           96.4,
+           -476.03
+          ],
+          [
+           88.85,
+           -488.2
+          ],
+          [
+           84.53,
+           -493.66
+          ]
+         ],
+         "latlon": [
+          [
+           25.200632,
+           55.275763
+          ],
+          [
+           25.200637,
+           55.275729
+          ],
+          [
+           25.20065,
+           55.275697
+          ],
+          [
+           25.200671,
+           55.27567
+          ],
+          [
+           25.200696,
+           55.27565
+          ],
+          [
+           25.200726,
+           55.275638
+          ],
+          [
+           25.201026,
+           55.275566
+          ],
+          [
+           25.20115,
+           55.275528
+          ],
+          [
+           25.201272,
+           55.27548
+          ],
+          [
+           25.201391,
+           55.275423
+          ],
+          [
+           25.201505,
+           55.275357
+          ],
+          [
+           25.201615,
+           55.275282
+          ],
+          [
+           25.201665,
+           55.275239
+          ]
+         ],
+         "arrival_s": 111.44,
+         "t_s": 92.86,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4750,
+         "geometry": [
+          [
+           84.53,
+           -493.66
+          ],
+          [
+           78.35,
+           -498.16
+          ],
+          [
+           71.51,
+           -501.83
+          ],
+          [
+           64.2,
+           -504.45
+          ],
+          [
+           56.58,
+           -505.95
+          ]
+         ],
+         "latlon": [
+          [
+           25.201665,
+           55.275239
+          ],
+          [
+           25.201705,
+           55.275178
+          ],
+          [
+           25.201738,
+           55.27511
+          ],
+          [
+           25.201762,
+           55.275037
+          ],
+          [
+           25.201776,
+           55.274962
+          ]
+         ],
+         "arrival_s": 204.3,
+         "t_s": 22.1,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4650,
+         "geometry": [
+          [
+           56.58,
+           -505.95
+          ],
+          [
+           51.36,
+           -512.38
+          ],
+          [
+           45.62,
+           -518.86
+          ]
+         ],
+         "latlon": [
+          [
+           25.201776,
+           55.274962
+          ],
+          [
+           25.201834,
+           55.27491
+          ],
+          [
+           25.201892,
+           55.274853
+          ]
+         ],
+         "arrival_s": 226.4,
+         "t_s": 12.09,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4651,
+         "geometry": [
+          [
+           45.62,
+           -518.86
+          ],
+          [
+           41.86,
+           -522.89
+          ]
+         ],
+         "latlon": [
+          [
+           25.201892,
+           55.274853
+          ],
+          [
+           25.201929,
+           55.274816
+          ]
+         ],
+         "arrival_s": 238.49,
+         "t_s": 3.94,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4806,
+         "geometry": [
+          [
+           41.86,
+           -522.89
+          ],
+          [
+           32.44,
+           -525.62
+          ],
+          [
+           29.24,
+           -526.98
+          ],
+          [
+           25.86,
+           -529.33
+          ],
+          [
+           13.93,
+           -541.53
+          ],
+          [
+           10.98,
+           -544.01
+          ],
+          [
+           8.32,
+           -545.31
+          ],
+          [
+           4.57,
+           -546.09
+          ],
+          [
+           0.67,
+           -545.85
+          ],
+          [
+           -3.83,
+           -545.06
+          ],
+          [
+           -39.05,
+           -536.13
+          ],
+          [
+           -43.09,
+           -534.46
+          ],
+          [
+           -46.73,
+           -532.04
+          ],
+          [
+           -49.81,
+           -528.96
+          ],
+          [
+           -52.23,
+           -525.35
+          ],
+          [
+           -72.11,
+           -487.22
+          ]
+         ],
+         "latlon": [
+          [
+           25.201929,
+           55.274816
+          ],
+          [
+           25.201954,
+           55.274722
+          ],
+          [
+           25.201966,
+           55.27469
+          ],
+          [
+           25.201987,
+           55.274657
+          ],
+          [
+           25.202097,
+           55.274538
+          ],
+          [
+           25.20212,
+           55.274509
+          ],
+          [
+           25.202132,
+           55.274483
+          ],
+          [
+           25.202139,
+           55.274445
+          ],
+          [
+           25.202137,
+           55.274407
+          ],
+          [
+           25.202129,
+           55.274362
+          ],
+          [
+           25.202049,
+           55.274012
+          ],
+          [
+           25.202034,
+           55.273972
+          ],
+          [
+           25.202012,
+           55.273936
+          ],
+          [
+           25.201984,
+           55.273905
+          ],
+          [
+           25.201951,
+           55.273881
+          ],
+          [
+           25.201606,
+           55.273684
+          ]
+         ],
+         "arrival_s": 242.43,
+         "t_s": 107.4,
+         "sun": 0.66,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4807,
+         "geometry": [
+          [
+           -72.11,
+           -487.22
+          ],
+          [
+           -74.91,
+           -482.51
+          ]
+         ],
+         "latlon": [
+          [
+           25.201606,
+           55.273684
+          ],
+          [
+           25.201564,
+           55.273656
+          ]
+         ],
+         "arrival_s": 349.83,
+         "t_s": 3.91,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4858,
+         "geometry": [
+          [
+           -74.91,
+           -482.51
+          ],
+          [
+           -80.84,
+           -486.69
+          ]
+         ],
+         "latlon": [
+          [
+           25.201564,
+           55.273656
+          ],
+          [
+           25.201601,
+           55.273597
+          ]
+         ],
+         "arrival_s": 353.74,
+         "t_s": 13.19,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4526,
+         "geometry": [
+          [
+           -80.84,
+           -486.69
+          ],
+          [
+           -83.96,
+           -482.95
+          ],
+          [
+           -87.8,
+           -479.91
+          ],
+          [
+           -92.15,
+           -477.6
+          ],
+          [
+           -96.82,
+           -476.09
+          ],
+          [
+           -101.69,
+           -475.42
+          ],
+          [
+           -106.61,
+           -475.63
+          ],
+          [
+           -111.41,
+           -476.71
+          ],
+          [
+           -115.95,
+           -478.61
+          ]
+         ],
+         "latlon": [
+          [
+           25.201601,
+           55.273597
+          ],
+          [
+           25.201568,
+           55.273566
+          ],
+          [
+           25.20154,
+           55.273528
+          ],
+          [
+           25.201519,
+           55.273485
+          ],
+          [
+           25.201506,
+           55.273439
+          ],
+          [
+           25.2015,
+           55.27339
+          ],
+          [
+           25.201501,
+           55.273342
+          ],
+          [
+           25.201511,
+           55.273294
+          ],
+          [
+           25.201528,
+           55.273249
+          ]
+         ],
+         "arrival_s": 366.93,
+         "t_s": 36.06,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4527,
+         "geometry": [
+          [
+           -115.95,
+           -478.61
+          ],
+          [
+           -121.49,
+           -481.51
+          ]
+         ],
+         "latlon": [
+          [
+           25.201528,
+           55.273249
+          ],
+          [
+           25.201555,
+           55.273194
+          ]
+         ],
+         "arrival_s": 402.99,
+         "t_s": 12.46,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4528,
+         "geometry": [
+          [
+           -121.49,
+           -481.51
+          ],
+          [
+           -152.39,
+           -497.69
+          ]
+         ],
+         "latlon": [
+          [
+           25.201555,
+           55.273194
+          ],
+          [
+           25.201701,
+           55.272887
+          ]
+         ],
+         "arrival_s": 415.45,
+         "t_s": 24.92,
+         "sun": 0.804,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4529,
+         "geometry": [
+          [
+           -152.39,
+           -497.69
+          ],
+          [
+           -168.47,
+           -506.11
+          ]
+         ],
+         "latlon": [
+          [
+           25.201701,
+           55.272887
+          ],
+          [
+           25.201777,
+           55.272727
+          ]
+         ],
+         "arrival_s": 440.37,
+         "t_s": 12.96,
+         "sun": 0.068,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4530,
+         "geometry": [
+          [
+           -168.47,
+           -506.11
+          ],
+          [
+           -180.7,
+           -512.51
+          ]
+         ],
+         "latlon": [
+          [
+           25.201777,
+           55.272727
+          ],
+          [
+           25.201835,
+           55.272606
+          ]
+         ],
+         "arrival_s": 453.34,
+         "t_s": 9.86,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4531,
+         "geometry": [
+          [
+           -180.7,
+           -512.51
+          ],
+          [
+           -217.45,
+           -531.71
+          ]
+         ],
+         "latlon": [
+          [
+           25.201835,
+           55.272606
+          ],
+          [
+           25.202009,
+           55.272241
+          ]
+         ],
+         "arrival_s": 463.19,
+         "t_s": 29.62,
+         "sun": 0.252,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4532,
+         "geometry": [
+          [
+           -217.45,
+           -531.71
+          ],
+          [
+           -219.65,
+           -532.91
+          ]
+         ],
+         "latlon": [
+          [
+           25.202009,
+           55.272241
+          ],
+          [
+           25.202019,
+           55.272219
+          ]
+         ],
+         "arrival_s": 492.81,
+         "t_s": 1.79,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4533,
+         "geometry": [
+          [
+           -219.65,
+           -532.91
+          ],
+          [
+           -228.61,
+           -537.02
+          ],
+          [
+           -234.62,
+           -538.54
+          ],
+          [
+           -240.82,
+           -538.99
+          ],
+          [
+           -246.98,
+           -538.35
+          ],
+          [
+           -252.95,
+           -536.65
+          ],
+          [
+           -258.53,
+           -533.94
+          ],
+          [
+           -263.53,
+           -530.3
+          ],
+          [
+           -266.94,
+           -526.7
+          ],
+          [
+           -267.82,
+           -525.86
+          ],
+          [
+           -270.72,
+           -521.54
+          ]
+         ],
+         "latlon": [
+          [
+           25.202019,
+           55.272219
+          ],
+          [
+           25.202057,
+           55.27213
+          ],
+          [
+           25.20207,
+           55.272071
+          ],
+          [
+           25.202074,
+           55.272009
+          ],
+          [
+           25.202069,
+           55.271948
+          ],
+          [
+           25.202053,
+           55.271889
+          ],
+          [
+           25.202029,
+           55.271833
+          ],
+          [
+           25.201996,
+           55.271784
+          ],
+          [
+           25.201963,
+           55.27175
+          ],
+          [
+           25.201956,
+           55.271741
+          ],
+          [
+           25.201917,
+           55.271712
+          ]
+         ],
+         "arrival_s": 494.6,
+         "t_s": 49.74,
+         "sun": 0.808,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4968,
+         "geometry": [
+          [
+           -270.72,
+           -521.54
+          ],
+          [
+           -277.5,
+           -525.68
+          ]
+         ],
+         "latlon": [
+          [
+           25.201917,
+           55.271712
+          ],
+          [
+           25.201954,
+           55.271645
+          ]
+         ],
+         "arrival_s": 544.34,
+         "t_s": 5.68,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4763,
+         "geometry": [
+          [
+           -277.5,
+           -525.68
+          ],
+          [
+           -291.6,
+           -498.07
+          ]
+         ],
+         "latlon": [
+          [
+           25.201954,
+           55.271645
+          ],
+          [
+           25.201704,
+           55.271505
+          ]
+         ],
+         "arrival_s": 550.02,
+         "t_s": 22.14,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4797,
+         "geometry": [
+          [
+           -291.6,
+           -498.07
+          ],
+          [
+           -304.69,
+           -504.7
+          ]
+         ],
+         "latlon": [
+          [
+           25.201704,
+           55.271505
+          ],
+          [
+           25.201764,
+           55.271375
+          ]
+         ],
+         "arrival_s": 572.16,
+         "t_s": 10.49,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4798,
+         "geometry": [
+          [
+           -304.69,
+           -504.7
+          ],
+          [
+           -306.8,
+           -505.68
+          ]
+         ],
+         "latlon": [
+          [
+           25.201764,
+           55.271375
+          ],
+          [
+           25.201773,
+           55.271354
+          ]
+         ],
+         "arrival_s": 582.65,
+         "t_s": 1.66,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4796,
+         "geometry": [
+          [
+           -306.8,
+           -505.68
+          ],
+          [
+           -309.6,
+           -506.13
+          ],
+          [
+           -312.42,
+           -505.86
+          ],
+          [
+           -315.08,
+           -504.9
+          ],
+          [
+           -317.41,
+           -503.31
+          ],
+          [
+           -325.48,
+           -497.34
+          ]
+         ],
+         "latlon": [
+          [
+           25.201773,
+           55.271354
+          ],
+          [
+           25.201777,
+           55.271326
+          ],
+          [
+           25.201775,
+           55.271298
+          ],
+          [
+           25.201766,
+           55.271272
+          ],
+          [
+           25.201752,
+           55.271249
+          ],
+          [
+           25.201698,
+           55.271169
+          ]
+         ],
+         "arrival_s": 584.31,
+         "t_s": 15.26,
+         "sun": 0.0,
+         "cls": "covered",
+         "name": null
+        }
+       ],
+       "distance_m": 794.59,
+       "duration_s": 599.56,
+       "sun_exposure_s": 342.3,
+       "shaded_pct": 42.91,
+       "covered_pct": 2.54,
+       "indoor_pct": 0.0,
+       "rhl": 432.34,
+       "added_time_s": 0.0,
+       "sun_saved_s": 0.0,
+       "sun_saved_pct": 0.0,
+       "rhl_saved_pct": 0.0,
+       "lam": 0.0,
+       "arrive": "2026-07-15T15:09:59.560000+04:00"
+      },
+      {
+       "lambda": 1.0,
+       "label": "balanced",
+       "mode": "walk",
+       "depart": "2026-07-15T15:00:00+04:00",
+       "stats": {
+        "distance_m": 889.38,
+        "duration_s": 643.27,
+        "sun_exposure_s": 212.37,
+        "shaded_pct": 66.99,
+        "covered_pct": 25.66,
+        "indoor_pct": 0.0,
+        "rhl": 363.18,
+        "added_time_s": 43.71,
+        "sun_saved_s": 129.93,
+        "sun_saved_pct": 37.96,
+        "rhl_saved_pct": 16.0
+       },
+       "nodes": [
+        5272,
+        5273,
+        3893,
+        2703,
+        79,
+        1188,
+        2730,
+        1279,
+        1381,
+        1382,
+        2583,
+        1646,
+        98,
+        2586,
+        3046,
+        3045,
+        1377,
+        1376,
+        4185,
+        1945,
+        1967,
+        1953,
+        1954,
+        1955
+       ],
+       "edges": [
+        6148,
+        5422,
+        6151,
+        5245,
+        4646,
+        5246,
+        4969,
+        4669,
+        4682,
+        4520,
+        4521,
+        4522,
+        4523,
+        4524,
+        4867,
+        4868,
+        4564,
+        4534,
+        4968,
+        4763,
+        4797,
+        4798,
+        4796
+       ],
+       "arrival_s": [
+        0.0,
+        19.33,
+        109.01,
+        112.16,
+        127.99,
+        131.59,
+        169.39,
+        319.2,
+        334.8,
+        341.74,
+        354.24,
+        371.54,
+        431.93,
+        479.25,
+        503.74,
+        525.76,
+        539.88,
+        574.41,
+        588.05,
+        593.73,
+        615.87,
+        626.36,
+        628.01,
+        643.27
+       ],
+       "segments": [
+        {
+         "edge": 6148,
+         "geometry": [
+          [
+           168.99,
+           -446.2
+          ],
+          [
+           170.36,
+           -448.05
+          ],
+          [
+           171.13,
+           -450.2
+          ],
+          [
+           171.21,
+           -452.49
+          ],
+          [
+           170.6,
+           -454.7
+          ],
+          [
+           169.37,
+           -456.64
+          ],
+          [
+           164.88,
+           -461.39
+          ],
+          [
+           163.22,
+           -462.93
+          ],
+          [
+           161.18,
+           -463.91
+          ],
+          [
+           158.95,
+           -464.27
+          ],
+          [
+           156.7,
+           -463.96
+          ]
+         ],
+         "latlon": [
+          [
+           25.201235,
+           55.276078
+          ],
+          [
+           25.201252,
+           55.276091
+          ],
+          [
+           25.201271,
+           55.276099
+          ],
+          [
+           25.201292,
+           55.2761
+          ],
+          [
+           25.201312,
+           55.276094
+          ],
+          [
+           25.20133,
+           55.276081
+          ],
+          [
+           25.201373,
+           55.276037
+          ],
+          [
+           25.201387,
+           55.27602
+          ],
+          [
+           25.201395,
+           55.276
+          ],
+          [
+           25.201399,
+           55.275978
+          ],
+          [
+           25.201396,
+           55.275956
+          ]
+         ],
+         "arrival_s": 0.0,
+         "t_s": 19.33,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 5422,
+         "geometry": [
+          [
+           156.7,
+           -463.96
+          ],
+          [
+           152.42,
+           -467.68
+          ],
+          [
+           147.66,
+           -470.85
+          ],
+          [
+           142.52,
+           -473.36
+          ],
+          [
+           139.68,
+           -474.41
+          ],
+          [
+           136.66,
+           -474.65
+          ],
+          [
+           133.68,
+           -474.09
+          ],
+          [
+           130.97,
+           -472.74
+          ],
+          [
+           128.72,
+           -470.71
+          ],
+          [
+           127.11,
+           -468.16
+          ],
+          [
+           126.25,
+           -465.27
+          ],
+          [
+           126.2,
+           -462.27
+          ],
+          [
+           126.88,
+           -459.32
+          ],
+          [
+           140.77,
+           -398.56
+          ],
+          [
+           141.72,
+           -393.92
+          ],
+          [
+           142.06,
+           -389.2
+          ],
+          [
+           141.76,
+           -384.47
+          ],
+          [
+           140.72,
+           -379.89
+          ]
+         ],
+         "latlon": [
+          [
+           25.201396,
+           55.275956
+          ],
+          [
+           25.20143,
+           55.275913
+          ],
+          [
+           25.201458,
+           55.275866
+          ],
+          [
+           25.201481,
+           55.275815
+          ],
+          [
+           25.20149,
+           55.275787
+          ],
+          [
+           25.201493,
+           55.275757
+          ],
+          [
+           25.201488,
+           55.275727
+          ],
+          [
+           25.201475,
+           55.2757
+          ],
+          [
+           25.201457,
+           55.275678
+          ],
+          [
+           25.201434,
+           55.275662
+          ],
+          [
+           25.201408,
+           55.275653
+          ],
+          [
+           25.201381,
+           55.275653
+          ],
+          [
+           25.201354,
+           55.27566
+          ],
+          [
+           25.200804,
+           55.275798
+          ],
+          [
+           25.200763,
+           55.275807
+          ],
+          [
+           25.20072,
+           55.27581
+          ],
+          [
+           25.200677,
+           55.275807
+          ],
+          [
+           25.200636,
+           55.275797
+          ]
+         ],
+         "arrival_s": 19.33,
+         "t_s": 89.68,
+         "sun": 0.023,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 6151,
+         "geometry": [
+          [
+           140.72,
+           -379.89
+          ],
+          [
+           138.39,
+           -376.13
+          ]
+         ],
+         "latlon": [
+          [
+           25.200636,
+           55.275797
+          ],
+          [
+           25.200602,
+           55.275774
+          ]
+         ],
+         "arrival_s": 109.01,
+         "t_s": 3.16,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 5245,
+         "geometry": [
+          [
+           138.39,
+           -376.13
+          ],
+          [
+           135.69,
+           -372.62
+          ],
+          [
+           132.65,
+           -369.41
+          ],
+          [
+           129.29,
+           -366.51
+          ],
+          [
+           125.68,
+           -363.95
+          ],
+          [
+           121.81,
+           -361.76
+          ]
+         ],
+         "latlon": [
+          [
+           25.200602,
+           55.275774
+          ],
+          [
+           25.20057,
+           55.275747
+          ],
+          [
+           25.200541,
+           55.275717
+          ],
+          [
+           25.200515,
+           55.275684
+          ],
+          [
+           25.200491,
+           55.275648
+          ],
+          [
+           25.200472,
+           55.275609
+          ]
+         ],
+         "arrival_s": 112.16,
+         "t_s": 15.83,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4646,
+         "geometry": [
+          [
+           121.81,
+           -361.76
+          ],
+          [
+           123.39,
+           -356.98
+          ]
+         ],
+         "latlon": [
+          [
+           25.200472,
+           55.275609
+          ],
+          [
+           25.200428,
+           55.275625
+          ]
+         ],
+         "arrival_s": 127.99,
+         "t_s": 3.6,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 5246,
+         "geometry": [
+          [
+           123.39,
+           -356.98
+          ],
+          [
+           72.55,
+           -342.29
+          ]
+         ],
+         "latlon": [
+          [
+           25.200428,
+           55.275625
+          ],
+          [
+           25.200296,
+           55.27512
+          ]
+         ],
+         "arrival_s": 131.59,
+         "t_s": 37.8,
+         "sun": 0.783,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4969,
+         "geometry": [
+          [
+           72.55,
+           -342.29
+          ],
+          [
+           15.11,
+           -324.4
+          ],
+          [
+           -25.03,
+           -311.41
+          ],
+          [
+           -28.75,
+           -310.75
+          ],
+          [
+           -31.62,
+           -310.62
+          ],
+          [
+           -34.71,
+           -311.46
+          ],
+          [
+           -42.12,
+           -314.53
+          ],
+          [
+           -52.32,
+           -319.26
+          ],
+          [
+           -122.77,
+           -353.34
+          ]
+         ],
+         "latlon": [
+          [
+           25.200296,
+           55.27512
+          ],
+          [
+           25.200134,
+           55.27455
+          ],
+          [
+           25.200016,
+           55.274152
+          ],
+          [
+           25.20001,
+           55.274115
+          ],
+          [
+           25.200009,
+           55.274086
+          ],
+          [
+           25.200017,
+           55.274055
+          ],
+          [
+           25.200045,
+           55.273982
+          ],
+          [
+           25.200087,
+           55.273881
+          ],
+          [
+           25.200396,
+           55.273181
+          ]
+         ],
+         "arrival_s": 169.39,
+         "t_s": 149.81,
+         "sun": 0.0,
+         "cls": "covered",
+         "name": null
+        },
+        {
+         "edge": 4669,
+         "geometry": [
+          [
+           -122.77,
+           -353.34
+          ],
+          [
+           -143.0,
+           -361.57
+          ]
+         ],
+         "latlon": [
+          [
+           25.200396,
+           55.273181
+          ],
+          [
+           25.20047,
+           55.27298
+          ]
+         ],
+         "arrival_s": 319.2,
+         "t_s": 15.6,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4682,
+         "geometry": [
+          [
+           -143.0,
+           -361.57
+          ],
+          [
+           -145.95,
+           -360.24
+          ],
+          [
+           -149.11,
+           -359.48
+          ],
+          [
+           -152.34,
+           -359.3
+          ]
+         ],
+         "latlon": [
+          [
+           25.20047,
+           55.27298
+          ],
+          [
+           25.200458,
+           55.272951
+          ],
+          [
+           25.200451,
+           55.27292
+          ],
+          [
+           25.200449,
+           55.272888
+          ]
+         ],
+         "arrival_s": 334.8,
+         "t_s": 6.94,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4520,
+         "geometry": [
+          [
+           -152.34,
+           -359.3
+          ],
+          [
+           -144.07,
+           -374.71
+          ]
+         ],
+         "latlon": [
+          [
+           25.200449,
+           55.272888
+          ],
+          [
+           25.200589,
+           55.27297
+          ]
+         ],
+         "arrival_s": 341.74,
+         "t_s": 12.49,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4521,
+         "geometry": [
+          [
+           -144.07,
+           -374.71
+          ],
+          [
+           -132.69,
+           -396.09
+          ]
+         ],
+         "latlon": [
+          [
+           25.200589,
+           55.27297
+          ],
+          [
+           25.200782,
+           55.273083
+          ]
+         ],
+         "arrival_s": 354.24,
+         "t_s": 17.3,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4522,
+         "geometry": [
+          [
+           -132.69,
+           -396.09
+          ],
+          [
+           -113.15,
+           -432.8
+          ],
+          [
+           -109.9,
+           -439.18
+          ],
+          [
+           -108.41,
+           -446.18
+          ],
+          [
+           -108.75,
+           -453.32
+          ],
+          [
+           -110.91,
+           -460.14
+          ],
+          [
+           -114.74,
+           -466.19
+          ],
+          [
+           -119.98,
+           -471.11
+          ]
+         ],
+         "latlon": [
+          [
+           25.200782,
+           55.273083
+          ],
+          [
+           25.201114,
+           55.273277
+          ],
+          [
+           25.201172,
+           55.273309
+          ],
+          [
+           25.201235,
+           55.273324
+          ],
+          [
+           25.2013,
+           55.27332
+          ],
+          [
+           25.201361,
+           55.273299
+          ],
+          [
+           25.201416,
+           55.273261
+          ],
+          [
+           25.201461,
+           55.273209
+          ]
+         ],
+         "arrival_s": 371.54,
+         "t_s": 60.39,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4523,
+         "geometry": [
+          [
+           -119.98,
+           -471.11
+          ],
+          [
+           -168.36,
+           -497.38
+          ]
+         ],
+         "latlon": [
+          [
+           25.201461,
+           55.273209
+          ],
+          [
+           25.201698,
+           55.272729
+          ]
+         ],
+         "arrival_s": 431.93,
+         "t_s": 47.32,
+         "sun": 0.676,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4524,
+         "geometry": [
+          [
+           -168.36,
+           -497.38
+          ],
+          [
+           -198.41,
+           -513.87
+          ]
+         ],
+         "latlon": [
+          [
+           25.201698,
+           55.272729
+          ],
+          [
+           25.201847,
+           55.27243
+          ]
+         ],
+         "arrival_s": 479.25,
+         "t_s": 24.49,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4867,
+         "geometry": [
+          [
+           -198.41,
+           -513.87
+          ],
+          [
+           -200.34,
+           -512.43
+          ],
+          [
+           -202.55,
+           -511.48
+          ],
+          [
+           -205.53,
+           -511.03
+          ],
+          [
+           -208.52,
+           -511.44
+          ],
+          [
+           -211.27,
+           -512.69
+          ],
+          [
+           -226.25,
+           -520.67
+          ]
+         ],
+         "latlon": [
+          [
+           25.201847,
+           55.27243
+          ],
+          [
+           25.201834,
+           55.272411
+          ],
+          [
+           25.201826,
+           55.272389
+          ],
+          [
+           25.201822,
+           55.27236
+          ],
+          [
+           25.201825,
+           55.27233
+          ],
+          [
+           25.201837,
+           55.272303
+          ],
+          [
+           25.201909,
+           55.272154
+          ]
+         ],
+         "arrival_s": 503.74,
+         "t_s": 22.03,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4868,
+         "geometry": [
+          [
+           -226.25,
+           -520.67
+          ],
+          [
+           -230.51,
+           -523.19
+          ],
+          [
+           -234.58,
+           -525.99
+          ],
+          [
+           -238.45,
+           -529.05
+          ],
+          [
+           -242.11,
+           -532.37
+          ]
+         ],
+         "latlon": [
+          [
+           25.201909,
+           55.272154
+          ],
+          [
+           25.201932,
+           55.272112
+          ],
+          [
+           25.201957,
+           55.272071
+          ],
+          [
+           25.201985,
+           55.272033
+          ],
+          [
+           25.202015,
+           55.271996
+          ]
+         ],
+         "arrival_s": 525.76,
+         "t_s": 14.11,
+         "sun": 0.296,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4564,
+         "geometry": [
+          [
+           -242.11,
+           -532.37
+          ],
+          [
+           -246.78,
+           -531.81
+          ],
+          [
+           -251.32,
+           -530.53
+          ],
+          [
+           -255.59,
+           -528.57
+          ],
+          [
+           -259.49,
+           -525.97
+          ],
+          [
+           -262.95,
+           -522.78
+          ],
+          [
+           -265.86,
+           -519.1
+          ],
+          [
+           -268.71,
+           -514.97
+          ],
+          [
+           -271.99,
+           -511.15
+          ],
+          [
+           -275.68,
+           -507.72
+          ],
+          [
+           -279.72,
+           -504.7
+          ]
+         ],
+         "latlon": [
+          [
+           25.202015,
+           55.271996
+          ],
+          [
+           25.20201,
+           55.27195
+          ],
+          [
+           25.201998,
+           55.271905
+          ],
+          [
+           25.20198,
+           55.271863
+          ],
+          [
+           25.201957,
+           55.271824
+          ],
+          [
+           25.201928,
+           55.271789
+          ],
+          [
+           25.201895,
+           55.271761
+          ],
+          [
+           25.201857,
+           55.271732
+          ],
+          [
+           25.201823,
+           55.2717
+          ],
+          [
+           25.201792,
+           55.271663
+          ],
+          [
+           25.201764,
+           55.271623
+          ]
+         ],
+         "arrival_s": 539.88,
+         "t_s": 34.53,
+         "sun": 0.267,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4534,
+         "geometry": [
+          [
+           -279.72,
+           -504.7
+          ],
+          [
+           -271.26,
+           -520.73
+          ],
+          [
+           -270.72,
+           -521.54
+          ]
+         ],
+         "latlon": [
+          [
+           25.201764,
+           55.271623
+          ],
+          [
+           25.201909,
+           55.271707
+          ],
+          [
+           25.201917,
+           55.271712
+          ]
+         ],
+         "arrival_s": 574.41,
+         "t_s": 13.64,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4968,
+         "geometry": [
+          [
+           -270.72,
+           -521.54
+          ],
+          [
+           -277.5,
+           -525.68
+          ]
+         ],
+         "latlon": [
+          [
+           25.201917,
+           55.271712
+          ],
+          [
+           25.201954,
+           55.271645
+          ]
+         ],
+         "arrival_s": 588.05,
+         "t_s": 5.68,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4763,
+         "geometry": [
+          [
+           -277.5,
+           -525.68
+          ],
+          [
+           -291.6,
+           -498.07
+          ]
+         ],
+         "latlon": [
+          [
+           25.201954,
+           55.271645
+          ],
+          [
+           25.201704,
+           55.271505
+          ]
+         ],
+         "arrival_s": 593.73,
+         "t_s": 22.14,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4797,
+         "geometry": [
+          [
+           -291.6,
+           -498.07
+          ],
+          [
+           -304.69,
+           -504.7
+          ]
+         ],
+         "latlon": [
+          [
+           25.201704,
+           55.271505
+          ],
+          [
+           25.201764,
+           55.271375
+          ]
+         ],
+         "arrival_s": 615.87,
+         "t_s": 10.49,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4798,
+         "geometry": [
+          [
+           -304.69,
+           -504.7
+          ],
+          [
+           -306.8,
+           -505.68
+          ]
+         ],
+         "latlon": [
+          [
+           25.201764,
+           55.271375
+          ],
+          [
+           25.201773,
+           55.271354
+          ]
+         ],
+         "arrival_s": 626.36,
+         "t_s": 1.66,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4796,
+         "geometry": [
+          [
+           -306.8,
+           -505.68
+          ],
+          [
+           -309.6,
+           -506.13
+          ],
+          [
+           -312.42,
+           -505.86
+          ],
+          [
+           -315.08,
+           -504.9
+          ],
+          [
+           -317.41,
+           -503.31
+          ],
+          [
+           -325.48,
+           -497.34
+          ]
+         ],
+         "latlon": [
+          [
+           25.201773,
+           55.271354
+          ],
+          [
+           25.201777,
+           55.271326
+          ],
+          [
+           25.201775,
+           55.271298
+          ],
+          [
+           25.201766,
+           55.271272
+          ],
+          [
+           25.201752,
+           55.271249
+          ],
+          [
+           25.201698,
+           55.271169
+          ]
+         ],
+         "arrival_s": 628.01,
+         "t_s": 15.26,
+         "sun": 0.0,
+         "cls": "covered",
+         "name": null
+        }
+       ],
+       "distance_m": 889.38,
+       "duration_s": 643.27,
+       "sun_exposure_s": 212.37,
+       "shaded_pct": 66.99,
+       "covered_pct": 25.66,
+       "indoor_pct": 0.0,
+       "rhl": 363.18,
+       "added_time_s": 43.71,
+       "sun_saved_s": 129.93,
+       "sun_saved_pct": 37.96,
+       "rhl_saved_pct": 16.0,
+       "lam": 1.0,
+       "arrive": "2026-07-15T15:10:43.270000+04:00"
+      },
+      {
+       "lambda": 3.0,
+       "label": "coolest",
+       "mode": "walk",
+       "depart": "2026-07-15T15:00:00+04:00",
+       "stats": {
+        "distance_m": 889.38,
+        "duration_s": 643.27,
+        "sun_exposure_s": 212.37,
+        "shaded_pct": 66.99,
+        "covered_pct": 25.66,
+        "indoor_pct": 0.0,
+        "rhl": 363.18,
+        "added_time_s": 43.71,
+        "sun_saved_s": 129.93,
+        "sun_saved_pct": 37.96,
+        "rhl_saved_pct": 16.0
+       },
+       "nodes": [
+        5272,
+        5273,
+        3893,
+        2703,
+        79,
+        1188,
+        2730,
+        1279,
+        1381,
+        1382,
+        2583,
+        1646,
+        98,
+        2586,
+        3046,
+        3045,
+        1377,
+        1376,
+        4185,
+        1945,
+        1967,
+        1953,
+        1954,
+        1955
+       ],
+       "edges": [
+        6148,
+        5422,
+        6151,
+        5245,
+        4646,
+        5246,
+        4969,
+        4669,
+        4682,
+        4520,
+        4521,
+        4522,
+        4523,
+        4524,
+        4867,
+        4868,
+        4564,
+        4534,
+        4968,
+        4763,
+        4797,
+        4798,
+        4796
+       ],
+       "arrival_s": [
+        0.0,
+        19.33,
+        109.01,
+        112.16,
+        127.99,
+        131.59,
+        169.39,
+        319.2,
+        334.8,
+        341.74,
+        354.24,
+        371.54,
+        431.93,
+        479.25,
+        503.74,
+        525.76,
+        539.88,
+        574.41,
+        588.05,
+        593.73,
+        615.87,
+        626.36,
+        628.01,
+        643.27
+       ],
+       "segments": [
+        {
+         "edge": 6148,
+         "geometry": [
+          [
+           168.99,
+           -446.2
+          ],
+          [
+           170.36,
+           -448.05
+          ],
+          [
+           171.13,
+           -450.2
+          ],
+          [
+           171.21,
+           -452.49
+          ],
+          [
+           170.6,
+           -454.7
+          ],
+          [
+           169.37,
+           -456.64
+          ],
+          [
+           164.88,
+           -461.39
+          ],
+          [
+           163.22,
+           -462.93
+          ],
+          [
+           161.18,
+           -463.91
+          ],
+          [
+           158.95,
+           -464.27
+          ],
+          [
+           156.7,
+           -463.96
+          ]
+         ],
+         "latlon": [
+          [
+           25.201235,
+           55.276078
+          ],
+          [
+           25.201252,
+           55.276091
+          ],
+          [
+           25.201271,
+           55.276099
+          ],
+          [
+           25.201292,
+           55.2761
+          ],
+          [
+           25.201312,
+           55.276094
+          ],
+          [
+           25.20133,
+           55.276081
+          ],
+          [
+           25.201373,
+           55.276037
+          ],
+          [
+           25.201387,
+           55.27602
+          ],
+          [
+           25.201395,
+           55.276
+          ],
+          [
+           25.201399,
+           55.275978
+          ],
+          [
+           25.201396,
+           55.275956
+          ]
+         ],
+         "arrival_s": 0.0,
+         "t_s": 19.33,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 5422,
+         "geometry": [
+          [
+           156.7,
+           -463.96
+          ],
+          [
+           152.42,
+           -467.68
+          ],
+          [
+           147.66,
+           -470.85
+          ],
+          [
+           142.52,
+           -473.36
+          ],
+          [
+           139.68,
+           -474.41
+          ],
+          [
+           136.66,
+           -474.65
+          ],
+          [
+           133.68,
+           -474.09
+          ],
+          [
+           130.97,
+           -472.74
+          ],
+          [
+           128.72,
+           -470.71
+          ],
+          [
+           127.11,
+           -468.16
+          ],
+          [
+           126.25,
+           -465.27
+          ],
+          [
+           126.2,
+           -462.27
+          ],
+          [
+           126.88,
+           -459.32
+          ],
+          [
+           140.77,
+           -398.56
+          ],
+          [
+           141.72,
+           -393.92
+          ],
+          [
+           142.06,
+           -389.2
+          ],
+          [
+           141.76,
+           -384.47
+          ],
+          [
+           140.72,
+           -379.89
+          ]
+         ],
+         "latlon": [
+          [
+           25.201396,
+           55.275956
+          ],
+          [
+           25.20143,
+           55.275913
+          ],
+          [
+           25.201458,
+           55.275866
+          ],
+          [
+           25.201481,
+           55.275815
+          ],
+          [
+           25.20149,
+           55.275787
+          ],
+          [
+           25.201493,
+           55.275757
+          ],
+          [
+           25.201488,
+           55.275727
+          ],
+          [
+           25.201475,
+           55.2757
+          ],
+          [
+           25.201457,
+           55.275678
+          ],
+          [
+           25.201434,
+           55.275662
+          ],
+          [
+           25.201408,
+           55.275653
+          ],
+          [
+           25.201381,
+           55.275653
+          ],
+          [
+           25.201354,
+           55.27566
+          ],
+          [
+           25.200804,
+           55.275798
+          ],
+          [
+           25.200763,
+           55.275807
+          ],
+          [
+           25.20072,
+           55.27581
+          ],
+          [
+           25.200677,
+           55.275807
+          ],
+          [
+           25.200636,
+           55.275797
+          ]
+         ],
+         "arrival_s": 19.33,
+         "t_s": 89.68,
+         "sun": 0.023,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 6151,
+         "geometry": [
+          [
+           140.72,
+           -379.89
+          ],
+          [
+           138.39,
+           -376.13
+          ]
+         ],
+         "latlon": [
+          [
+           25.200636,
+           55.275797
+          ],
+          [
+           25.200602,
+           55.275774
+          ]
+         ],
+         "arrival_s": 109.01,
+         "t_s": 3.16,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 5245,
+         "geometry": [
+          [
+           138.39,
+           -376.13
+          ],
+          [
+           135.69,
+           -372.62
+          ],
+          [
+           132.65,
+           -369.41
+          ],
+          [
+           129.29,
+           -366.51
+          ],
+          [
+           125.68,
+           -363.95
+          ],
+          [
+           121.81,
+           -361.76
+          ]
+         ],
+         "latlon": [
+          [
+           25.200602,
+           55.275774
+          ],
+          [
+           25.20057,
+           55.275747
+          ],
+          [
+           25.200541,
+           55.275717
+          ],
+          [
+           25.200515,
+           55.275684
+          ],
+          [
+           25.200491,
+           55.275648
+          ],
+          [
+           25.200472,
+           55.275609
+          ]
+         ],
+         "arrival_s": 112.16,
+         "t_s": 15.83,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4646,
+         "geometry": [
+          [
+           121.81,
+           -361.76
+          ],
+          [
+           123.39,
+           -356.98
+          ]
+         ],
+         "latlon": [
+          [
+           25.200472,
+           55.275609
+          ],
+          [
+           25.200428,
+           55.275625
+          ]
+         ],
+         "arrival_s": 127.99,
+         "t_s": 3.6,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 5246,
+         "geometry": [
+          [
+           123.39,
+           -356.98
+          ],
+          [
+           72.55,
+           -342.29
+          ]
+         ],
+         "latlon": [
+          [
+           25.200428,
+           55.275625
+          ],
+          [
+           25.200296,
+           55.27512
+          ]
+         ],
+         "arrival_s": 131.59,
+         "t_s": 37.8,
+         "sun": 0.783,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4969,
+         "geometry": [
+          [
+           72.55,
+           -342.29
+          ],
+          [
+           15.11,
+           -324.4
+          ],
+          [
+           -25.03,
+           -311.41
+          ],
+          [
+           -28.75,
+           -310.75
+          ],
+          [
+           -31.62,
+           -310.62
+          ],
+          [
+           -34.71,
+           -311.46
+          ],
+          [
+           -42.12,
+           -314.53
+          ],
+          [
+           -52.32,
+           -319.26
+          ],
+          [
+           -122.77,
+           -353.34
+          ]
+         ],
+         "latlon": [
+          [
+           25.200296,
+           55.27512
+          ],
+          [
+           25.200134,
+           55.27455
+          ],
+          [
+           25.200016,
+           55.274152
+          ],
+          [
+           25.20001,
+           55.274115
+          ],
+          [
+           25.200009,
+           55.274086
+          ],
+          [
+           25.200017,
+           55.274055
+          ],
+          [
+           25.200045,
+           55.273982
+          ],
+          [
+           25.200087,
+           55.273881
+          ],
+          [
+           25.200396,
+           55.273181
+          ]
+         ],
+         "arrival_s": 169.39,
+         "t_s": 149.81,
+         "sun": 0.0,
+         "cls": "covered",
+         "name": null
+        },
+        {
+         "edge": 4669,
+         "geometry": [
+          [
+           -122.77,
+           -353.34
+          ],
+          [
+           -143.0,
+           -361.57
+          ]
+         ],
+         "latlon": [
+          [
+           25.200396,
+           55.273181
+          ],
+          [
+           25.20047,
+           55.27298
+          ]
+         ],
+         "arrival_s": 319.2,
+         "t_s": 15.6,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4682,
+         "geometry": [
+          [
+           -143.0,
+           -361.57
+          ],
+          [
+           -145.95,
+           -360.24
+          ],
+          [
+           -149.11,
+           -359.48
+          ],
+          [
+           -152.34,
+           -359.3
+          ]
+         ],
+         "latlon": [
+          [
+           25.20047,
+           55.27298
+          ],
+          [
+           25.200458,
+           55.272951
+          ],
+          [
+           25.200451,
+           55.27292
+          ],
+          [
+           25.200449,
+           55.272888
+          ]
+         ],
+         "arrival_s": 334.8,
+         "t_s": 6.94,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4520,
+         "geometry": [
+          [
+           -152.34,
+           -359.3
+          ],
+          [
+           -144.07,
+           -374.71
+          ]
+         ],
+         "latlon": [
+          [
+           25.200449,
+           55.272888
+          ],
+          [
+           25.200589,
+           55.27297
+          ]
+         ],
+         "arrival_s": 341.74,
+         "t_s": 12.49,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4521,
+         "geometry": [
+          [
+           -144.07,
+           -374.71
+          ],
+          [
+           -132.69,
+           -396.09
+          ]
+         ],
+         "latlon": [
+          [
+           25.200589,
+           55.27297
+          ],
+          [
+           25.200782,
+           55.273083
+          ]
+         ],
+         "arrival_s": 354.24,
+         "t_s": 17.3,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4522,
+         "geometry": [
+          [
+           -132.69,
+           -396.09
+          ],
+          [
+           -113.15,
+           -432.8
+          ],
+          [
+           -109.9,
+           -439.18
+          ],
+          [
+           -108.41,
+           -446.18
+          ],
+          [
+           -108.75,
+           -453.32
+          ],
+          [
+           -110.91,
+           -460.14
+          ],
+          [
+           -114.74,
+           -466.19
+          ],
+          [
+           -119.98,
+           -471.11
+          ]
+         ],
+         "latlon": [
+          [
+           25.200782,
+           55.273083
+          ],
+          [
+           25.201114,
+           55.273277
+          ],
+          [
+           25.201172,
+           55.273309
+          ],
+          [
+           25.201235,
+           55.273324
+          ],
+          [
+           25.2013,
+           55.27332
+          ],
+          [
+           25.201361,
+           55.273299
+          ],
+          [
+           25.201416,
+           55.273261
+          ],
+          [
+           25.201461,
+           55.273209
+          ]
+         ],
+         "arrival_s": 371.54,
+         "t_s": 60.39,
+         "sun": 1.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4523,
+         "geometry": [
+          [
+           -119.98,
+           -471.11
+          ],
+          [
+           -168.36,
+           -497.38
+          ]
+         ],
+         "latlon": [
+          [
+           25.201461,
+           55.273209
+          ],
+          [
+           25.201698,
+           55.272729
+          ]
+         ],
+         "arrival_s": 431.93,
+         "t_s": 47.32,
+         "sun": 0.676,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4524,
+         "geometry": [
+          [
+           -168.36,
+           -497.38
+          ],
+          [
+           -198.41,
+           -513.87
+          ]
+         ],
+         "latlon": [
+          [
+           25.201698,
+           55.272729
+          ],
+          [
+           25.201847,
+           55.27243
+          ]
+         ],
+         "arrival_s": 479.25,
+         "t_s": 24.49,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4867,
+         "geometry": [
+          [
+           -198.41,
+           -513.87
+          ],
+          [
+           -200.34,
+           -512.43
+          ],
+          [
+           -202.55,
+           -511.48
+          ],
+          [
+           -205.53,
+           -511.03
+          ],
+          [
+           -208.52,
+           -511.44
+          ],
+          [
+           -211.27,
+           -512.69
+          ],
+          [
+           -226.25,
+           -520.67
+          ]
+         ],
+         "latlon": [
+          [
+           25.201847,
+           55.27243
+          ],
+          [
+           25.201834,
+           55.272411
+          ],
+          [
+           25.201826,
+           55.272389
+          ],
+          [
+           25.201822,
+           55.27236
+          ],
+          [
+           25.201825,
+           55.27233
+          ],
+          [
+           25.201837,
+           55.272303
+          ],
+          [
+           25.201909,
+           55.272154
+          ]
+         ],
+         "arrival_s": 503.74,
+         "t_s": 22.03,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4868,
+         "geometry": [
+          [
+           -226.25,
+           -520.67
+          ],
+          [
+           -230.51,
+           -523.19
+          ],
+          [
+           -234.58,
+           -525.99
+          ],
+          [
+           -238.45,
+           -529.05
+          ],
+          [
+           -242.11,
+           -532.37
+          ]
+         ],
+         "latlon": [
+          [
+           25.201909,
+           55.272154
+          ],
+          [
+           25.201932,
+           55.272112
+          ],
+          [
+           25.201957,
+           55.272071
+          ],
+          [
+           25.201985,
+           55.272033
+          ],
+          [
+           25.202015,
+           55.271996
+          ]
+         ],
+         "arrival_s": 525.76,
+         "t_s": 14.11,
+         "sun": 0.296,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4564,
+         "geometry": [
+          [
+           -242.11,
+           -532.37
+          ],
+          [
+           -246.78,
+           -531.81
+          ],
+          [
+           -251.32,
+           -530.53
+          ],
+          [
+           -255.59,
+           -528.57
+          ],
+          [
+           -259.49,
+           -525.97
+          ],
+          [
+           -262.95,
+           -522.78
+          ],
+          [
+           -265.86,
+           -519.1
+          ],
+          [
+           -268.71,
+           -514.97
+          ],
+          [
+           -271.99,
+           -511.15
+          ],
+          [
+           -275.68,
+           -507.72
+          ],
+          [
+           -279.72,
+           -504.7
+          ]
+         ],
+         "latlon": [
+          [
+           25.202015,
+           55.271996
+          ],
+          [
+           25.20201,
+           55.27195
+          ],
+          [
+           25.201998,
+           55.271905
+          ],
+          [
+           25.20198,
+           55.271863
+          ],
+          [
+           25.201957,
+           55.271824
+          ],
+          [
+           25.201928,
+           55.271789
+          ],
+          [
+           25.201895,
+           55.271761
+          ],
+          [
+           25.201857,
+           55.271732
+          ],
+          [
+           25.201823,
+           55.2717
+          ],
+          [
+           25.201792,
+           55.271663
+          ],
+          [
+           25.201764,
+           55.271623
+          ]
+         ],
+         "arrival_s": 539.88,
+         "t_s": 34.53,
+         "sun": 0.267,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4534,
+         "geometry": [
+          [
+           -279.72,
+           -504.7
+          ],
+          [
+           -271.26,
+           -520.73
+          ],
+          [
+           -270.72,
+           -521.54
+          ]
+         ],
+         "latlon": [
+          [
+           25.201764,
+           55.271623
+          ],
+          [
+           25.201909,
+           55.271707
+          ],
+          [
+           25.201917,
+           55.271712
+          ]
+         ],
+         "arrival_s": 574.41,
+         "t_s": 13.64,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4968,
+         "geometry": [
+          [
+           -270.72,
+           -521.54
+          ],
+          [
+           -277.5,
+           -525.68
+          ]
+         ],
+         "latlon": [
+          [
+           25.201917,
+           55.271712
+          ],
+          [
+           25.201954,
+           55.271645
+          ]
+         ],
+         "arrival_s": 588.05,
+         "t_s": 5.68,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4763,
+         "geometry": [
+          [
+           -277.5,
+           -525.68
+          ],
+          [
+           -291.6,
+           -498.07
+          ]
+         ],
+         "latlon": [
+          [
+           25.201954,
+           55.271645
+          ],
+          [
+           25.201704,
+           55.271505
+          ]
+         ],
+         "arrival_s": 593.73,
+         "t_s": 22.14,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4797,
+         "geometry": [
+          [
+           -291.6,
+           -498.07
+          ],
+          [
+           -304.69,
+           -504.7
+          ]
+         ],
+         "latlon": [
+          [
+           25.201704,
+           55.271505
+          ],
+          [
+           25.201764,
+           55.271375
+          ]
+         ],
+         "arrival_s": 615.87,
+         "t_s": 10.49,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4798,
+         "geometry": [
+          [
+           -304.69,
+           -504.7
+          ],
+          [
+           -306.8,
+           -505.68
+          ]
+         ],
+         "latlon": [
+          [
+           25.201764,
+           55.271375
+          ],
+          [
+           25.201773,
+           55.271354
+          ]
+         ],
+         "arrival_s": 626.36,
+         "t_s": 1.66,
+         "sun": 0.0,
+         "cls": "open",
+         "name": null
+        },
+        {
+         "edge": 4796,
+         "geometry": [
+          [
+           -306.8,
+           -505.68
+          ],
+          [
+           -309.6,
+           -506.13
+          ],
+          [
+           -312.42,
+           -505.86
+          ],
+          [
+           -315.08,
+           -504.9
+          ],
+          [
+           -317.41,
+           -503.31
+          ],
+          [
+           -325.48,
+           -497.34
+          ]
+         ],
+         "latlon": [
+          [
+           25.201773,
+           55.271354
+          ],
+          [
+           25.201777,
+           55.271326
+          ],
+          [
+           25.201775,
+           55.271298
+          ],
+          [
+           25.201766,
+           55.271272
+          ],
+          [
+           25.201752,
+           55.271249
+          ],
+          [
+           25.201698,
+           55.271169
+          ]
+         ],
+         "arrival_s": 628.01,
+         "t_s": 15.26,
+         "sun": 0.0,
+         "cls": "covered",
+         "name": null
+        }
+       ],
+       "distance_m": 889.38,
+       "duration_s": 643.27,
+       "sun_exposure_s": 212.37,
+       "shaded_pct": 66.99,
+       "covered_pct": 25.66,
+       "indoor_pct": 0.0,
+       "rhl": 363.18,
+       "added_time_s": 43.71,
+       "sun_saved_s": 129.93,
+       "sun_saved_pct": 37.96,
+       "rhl_saved_pct": 16.0,
+       "lam": 3.0,
+       "arrive": "2026-07-15T15:10:43.270000+04:00"
+      }
+     ],
+     "items": [],
+     "recommendation": "coolest",
+     "tokens": {
+      "route_compliant.origin": "Address Boulevard",
+      "route_compliant.dest": "Address Sky View",
+      "route_compliant.coolest.depart_time": "15:00",
+      "route_compliant.coolest.sun_exposure_min": "3.5 min",
+      "route_compliant.fastest.sun_exposure_min": "5.7 min",
+      "route_compliant.coolest.sun_saved_min": "2.2 min",
+      "route_compliant.coolest.shaded_pct": "67%",
+      "route_compliant.coolest.added_time_min": "0.7 min",
+      "route_compliant.coolest.covered_pct": "26%",
+      "route.depart_time": "14:30",
+      "policy.label": "Policy pack: UAE midday break (v1, verify)",
+      "policy.midday_window_start": "12:30",
+      "policy.midday_window_end": "15:00"
+     },
+     "autonomy_level": 2
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 400,
+   "event": {
+    "id": "evt_0031",
+    "ts": "2026-10-22T21:20:45.172+00:00",
+    "type": "approval_request",
+    "payload": {
+     "plan_id": "plan_3",
+     "risk": "high",
+     "options": [
+      {
+       "id": "approve",
+       "label": "Approve plan"
+      },
+      {
+       "id": "reject",
+       "label": "Not now"
+      }
+     ],
+     "reason": "Autonomy L2 asks before committing."
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 900,
+   "event": {
+    "id": "evt_0032",
+    "ts": "2026-10-22T21:20:45.173+00:00",
+    "type": "message",
+    "payload": {
+     "text": "Movement plan: Address Boulevard to Address Sky View by the coolest route, leaving 15:00, arriving 15:10. The coolest walk spends 3.5 min in direct sun against 5.7 min on the fastest, saving 2.2 min of sun, and 67% of it is shaded. It takes 0.7 min longer than the fastest. 26% of it is under cover. There is a heat alert: carry water and take shade breaks. I moved this from 14:30 to 15:00 because Policy pack: UAE midday break (v1, verify) bars outdoor work in direct sun between 12:30 and 15:00; the new timing has no conflict. Please verify the rule before relying on it. Shade counts buildings, mapped trees and covered links only; awnings and wind are not modelled.",
+     "resolved": [
+      {
+       "token": "route_compliant.origin",
+       "value": "Address Boulevard"
+      },
+      {
+       "token": "route_compliant.dest",
+       "value": "Address Sky View"
+      },
+      {
+       "token": "route_compliant.coolest.depart_time",
+       "value": "15:00"
+      },
+      {
+       "token": "route_compliant.coolest.arrive_time",
+       "value": "15:10"
+      },
+      {
+       "token": "route_compliant.coolest.sun_exposure_min",
+       "value": "3.5 min"
+      },
+      {
+       "token": "route_compliant.fastest.sun_exposure_min",
+       "value": "5.7 min"
+      },
+      {
+       "token": "route_compliant.coolest.sun_saved_min",
+       "value": "2.2 min"
+      },
+      {
+       "token": "route_compliant.coolest.shaded_pct",
+       "value": "67%"
+      },
+      {
+       "token": "route_compliant.coolest.added_time_min",
+       "value": "0.7 min"
+      },
+      {
+       "token": "route_compliant.coolest.covered_pct",
+       "value": "26%"
+      },
+      {
+       "token": "route.depart_time",
+       "value": "14:30"
+      },
+      {
+       "token": "route_compliant.coolest.depart_time",
+       "value": "15:00"
+      },
+      {
+       "token": "policy.label",
+       "value": "Policy pack: UAE midday break (v1, verify)"
+      },
+      {
+       "token": "policy.midday_window_start",
+       "value": "12:30"
+      },
+      {
+       "token": "policy.midday_window_end",
+       "value": "15:00"
+      }
+     ],
+     "template": "Movement plan: {{route_compliant.origin}} to {{route_compliant.dest}} by the coolest route, leaving {{route_compliant.coolest.depart_time}}, arriving {{route_compliant.coolest.arrive_time}}. The coolest walk spends {{route_compliant.coolest.sun_exposure_min}} in direct sun against {{route_compliant.fastest.sun_exposure_min}} on the fastest, saving {{route_compliant.coolest.sun_saved_min}} of sun, and {{route_compliant.coolest.shaded_pct}} of it is shaded. It takes {{route_compliant.coolest.added_time_min}} longer than the fastest. {{route_compliant.coolest.covered_pct}} of it is under cover. There is a heat alert: carry water and take shade breaks. I moved this from {{route.depart_time}} to {{route_compliant.coolest.depart_time}} because {{policy.label}} bars outdoor work in direct sun between {{policy.midday_window_start}} and {{policy.midday_window_end}}; the new timing has no conflict. Please verify the rule before relying on it. Shade counts buildings, mapped trees and covered links only; awnings and wind are not modelled.",
+     "source": "narrator"
+    }
+   },
+   "phase": "plan"
+  },
+  {
+   "dt_ms": 500,
+   "event": {
+    "id": "evt_0033",
+    "ts": "2026-10-22T21:20:45.173+00:00",
+    "type": "plan_committed",
+    "payload": {
+     "plan_id": "plan_3",
+     "auto": false,
+     "reason": "Approved by the user.",
+     "summary": {
+      "id": "plan_3",
+      "kind": "journey",
+      "mode": "walk",
+      "recommendation": "coolest",
+      "depart": "2026-07-15T15:00:00+04:00",
+      "arrive": "2026-07-15T15:10:43.270000+04:00",
+      "duration_s": 643.27,
+      "distance_m": 889.38,
+      "sun_exposure_s": 212.37,
+      "shaded_pct": 66.99,
+      "rhl": 363.18,
+      "status": "committed"
+     },
+     "autonomy_level": 2
+    }
+   },
+   "phase": "approve"
+  },
+  {
+   "dt_ms": 600,
+   "event": {
+    "id": "evt_0034",
+    "ts": "2026-10-22T21:20:45.173+00:00",
+    "type": "monitor_tick",
+    "payload": {
+     "sim_time": "2026-07-15T14:30:00+04:00",
+     "status": "watching",
+     "note": "Monitor armed on the simulated clock."
+    }
+   },
+   "phase": "approve"
+  }
+ ],
+ "source": "hero.json"
+}

@@ -1,7 +1,7 @@
 "use client";
 // The city world: every layer of PRD 13.1, composed once inside the persistent canvas.
 import { useThree, type ThreeEvent } from "@react-three/fiber";
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useCity } from "@/state/city";
 import { useRig } from "@/state/rig";
 import { useRoute } from "@/state/route";
@@ -19,6 +19,11 @@ import { ShadeDriver, ShadeGround } from "./ShadeGround";
 import { Sky } from "./Sky";
 import { SunLight } from "./SunLight";
 import { Trees } from "./Trees";
+
+// Film-only scene layer (FILM stream): loaded lazily, mounted only on /film.
+const FilmWorld = lazy(() =>
+  import("@/film/three/FilmWorld").then((m) => ({ default: m.FilmWorld })),
+);
 
 function GroundPicker() {
   // invisible pick plane over the core grid (clicks set A then B, snapped to the graph)
@@ -67,9 +72,13 @@ function RouteLayer() {
   const frameT = useStage((s) => s.frameT);
   const a = useRoute((s) => s.a);
   const b = useRoute((s) => s.b);
+  const reveal = useRoute((s) => s.reveal);
+  const routeOpacity = useRoute((s) => s.routeOpacity);
   return (
     <>
       <Routes
+        reveal={reveal}
+        opacity={routeOpacity}
         result={result}
         view={view}
         selected={selected}
@@ -111,6 +120,11 @@ export function World() {
       <GroundPicker />
       <CameraDriver interactive={mode === "app"} />
       {mode === "app" ? <AppDrivers /> : null}
+      {mode === "film" ? (
+        <Suspense fallback={null}>
+          <FilmWorld />
+        </Suspense>
+      ) : null}
       <Post />
       <Perf />
       <QaHandle />

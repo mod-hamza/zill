@@ -245,3 +245,32 @@ export function lightingFor(altDeg: number, azDeg: number): Lighting {
     sunDisc: altDeg > -1 ? 18 + 10 * Math.min(1, Math.max(0, altDeg / 30)) : 0,
   };
 }
+
+// ---------------------------------------------------------------------------------------------
+// Film look (FILM stream, additive; /app never calls it). The Phase-6 review found daytime frames
+// sitting in one narrow sepia band. This pushes separation without leaving the palette: a cleaner
+// warm-white horizon with a desaturated Rayleigh blue at the zenith, deeper teal-slate shade,
+// brighter sunlit stone and darker sides. `k` in [0,1] blends it in (cross-grades stay smooth).
+const FILM_ZENITH = hexToLinear("#6A8BAA");
+const FILM_HORIZON = hexToLinear("#E9E5DB");
+const FILM_FOG = hexToLinear("#D8D4C9");
+
+export function applyFilmLook(L: Lighting, altDeg: number, k: number): Lighting {
+  if (k <= 0) return L;
+  const day = Math.max(0, Math.min(1, (altDeg - 4) / 18)) * k;
+  const shadeDeep = scale(SHADE, 0.62 + 0.25 * (1 - day));
+  return {
+    ...L,
+    zenith: mix(L.zenith, FILM_ZENITH, 0.75 * day),
+    horizon: mix(L.horizon, FILM_HORIZON, 0.7 * day),
+    fog: mix(L.fog, FILM_FOG, 0.7 * day),
+    fogDensity: L.fogDensity * (1 - 0.15 * day),
+    sunIntensity: L.sunIntensity * (1 + 0.32 * day),
+    hemiIntensity: L.hemiIntensity * (1 - 0.3 * day),
+    groundSun: scale(L.groundSun, 1 - 0.2 * day),
+    groundShade: mix(L.groundShade, shadeDeep, 0.7 * day),
+    saturation: L.saturation + 0.04 * day,
+    tint: mix(L.tint, hexToLinear("#FFFBF6"), 0.6 * day),
+    contrast: L.contrast + 0.07 * day,
+  };
+}

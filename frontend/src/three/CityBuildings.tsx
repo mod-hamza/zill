@@ -7,6 +7,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo } from "react";
 import {
+  BufferAttribute,
   BufferGeometry,
   Color,
   Mesh,
@@ -16,14 +17,18 @@ import {
 import { useCity } from "@/state/city";
 import { SCENE } from "./sceneConfig";
 import { currentLighting } from "./useLighting";
+import { sceneOverrides } from "./sceneOverrides";
 
 export const buildingUniforms = {
   uDusk: { value: 0 },
   uTungsten: { value: new Color(SCENE.tungsten) },
   uWindowPitch: { value: SCENE.windowPitchM },
   uFloorH: { value: SCENE.floorM },
-  uLitFrac: { value: SCENE.windowLitFraction },
+  uLitFrac: { value: SCENE.windowLitFraction as number },
   uAoH: { value: SCENE.aoHeightM },
+  /** Film Ch.4 radial rise (identity by default: everything risen) */
+  uRevealR: { value: 1e9 },
+  uRevealBand: { value: 260 },
 };
 
 const HASH = /* glsl */ `
@@ -45,10 +50,22 @@ export function makeBuildingMaterial(): MeshStandardMaterial {
         `#include <common>
 attribute float aBid;
 attribute float aTop;
+attribute float aCDist;
+uniform float uRevealR;
+uniform float uRevealBand;
+varying float vRise;
 varying vec3 vZW;
 varying vec3 vZN;
 varying float vBid;
 varying float vTop;`,
+      )
+      .replace(
+        "#include <begin_vertex>",
+        `#include <begin_vertex>
+float zRise = clamp((uRevealR - aCDist) / uRevealBand, 0.0, 1.0);
+zRise = 1.0 - pow(1.0 - zRise, 3.0);
+transformed.y *= max(zRise, 0.002);
+vRise = zRise;`,
       )
       .replace(
         "#include <fog_vertex>",
@@ -72,6 +89,7 @@ varying vec3 vZW;
 varying vec3 vZN;
 varying float vBid;
 varying float vTop;
+varying float vRise;
 ${HASH}`,
       )
       .replace(
@@ -93,7 +111,9 @@ float zFloorLine = smoothstep(0.0, 0.04, zFy) * (1.0 - smoothstep(0.06, 0.1, zFy
 diffuseColor.rgb *= 1.0 - zWall * (0.075 * zLine + 0.035 * zFloorLine) * step(4.0, vZW.y);
 // ground-contact darkening (cheap AO) on walls
 float zAo = mix(0.58, 1.0, smoothstep(0.0, uAoH, vZW.y));
-diffuseColor.rgb *= mix(1.0, zAo, zWall);`,
+diffuseColor.rgb *= mix(1.0, zAo, zWall);
+// Film Ch.4: footprints waiting to rise read as dim stone, brightening as they rise
+diffuseColor.rgb *= mix(0.1, 1.0, smoothstep(0.0, 0.35, vRise));`,
       )
       .replace(
         "#include <emissivemap_fragment>",
@@ -111,7 +131,7 @@ if (uDusk > 0.001) {
 }`,
       );
   };
-  m.customProgramCacheKey = () => "zill-building-v1";
+  m.customProgramCacheKey = () => "zill-building-v3";
   return m;
 }
 
@@ -122,6 +142,26 @@ export function CityBuildings() {
   const meshes = useMemo(() => {
     if (!scene) return [];
     const out: Mesh[] = [];
+    // per-building centroid distance from the origin (Film Ch.4 radial rise; harmless otherwise)
+    const acc = new Map<number, [number, number, number]>();
+    scene.traverse((o: Object3D) => {
+      const mesh = o as Mesh;
+      if (!mesh.isMesh) return;
+      const g = mesh.geometry as BufferGeometry;
+      const bid = g.getAttribute("_building_id") ?? g.getAttribute("_BUILDING_ID");
+      const pos = g.getAttribute("position");
+      if (!bid || !pos) return;
+      mesh.updateWorldMatrix(true, false);
+      const e = mesh.matrixWorld.elements;
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+        const wx = e[0]! * x + e[4]! * y + e[8]! * z + e[12]!;
+        const wz = e[2]! * x + e[6]! * y + e[10]! * z + e[14]!;
+        const k = bid.getX(i);
+        const a = acc.get(k);
+        if (a) { a[0] += wx; a[1] += wz; a[2] += 1; } else acc.set(k, [wx, wz, 1]);
+      }
+    });
     scene.traverse((o: Object3D) => {
       const mesh = o as Mesh;
       if (!mesh.isMesh) return;
@@ -132,6 +172,14 @@ export function CityBuildings() {
       const top = g.getAttribute("_height") ?? g.getAttribute("_HEIGHT");
       if (bid) g.setAttribute("aBid", bid);
       if (top) g.setAttribute("aTop", top);
+      if (bid && !g.getAttribute("aCDist")) {
+        const d = new Float32Array(bid.count);
+        for (let i = 0; i < bid.count; i++) {
+          const a = acc.get(bid.getX(i));
+          d[i] = a ? Math.hypot(a[0] / a[2], a[1] / a[2]) : 0;
+        }
+        g.setAttribute("aCDist", new BufferAttribute(d, 1));
+      }
       if (!g.getAttribute("normal")) g.computeVertexNormals();
       g.computeBoundingSphere();
       mesh.material = material;
@@ -149,6 +197,9 @@ export function CityBuildings() {
 
   useFrame(() => {
     buildingUniforms.uDusk.value = currentLighting().dusk;
+    buildingUniforms.uRevealR.value = sceneOverrides.revealRadius;
+    buildingUniforms.uLitFrac.value = sceneOverrides.litFrac ?? SCENE.windowLitFraction;
+    buildingUniforms.uRevealBand.value = sceneOverrides.revealBand;
   });
 
   if (!scene) return null;

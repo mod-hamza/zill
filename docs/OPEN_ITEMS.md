@@ -41,6 +41,11 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 - [ ] OSM trees are sparse (744 in the caster box, none with crown/height tags), so tree shade is under-estimated: accept (conservative), or add a tree layer.
 - [ ] Router constants are heuristics, not measurements: `uv(alt) = clip(sin^0.6)`, RHL weights 1.0/0.35/0.1, crowd x1.15 indoors, crossing waits, planner break threshold `RHL_BREAK_THRESHOLD = 1200` (`backend/zill/config.py`). Validate with the field test.
 - [ ] Extra cities and the Chapter 4 morph (P2) were not built unless noted in `docs/PROGRESS.md`; chapter 11 shows only Downtown Dubai as baked.
-- [ ] In-browser stills fallback for WebGL failure (PRD 17.4): the exporter fills `frontend/public/stills/`, but the viewer was not confirmed in the film code at the time of writing; backup videos are the fallback until it is.
+- [x] In-browser stills fallback for WebGL failure (PRD 17.4): `/film` shows `public/stills/manifest.json` stills with ←/→ when WebGL is unavailable or the context is lost (`src/film/StillsFallback.tsx`).
 - [ ] Scripted (not live) agent sessions are badged as such in the UI; decide whether to re-record live (see above) or present them as scripted.
 - [ ] The fleet view and the crew view are scenario simulations and labelled "Simulated"; confirm you are comfortable presenting them that way.
+- [ ] Film Ch.9: market sizes for hotels/tourism, delivery fleets and outdoor employers are `[TEAM TO FILL — cite source]`; rider "trips per shift" is `[TEAM TO FILL]` (the film only shows sun saved per trip).
+- [ ] Film Ch.10: field-test card says "result pending" until `data/validation/field_test.json` exists (then re-run `npm run sync:film`).
+- [ ] Film Ch.9 crew vignette shows the UAE midday-break window from the UNVERIFIED policy pack (`data/curated/policy_packs/uae_outdoor_work.json`), labelled "verify".
+- [ ] Film data copies: after re-recording replays, re-running `make test`, or editing SPEAKER_NOTES, run `npm run sync:film` (also runs automatically on `npm run dev` / `npm run build`).
+- [ ] Film Ch.11 roadmap cities (Doha, Riyadh, Singapore, Phoenix) are a team choice from the PRD; confirm.

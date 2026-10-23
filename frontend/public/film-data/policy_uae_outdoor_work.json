@@ -1,0 +1,10 @@
+{
+  "id": "UAE_OUTDOOR_WORK",
+  "label": "Policy pack: UAE midday break (v1, verify)",
+  "verified": false,
+  "verify_note": "[TEAM TO FILL - cite source] Confirm the current UAE midday outdoor-work ban window and dates before the pitch. Not legal advice.",
+  "midday_window": {"start": "12:30", "end": "15:00", "from_month_day": "06-15", "to_month_day": "09-15"},
+  "max_continuous_sun_min": 45,
+  "min_break_min": 10,
+  "applies_to": ["crew"]
+}

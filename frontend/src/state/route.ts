@@ -36,6 +36,10 @@ type RouteState = {
   activeScenario: string | null;
   /** fly-through playback 0..1 (null when not flying) */
   flyT: number | null;
+  /** Film-only (FILM stream): fraction of each route drawn (1 = whole) and overall opacity */
+  reveal: Record<RouteKey, number>;
+  routeOpacity: number;
+  setReveal: (r: Partial<Record<RouteKey, number>>, opacity?: number) => void;
   setEndpoint: (which: "a" | "b", e: Endpoint | null) => void;
   clickPoint: (e: Endpoint) => void;
   setMode: (m: Mode) => void;
@@ -64,6 +68,20 @@ export const useRoute = create<RouteState>((set, get) => ({
   scenarios: [],
   activeScenario: null,
   flyT: null,
+  reveal: { fastest: 1, balanced: 1, coolest: 1 },
+  routeOpacity: 1,
+  setReveal: (r, opacity) => {
+    const cur = get().reveal;
+    const next = { ...cur, ...r };
+    const op = opacity ?? get().routeOpacity;
+    if (
+      next.fastest !== cur.fastest ||
+      next.balanced !== cur.balanced ||
+      next.coolest !== cur.coolest ||
+      op !== get().routeOpacity
+    )
+      set({ reveal: next, routeOpacity: op });
+  },
   setEndpoint: (which, e) =>
     set({ [which]: e, activeScenario: null } as Partial<RouteState>),
   clickPoint: (e) => {

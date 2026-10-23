@@ -39,6 +39,10 @@ export const shadeUniforms = {
   uSunDir: { value: new Vector3(0, 1, 0) },
   /** ground beyond the modelled area: a quiet plinth that fades into the haze */
   uOutside: { value: new Color(0.06, 0.05, 0.045) },
+  /** Film (Ch.4): 0 = normal, 1 = ground replaced by ink. Default 0 (identity for /app). */
+  uBlackout: { value: 0 },
+  /** soft edge of the modelled area (uv fraction) */
+  uEdgeSoft: { value: 0.012 },
 };
 
 /** GLSL: `float zillSunFrac(vec2 xz, out float inside)` + `vec3 zillGround(vec2 xz)`. */
@@ -53,6 +57,8 @@ uniform vec2 uTexel;
 uniform vec3 uGroundSun;
 uniform vec3 uGroundShade;
 uniform vec3 uOutside;
+uniform float uBlackout;
+uniform float uEdgeSoft;
 
 float zillTap(sampler2D t, vec2 uv) {
   // 5-tap soft sample (~1 texel): slightly softened shadow edges, PRD 13.1.3
@@ -68,7 +74,7 @@ float zillTap(sampler2D t, vec2 uv) {
 float zillSunFrac(vec2 xz, out float inside) {
   vec2 uv = (xz - uGridOrigin) / uGridSize;
   vec2 e = min(uv, 1.0 - uv);
-  inside = smoothstep(0.0, 0.012, min(e.x, e.y));
+  inside = smoothstep(0.0, uEdgeSoft, min(e.x, e.y));
   float a = zillTap(uShadeA, uv);
   float b = zillTap(uShadeB, uv);
   return mix(a, b, uShadeMix);
@@ -83,6 +89,8 @@ vec3 zillGround(vec2 xz) {
   // while no raster is loaded show a neutral mid tone (soft fade, no pop)
   vec3 neutral = mix(uGroundShade, uGroundSun, 0.55);
   vec3 c = mix(neutral, lit, uShadeOpacity);
-  return mix(uOutside, c, inside);
+  c = mix(uOutside, c, inside);
+  // Film blackout (Ch.4 build): ink ground, a hair lighter than pure black
+  return mix(c, vec3(0.0046, 0.0039, 0.0032), uBlackout);
 }
 `;

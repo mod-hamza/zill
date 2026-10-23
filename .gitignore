@@ -13,3 +13,7 @@ data/cache/
 test-results/
 playwright-report/
 *.egg-info/
+
+# bulky QA iterations (best stills kept in docs/qa/best)
+docs/qa/phase7/
+docs/qa/phase8/

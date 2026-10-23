@@ -18,6 +18,7 @@ import { useStage } from "@/state/stage";
 import { TIERS } from "../sceneConfig";
 import { currentLighting, getIndoorAmount } from "../useLighting";
 import { GradeEffect } from "./GradeEffect";
+import { filmFx } from "./FilmFxEffect";
 
 export function Post() {
   const quality = useStage((s) => s.quality);
@@ -47,6 +48,8 @@ export function Post() {
             halfRes
           />
         ) : null}
+        {/* Film-only shimmer/split; identity unless the Film drives it */}
+        <primitive object={filmFx} />
         {tier.bloom ? (
           <Bloom
             mipmapBlur

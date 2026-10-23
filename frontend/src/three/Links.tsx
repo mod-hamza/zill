@@ -25,20 +25,26 @@ uniform vec3 uOasis;
 uniform vec3 uWarm;
 uniform float uLevel;
 uniform float uHighlight;
+uniform float uVis;
 #include <fog_pars_fragment>
 void main() {
   float s = abs(vSide);
   float body = 1.0 - smoothstep(0.82, 1.0, s);
   float core = exp(-s * s * 18.0);
   vec3 c = uOasis * uLevel * (0.85 + 0.35 * uHighlight) + uWarm * core * (0.16 + 0.5 * uHighlight);
-  gl_FragColor = vec4(c, body * (0.92));
+  gl_FragColor = vec4(c, body * 0.92 * uVis);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
   #include <fog_fragment>
 }
 `;
 
-export const linkUniforms = { uHighlight: { value: 0 } };
+/** uHighlight: Film emphasis; uVis: Film reveal (1 = visible, the /app default) */
+export const linkUniforms = {
+  uHighlight: { value: 0 },
+  uVis: { value: 1 },
+  uMinPx: { value: 1.1 },
+};
 
 export function Links() {
   const graph = useCity((s) => s.graph);

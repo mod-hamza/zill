@@ -12,6 +12,10 @@ import {
 } from "three";
 import { useCity } from "@/state/city";
 import { SCENE } from "./sceneConfig";
+import { sceneOverrides } from "./sceneOverrides";
+import { useFrame } from "@react-three/fiber";
+
+const treeUniforms = { uTreeR: { value: 1e9 } };
 
 export function Trees() {
   const trees = useCity((s) => s.trees);
@@ -21,15 +25,32 @@ export function Trees() {
     g.computeVertexNormals();
     return g;
   }, []);
-  const material = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        roughness: 0.95,
-        metalness: 0,
-        flatShading: true,
-      }),
-    [],
-  );
+  const material = useMemo(() => {
+    const m = new MeshStandardMaterial({
+      roughness: 0.95,
+      metalness: 0,
+      flatShading: true,
+    });
+    // Film Ch.4: canopies grow in radially from the origin (identity by default)
+    m.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, treeUniforms);
+      shader.vertexShader = shader.vertexShader
+        .replace("#include <common>", "#include <common>\nuniform float uTreeR;")
+        .replace(
+          "#include <begin_vertex>",
+          `#include <begin_vertex>
+#ifdef USE_INSTANCING
+float zG = clamp((uTreeR - length(vec2(instanceMatrix[3].x, instanceMatrix[3].z))) / 140.0, 0.0, 1.0);
+transformed *= zG;
+#endif`,
+        );
+    };
+    m.customProgramCacheKey = () => "zill-tree-v1";
+    return m;
+  }, []);
+  useFrame(() => {
+    treeUniforms.uTreeR.value = sceneOverrides.treeRadius;
+  });
 
   useEffect(() => {
     const mesh = ref.current;

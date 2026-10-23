@@ -6,6 +6,7 @@ import { useMemo, useRef } from "react";
 import { BackSide, Color, FogExp2, Mesh, ShaderMaterial, Vector3 } from "three";
 import { useSun } from "@/state/sun";
 import { currentLighting } from "./useLighting";
+import { sceneOverrides } from "./sceneOverrides";
 
 const vertex = /* glsl */ `
 varying vec3 vDir;
@@ -25,6 +26,7 @@ uniform vec3 uSunDir;
 uniform vec3 uSunColor;
 uniform float uDisc;
 uniform float uGlow;
+uniform float uDim;
 float zhash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
 void main() {
   vec3 d = normalize(vDir);
@@ -32,7 +34,9 @@ void main() {
   float up = clamp(h, 0.0, 1.0);
   vec3 col = mix(uHorizon, uZenith, pow(up, 0.5));
   // horizon haze band
-  col = mix(col, uFog, exp(-max(h, 0.0) * 14.0) * 0.55);
+  // (reaches the full fog colour AT the horizon so the fogged ground meets the sky without a seam)
+  float hz = max(h, 0.0);
+  col = mix(col, uFog, clamp(exp(-hz * 14.0) * 0.55 + exp(-hz * 70.0) * 0.45, 0.0, 1.0));
   // below the horizon: the haze the city sits in
   col = h < 0.0 ? mix(uFog, uFog * 0.7, clamp(-h * 6.0, 0.0, 1.0)) : col;
   float c = dot(d, normalize(uSunDir));
@@ -44,6 +48,8 @@ void main() {
   float disc = 1.0 - smoothstep(0.0085, 0.0125, ang);
   float horizonCut = smoothstep(-0.01, 0.006, h);
   col += uSunColor * disc * uDisc * horizonCut;
+  // Film: dim towards ink (Ch.4 build, Ch.11 globe); identity at 0
+  col = mix(col, vec3(0.0046, 0.0039, 0.0032), uDim);
   // tiny dither against banding in the gradient
   col += (zhash(gl_FragCoord.xy) - 0.5) / 255.0;
   gl_FragColor = vec4(col, 1.0);
@@ -66,6 +72,7 @@ export function Sky() {
           uSunColor: { value: new Color() },
           uDisc: { value: 20 },
           uGlow: { value: 1 },
+          uDim: { value: 0 },
         },
         vertexShader: vertex,
         fragmentShader: fragment,
@@ -92,8 +99,14 @@ export function Sky() {
     if (L.sunIntensity <= 0) sc.setRGB(0, 0, 0);
     u.uDisc!.value = L.sunDisc;
     u.uGlow!.value = Math.min(1.4, 0.4 + L.sunIntensity * 0.3);
-    fog.color.setRGB(...L.fog);
-    fog.density = L.fogDensity;
+    const dim = sceneOverrides.skyDim;
+    u.uDim!.value = dim;
+    fog.color.setRGB(
+      L.fog[0] * (1 - dim) + 0.0046 * dim,
+      L.fog[1] * (1 - dim) + 0.0039 * dim,
+      L.fog[2] * (1 - dim) + 0.0032 * dim,
+    );
+    fog.density = L.fogDensity * sceneOverrides.fogScale;
     if (scene.fog !== fog) scene.fog = fog;
     if (ref.current) ref.current.position.copy(camera.position);
   });

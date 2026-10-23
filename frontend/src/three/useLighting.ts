@@ -1,6 +1,7 @@
 // Cached time-of-day lighting derived from the sun store (recomputed only when the sun moves).
 import { useSun } from "@/state/sun";
-import { lightingFor, type Lighting } from "./lighting";
+import { applyFilmLook, lightingFor, type Lighting } from "./lighting";
+import { sceneOverrides } from "./sceneOverrides";
 
 let lastKey = "";
 let last: Lighting = lightingFor(60, 180);
@@ -9,9 +10,10 @@ let indoorAmount = 0;
 
 export function currentLighting(): Lighting {
   const { sun } = useSun.getState();
-  const key = `${sun.altDeg.toFixed(3)}_${sun.azDeg.toFixed(3)}`;
+  const film = sceneOverrides.filmLook;
+  const key = `${sun.altDeg.toFixed(3)}_${sun.azDeg.toFixed(3)}_${film.toFixed(3)}`;
   if (key !== lastKey) {
-    last = lightingFor(sun.altDeg, sun.azDeg);
+    last = applyFilmLook(lightingFor(sun.altDeg, sun.azDeg), sun.altDeg, film);
     lastKey = key;
   }
   return last;
