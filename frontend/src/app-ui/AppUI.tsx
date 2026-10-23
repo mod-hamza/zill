@@ -5,6 +5,8 @@ import { ARABIC, NAME } from "@/brand";
 import { useCity } from "@/state/city";
 import { useRoute } from "@/state/route";
 import { AgentPanel } from "./AgentPanel";
+import { BusyNote } from "./BusyNote";
+import { CitySwitch } from "./CitySwitch";
 import { CommandBar } from "./CommandBar";
 import { FlyHud } from "./FlyHud";
 import { JourneyPanel } from "./JourneyPanel";
@@ -17,10 +19,10 @@ function Hint() {
   const flying = useRoute((s) => s.flyT !== null);
   if (flying || (a && b)) return null;
   return (
-    <p className="pointer-events-none fixed bottom-[150px] left-1/2 z-20 -translate-x-1/2 text-[13px] tracking-wide text-ivory/60">
+    <p className="zill-hint pointer-events-none fixed left-1/2 z-20 -translate-x-1/2 text-center text-[13px] tracking-wide text-ivory/60">
       {!a
-        ? "Click the map to set a start point"
-        : "Click again to set the destination"}
+        ? "Tap the map to set a start point, or type a journey above"
+        : "Tap again to set the destination"}
     </p>
   );
 }
@@ -35,25 +37,28 @@ export function AppUI() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-20">
-      <div className="pointer-events-auto fixed left-6 top-5 z-30">
+      <div className="zill-brand pointer-events-auto fixed z-30 border border-[color:var(--zill-hairline)] bg-umber/[0.72] px-3 pb-2 pt-2.5">
         <div className="flex items-baseline gap-2">
-          <span className="font-display text-[28px] font-light leading-none text-champagne">
+          <span className="zill-brand-name font-display font-light leading-none text-champagne">
             {NAME}
           </span>
           <span
-            className="font-display text-[20px] leading-none text-sand/60"
+            className="zill-brand-ar font-display leading-none text-sand/60"
             lang="ar"
+            dir="rtl"
           >
             {ARABIC}
           </span>
         </div>
-        <p className="smallcaps mt-2 text-[10px] text-sand/55">
-          {meta?.synthetic
-            ? "Synthetic fixture"
-            : (meta?.name ?? "Downtown Dubai")}
-        </p>
+        <div className="mt-2 flex items-center gap-3">
+          <p className="zill-brand-city smallcaps text-[10px] text-sand/55">
+            {meta?.synthetic ? "Synthetic fixture" : (meta?.name ?? " ")}
+          </p>
+          <CitySwitch />
+        </div>
       </div>
       <CommandBar />
+      <BusyNote />
       <AgentPanel />
       <ViewHost />
       <JourneyPanel />

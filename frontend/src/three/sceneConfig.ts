@@ -92,3 +92,30 @@ export const CAMERA_PRESETS: Record<string, CameraPreset> = {
   // low aerial over Downtown (QA)
   aerial: presetFrom([60, 60, 60], 218, 1650, 480, 32),
 };
+
+/** Opening frame for a city: Dubai keeps its authored preset (the Film relies on it); any other
+ *  city is framed from its core grid (centre, extent) with the same long-lens three-quarter view. */
+export function cityView(meta: {
+  city_id: string;
+  core_grid: { x0: number; z0: number; rows: number; cols: number; res_m: number };
+}): CameraPreset {
+  if (meta.city_id === "dubai_downtown") return CAMERA_PRESETS.default!;
+  const g = meta.core_grid;
+  const w = g.cols * g.res_m;
+  const h = g.rows * g.res_m;
+  const ext = Math.max(w, h);
+  return presetFrom(
+    [g.x0 + w / 2, 0, g.z0 + h / 2],
+    CITY_VIEW.bearingDeg,
+    ext * CITY_VIEW.distPerExtent,
+    ext * CITY_VIEW.heightPerExtent,
+    CITY_VIEW.fov,
+  );
+}
+
+export const CITY_VIEW = {
+  bearingDeg: 200,
+  distPerExtent: 0.95,
+  heightPerExtent: 0.5,
+  fov: 32,
+} as const;

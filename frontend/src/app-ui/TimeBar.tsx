@@ -3,8 +3,8 @@
 // (time-lapse), "Now". Scrubbing drives shade raster + light + sky continuously.
 import { useMemo } from "react";
 import { fmtDate } from "@/lib/format";
-import { minutesToHHMM, sunAt } from "@/lib/sun";
-import { PRESET_DATES, PRESET_ORDER, useSun } from "@/state/sun";
+import { minutesToHHMM, nowMinutes, sunAt } from "@/lib/sun";
+import { PRESET_ORDER, useSun } from "@/state/sun";
 import { useRoute } from "@/state/route";
 
 const LABEL: Record<string, string> = {
@@ -28,7 +28,7 @@ export function TimeBar() {
     let maxAlt = 1;
     const samples: [number, number][] = [];
     for (let m = lo; m <= hi; m += 5) {
-      const a = sunAt(s.dateIso, m, s.origin.lat, s.origin.lon).altDeg;
+      const a = sunAt(s.dateIso, m, s.origin.lat, s.origin.lon, s.tz).altDeg;
       samples.push([m, a]);
       maxAlt = Math.max(maxAlt, a);
     }
@@ -38,7 +38,7 @@ export function TimeBar() {
       pts.push(`${x.toFixed(1)},${y.toFixed(1)}`);
     }
     return { d: `M${pts.join(" L")}`, maxAlt };
-  }, [s.dateIso, s.origin.lat, s.origin.lon, lo, hi]);
+  }, [s.dateIso, s.origin.lat, s.origin.lon, s.tz, lo, hi]);
 
   const frac = Math.min(1, Math.max(0, (s.minutes - lo) / (hi - lo)));
   const curAlt = s.sun.altDeg;
@@ -47,23 +47,18 @@ export function TimeBar() {
   const horizonY = ARC_H - 2;
 
   const now = () => {
-    const d = new Date();
-    const parts = new Intl.DateTimeFormat("en-GB", {
-      timeZone: "Asia/Dubai",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    }).formatToParts(d);
-    const hh = Number(parts.find((p) => p.type === "hour")?.value ?? 12);
-    const mm = Number(parts.find((p) => p.type === "minute")?.value ?? 0);
-    s.setMinutes(hh * 60 + mm);
+    s.setPlaying(false);
+    s.setMinutes(nowMinutes(s.tz));
   };
 
   return (
-    <div className="pointer-events-auto fixed bottom-[44px] left-1/2 z-30 flex w-[min(1180px,calc(100vw-48px))] -translate-x-1/2 items-center gap-5 border border-[color:var(--zill-hairline)] bg-umber/[0.92] px-5 py-3">
-      <div className="flex shrink-0 flex-col gap-1.5">
+    <div
+      className="zill-timebar pointer-events-auto fixed z-30 flex items-center gap-5 border border-[color:var(--zill-hairline)] bg-umber/[0.94] px-5 py-3"
+      data-testid="time-bar"
+    >
+      <div className="zill-timebar-dates flex shrink-0 flex-col gap-1.5">
         <div className="flex gap-1.5">
-          {PRESET_ORDER.map((k) => (
+          {PRESET_ORDER.filter((k) => s.presets[k]).map((k) => (
             <button
               key={k}
               type="button"
@@ -79,8 +74,8 @@ export function TimeBar() {
             </button>
           ))}
         </div>
-        <span className="tabular text-[11px] text-ivory/45">
-          {fmtDate(PRESET_DATES[s.dateKey] ?? s.dateIso)} &middot; Asia/Dubai
+        <span className="zill-timebar-sub tabular text-[11px] text-ivory/45">
+          {fmtDate(s.presets[s.dateKey] ?? s.dateIso, s.tz)} &middot; {s.tz}
         </span>
       </div>
 
@@ -89,7 +84,7 @@ export function TimeBar() {
         onClick={() => s.setPlaying(!s.playing)}
         disabled={flying}
         aria-label={s.playing ? "Pause time-lapse" : "Play time-lapse"}
-        className="flex h-9 w-9 shrink-0 items-center justify-center border border-[color:var(--zill-hairline)] text-champagne hover:bg-stone disabled:opacity-30"
+        className="zill-timebar-play flex h-9 w-9 shrink-0 items-center justify-center border border-[color:var(--zill-hairline)] text-champagne hover:bg-stone disabled:opacity-30"
       >
         {s.playing ? (
           <svg width="10" height="12" viewBox="0 0 10 12" aria-hidden>
@@ -103,7 +98,7 @@ export function TimeBar() {
         )}
       </button>
 
-      <div className="relative min-w-0 flex-1">
+      <div className="zill-timebar-scrub relative min-w-0 flex-1">
         <svg
           viewBox={`0 0 ${ARC_W} ${ARC_H}`}
           preserveAspectRatio="none"
@@ -149,26 +144,32 @@ export function TimeBar() {
           aria-label="Time of day"
           className="zill-range mt-1 w-full"
         />
-        <div className="tabular mt-0.5 flex justify-between text-[10px] text-ivory/40">
+        <div className="zill-timebar-sub tabular mt-0.5 flex justify-between text-[10px] text-ivory/40">
           <span>Sunrise {minutesToHHMM(s.sunrise, ":")}</span>
           <span>Sunset {minutesToHHMM(s.sunset, ":")}</span>
         </div>
       </div>
 
-      <div className="flex shrink-0 flex-col items-end">
+      <div className="zill-timebar-clock flex shrink-0 flex-col items-end">
         <span className="tabular font-display text-[34px] font-light leading-none text-champagne">
           {minutesToHHMM(s.minutes, ":")}
         </span>
-        <span className="tabular mt-1 text-[11px] text-ivory/45">
-          sun {s.sun.altDeg.toFixed(0)}&deg; alt &middot;{" "}
-          {s.sun.azDeg.toFixed(0)}&deg; az
+        <span className="zill-timebar-sub tabular mt-1 text-[11px] text-ivory/45">
+          {s.sun.altDeg < 0 ? (
+            <>sun below horizon</>
+          ) : (
+            <>
+              sun {s.sun.altDeg.toFixed(0)}&deg; alt &middot;{" "}
+              {s.sun.azDeg.toFixed(0)}&deg; az
+            </>
+          )}
         </span>
       </div>
       <button
         type="button"
         onClick={now}
         disabled={flying}
-        className="shrink-0 border border-[color:var(--zill-hairline)] px-3 py-1.5 text-[12px] text-ivory/70 hover:text-ivory disabled:opacity-30"
+        className="zill-timebar-now shrink-0 border border-[color:var(--zill-hairline)] px-3 py-1.5 text-[12px] text-ivory/70 hover:text-ivory disabled:opacity-30"
       >
         Now
       </button>

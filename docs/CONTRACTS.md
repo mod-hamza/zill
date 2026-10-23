@@ -266,3 +266,8 @@ Note for the frontend: handle 429 by honouring `Retry-After`. Other streams: kee
 - Monitor re-plans keep the plan's `preference`. In sun mode the routes are fastest/balanced/sunniest, and `replan` gains
   `preference:"sun"` and `delta_sun_pct`. Auto-apply needs direct sun reduced by at most 10 % (instead of RHL up by at most
   10 %). A heat alert keeps sun mode and switches to the balanced sun route.
+
+## Overnight additions — Stream F (app)
+- Client normalises sun-mode `/api/route` responses: `coolest := sunniest` (`lib/api.ts normaliseRoute`); `result.preference` drives labels. `Routes` (three/) gains optional `bestColor` prop (default brass); all other three/ props unchanged.
+- `/app` URL flags: `city=<id>`, `pref=shade|sun`, `ask=<one-line journey>`, `sel=sunniest|best` (alias of coolest), plus the existing ones. `useCity.load(id?)` switches cities (default `?city=` or `dubai_downtown`); `state/switchCity.ts`. `useSun` gains `tz`, `presets`, `dayKind`, `setCity`. `lib/sun.ts` functions take an optional `tz` (default Asia/Dubai).
+- `lib/busy.ts fetchRetrying`: 429 + Retry-After → wait and retry (≤3), `useBusy` drives the notice.

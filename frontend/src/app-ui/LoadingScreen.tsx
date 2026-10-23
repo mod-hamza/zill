@@ -9,9 +9,15 @@ export function LoadingScreen() {
   const loaded = useCity((s) => s.loaded);
   const error = useCity((s) => s.error);
   const meta = useCity((s) => s.meta);
+  const cityId = useCity((s) => s.cityId);
   const shadeReady = useStage((s) => s.shadeReady);
   const done = loaded && shadeReady;
   const [gone, setGone] = useState(false);
+
+  // switching city shows the loader again until the new city is ready
+  useEffect(() => {
+    setGone(false);
+  }, [cityId]);
 
   useEffect(() => {
     if (!done) return;
@@ -20,7 +26,7 @@ export function LoadingScreen() {
   }, [done]);
 
   if (gone) return null;
-  const name = meta && !meta.synthetic ? meta.name : "Downtown Dubai";
+  const name = meta && !meta.synthetic ? meta.name : "the city";
   return (
     <div
       className="zill-loading fixed inset-0 z-[60] flex flex-col items-center justify-center bg-ink"

@@ -8,12 +8,13 @@ export const fmtSigned = (s: number, unit = "min") => {
   const sign = v > 0.05 ? "+" : v < -0.05 ? "−" : "±";
   return `${sign}${Math.abs(v).toFixed(1)} ${unit}`;
 };
-export function fmtDate(iso: string): string {
-  const d = new Date(`${iso}T12:00:00+04:00`);
+export function fmtDate(iso: string, tz = "Asia/Dubai"): string {
+  // noon UTC on that date is the same calendar day in every timezone within +-11 h
+  const d = new Date(`${iso}T12:00:00Z`);
   return d.toLocaleDateString("en-GB", {
     day: "numeric",
     month: "short",
     year: "numeric",
-    timeZone: "Asia/Dubai",
+    timeZone: tz,
   });
 }

@@ -14,8 +14,10 @@ export type SunPos = {
 
 const DEG = Math.PI / 180;
 
-/** Dubai has no DST; every preset date is interpreted in a fixed +04:00 offset. */
+/** Dubai has no DST: its fixed +04:00 offset. Other cities use `tzOffset(tz, ...)`. */
 export const TZ_OFFSET = "+04:00";
+export const DEFAULT_TZ = "Asia/Dubai";
+
 
 /** Bennett (1982) refraction in degrees for a true altitude in degrees. */
 export function refractionDeg(trueAltDeg: number): number {
@@ -41,10 +43,65 @@ export function sunPosition(date: Date, lat: number, lon: number): SunPos {
   return { altDeg, azDeg: az, vector: sunVector(altDeg, az) };
 }
 
-/** Build a Date for a local Dubai wall-clock time. `minutes` = minutes since local midnight. */
-export function dubaiDate(isoDate: string, minutes: number): Date {
-  const base = Date.parse(`${isoDate}T00:00:00${TZ_OFFSET}`);
-  return new Date(base + minutes * 60_000);
+
+const offFmt = new Map<string, Intl.DateTimeFormat>();
+
+/** UTC offset in minutes of `tz` at the instant `utcMs` (e.g. Europe/Oslo in winter -> 60). */
+export function tzOffsetMinutesAt(tz: string, utcMs: number): number {
+  if (tz === DEFAULT_TZ) return 240;
+  let f = offFmt.get(tz);
+  if (!f) {
+    f = new Intl.DateTimeFormat("en-US", {
+      timeZone: tz,
+      hourCycle: "h23",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    offFmt.set(tz, f);
+  }
+  const p: Record<string, number> = {};
+  for (const x of f.formatToParts(new Date(utcMs)))
+    if (x.type !== "literal") p[x.type] = Number(x.value);
+  const asUtc = Date.UTC(p.year!, p.month! - 1, p.day!, p.hour!, p.minute!, p.second!);
+  return Math.round((asUtc - Math.floor(utcMs / 1000) * 1000) / 60_000);
+}
+
+/** UTC instant (ms) of a wall-clock time in `tz`. `minutes` = minutes since local midnight. */
+export function localMs(isoDate: string, minutes: number, tz = DEFAULT_TZ): number {
+  const wall = Date.parse(`${isoDate}T00:00:00Z`) + minutes * 60_000;
+  let off = tzOffsetMinutesAt(tz, wall);
+  off = tzOffsetMinutesAt(tz, wall - off * 60_000);
+  return wall - off * 60_000;
+}
+
+/** "+01:00" style offset of `tz` at that local wall-clock time (for ISO depart_at strings). */
+export function tzOffset(isoDate: string, minutes: number, tz = DEFAULT_TZ): string {
+  if (tz === DEFAULT_TZ) return TZ_OFFSET;
+  const off = tzOffsetMinutesAt(tz, localMs(isoDate, minutes, tz));
+  const a = Math.abs(off);
+  return `${off < 0 ? "-" : "+"}${String(Math.floor(a / 60)).padStart(2, "0")}:${String(a % 60).padStart(2, "0")}`;
+}
+
+/** ISO timestamp for a local wall-clock time in `tz`, e.g. 2026-12-21T12:00:00+01:00. */
+export function localIso(isoDate: string, minutes: number, tz = DEFAULT_TZ): string {
+  return `${isoDate}T${minutesToHHMM(minutes, ":")}:00${tzOffset(isoDate, minutes, tz)}`;
+}
+
+/** Build a Date for a local wall-clock time (Dubai unless `tz` is given). */
+export function dubaiDate(isoDate: string, minutes: number, tz = DEFAULT_TZ): Date {
+  return new Date(localMs(isoDate, minutes, tz));
+}
+export const localDate = dubaiDate;
+
+/** Minutes since local midnight "now" in `tz`. */
+export function nowMinutes(tz = DEFAULT_TZ, now = Date.now()): number {
+  const off = tzOffsetMinutesAt(tz, now);
+  const d = new Date(now + off * 60_000);
+  return d.getUTCHours() * 60 + d.getUTCMinutes();
 }
 
 export function sunAt(
@@ -52,26 +109,43 @@ export function sunAt(
   minutes: number,
   lat: number,
   lon: number,
+  tz = DEFAULT_TZ,
 ): SunPos {
-  return sunPosition(dubaiDate(isoDate, minutes), lat, lon);
+  return sunPosition(dubaiDate(isoDate, minutes, tz), lat, lon);
 }
 
-export type SunTimes = { sunrise: number; sunset: number; solarNoon: number };
+export type SunTimes = {
+  sunrise: number;
+  sunset: number;
+  solarNoon: number;
+  /** "day" normal; "polar_night" sun never rises; "midnight_sun" never sets */
+  kind: "day" | "polar_night" | "midnight_sun";
+};
 
-/** Sunrise/sunset/solar noon as minutes since local (Dubai) midnight. */
+/** Sunrise/sunset/solar noon as minutes since local midnight (Dubai unless `tz` is given). */
 export function sunTimesMinutes(
   isoDate: string,
   lat: number,
   lon: number,
+  tz = DEFAULT_TZ,
 ): SunTimes {
-  const noonLocal = dubaiDate(isoDate, 12 * 60);
+  const noonLocal = dubaiDate(isoDate, 12 * 60, tz);
   const t = getTimes(noonLocal, lat, lon);
-  const base = Date.parse(`${isoDate}T00:00:00${TZ_OFFSET}`);
+  const base = localMs(isoDate, 0, tz);
   const m = (d: Date) => (d.getTime() - base) / 60_000;
+  const ok = (d: Date | null | undefined): d is Date =>
+    !!d && Number.isFinite(d.getTime());
+  const solarNoon = m(t.solarNoon);
+  const rise: Date | null | undefined = t.sunrise;
+  const set: Date | null | undefined = t.sunset;
+  if (ok(rise) && ok(set))
+    return { sunrise: m(rise), sunset: m(set), solarNoon, kind: "day" };
+  const noonAlt = getPosition(t.solarNoon, lat, lon).altitude;
   return {
-    sunrise: t.sunrise ? m(t.sunrise) : 6 * 60,
-    sunset: t.sunset ? m(t.sunset) : 18 * 60,
-    solarNoon: m(t.solarNoon),
+    sunrise: 6 * 60,
+    sunset: 18 * 60,
+    solarNoon,
+    kind: noonAlt > 0 ? "midnight_sun" : "polar_night",
   };
 }
 

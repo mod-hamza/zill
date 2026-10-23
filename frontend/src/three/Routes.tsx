@@ -148,6 +148,9 @@ type Props = {
   reveal?: Partial<Record<RouteKey, number>>;
   /** Film: overall opacity multiplier (default 1) */
   opacity?: number;
+  /** colour of the third (lambda 3) route in presentation view: brass = coolest (default),
+   *  ember = sunniest (App sun mode) */
+  bestColor?: string;
 };
 
 const ORDER: RouteKey[] = ["fastest", "balanced", "coolest"];
@@ -264,6 +267,7 @@ function styleFor(
   k: RouteKey,
   view: RouteView,
   selected: RouteKey,
+  bestColor: string = colors.brass,
 ): Style | null {
   const isSel = k === selected;
   if (view === "analysis") {
@@ -294,7 +298,7 @@ function styleFor(
     k === "fastest"
       ? colors.slate
       : k === "coolest"
-        ? colors.brass
+        ? bestColor
         : colors.bronze;
   return {
     color,
@@ -316,6 +320,7 @@ export function Routes({
   travellerAt,
   reveal,
   opacity = 1,
+  bestColor,
 }: Props) {
   const polys = useMemo(() => {
     if (!result) return null;
@@ -332,7 +337,7 @@ export function Routes({
         const p = polys[k];
         const r = result[k];
         if (!p || !r) return null;
-        const st = styleFor(k, view, selected);
+        const st = styleFor(k, view, selected, bestColor);
         if (!st) return null;
         return (
           <RouteRibbon

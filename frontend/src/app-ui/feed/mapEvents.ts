@@ -1,5 +1,6 @@
 // Pure mapping from agent events to feed rows. All numbers shown come straight from the event
 // payloads (verifier counts, tool_result summaries) — nothing is computed or invented here.
+import { SHORT } from "@/brand";
 import { colors } from "@/design/tokens";
 import type { AgentEvent, FeedBadge } from "./types";
 
@@ -138,7 +139,7 @@ export function mapEvent(ev: AgentEvent, offsetMs: number, compact: boolean): Fe
     case "approval_request":
       return row("approval", "Approval", str(p.reason) ?? "Waiting for your decision");
     case "message":
-      return row("message", "Zill", str(p.text) ?? "");
+      return row("message", SHORT, str(p.text) ?? "");
     case "plan_committed": {
       const auto = p.auto === true;
       return row("commit", "Committed", auto ? "Applied automatically" : "Plan committed", {

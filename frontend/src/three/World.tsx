@@ -2,6 +2,7 @@
 // The city world: every layer of PRD 13.1, composed once inside the persistent canvas.
 import { useThree, type ThreeEvent } from "@react-three/fiber";
 import { lazy, Suspense, useEffect } from "react";
+import { colors } from "@/design/tokens";
 import { useCity } from "@/state/city";
 import { useRig } from "@/state/rig";
 import { useRoute } from "@/state/route";
@@ -74,6 +75,7 @@ function RouteLayer() {
   const b = useRoute((s) => s.b);
   const reveal = useRoute((s) => s.reveal);
   const routeOpacity = useRoute((s) => s.routeOpacity);
+  const sunMode = useRoute((s) => s.result?.preference === "sun");
   return (
     <>
       <Routes
@@ -84,6 +86,7 @@ function RouteLayer() {
         selected={selected}
         t={frameT}
         travellerAt={flyT}
+        bestColor={sunMode ? colors.ember : colors.brass}
       />
       <Markers a={a} b={b} />
     </>

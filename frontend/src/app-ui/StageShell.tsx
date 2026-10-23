@@ -5,13 +5,19 @@
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
-import { useCity } from "@/state/city";
+import { DEFAULT_CITY, useCity } from "@/state/city";
+import { switchCity } from "@/state/switchCity";
+import { useBusy } from "@/lib/busy";
 import { useRig } from "@/state/rig";
 import { useRoute, type RouteKey, type RouteView } from "@/state/route";
 import { useStage, type Quality } from "@/state/stage";
 import { PRESET_DATES, useSun } from "@/state/sun";
 import { hhmmToMinutes } from "@/lib/sun";
-import { CAMERA_PRESETS, type CameraPreset } from "@/three/sceneConfig";
+import {
+  CAMERA_PRESETS,
+  cityView,
+  type CameraPreset,
+} from "@/three/sceneConfig";
 import { frameRouteView } from "@/three/AppDrivers";
 import { DebugOverlay } from "./DebugOverlay";
 import { LoadingScreen } from "./LoadingScreen";
@@ -43,10 +49,24 @@ function parseCam(v: string): CameraPreset | null {
 export function StageShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const loaded = useCity((s) => s.loaded);
+  const meta = useCity((s) => s.meta);
 
   useEffect(() => {
-    useStage.getState().setMode(pathname?.startsWith("/film") ? "film" : "app");
+    const film = pathname?.startsWith("/film") ?? false;
+    useStage.getState().setMode(film ? "film" : "app");
+    // the Film is authored for Downtown Dubai: leaving /app?city=oslo for /film switches back
+    const c = useCity.getState();
+    if (film && c.cityId !== DEFAULT_CITY && (c.meta || c.loaded))
+      void c.load(DEFAULT_CITY);
   }, [pathname]);
+
+  // frame a non-default city from its bbox once its meta arrives (unless ?cam= pins the camera)
+  useEffect(() => {
+    if (!meta || meta.city_id === DEFAULT_CITY) return;
+    if (useStage.getState().mode !== "app") return;
+    if (new URLSearchParams(window.location.search).get("cam")) return;
+    useRig.getState().setView(cityView(meta));
+  }, [meta]);
 
   // flags that matter before the first frame
   useEffect(() => {
@@ -66,6 +86,9 @@ export function StageShell({ children }: { children: ReactNode }) {
         );
     const time = p.get("time");
     if (time) useSun.getState().setMinutes(hhmmToMinutes(time));
+    const pref = p.get("pref");
+    if (pref === "sun" || pref === "shade")
+      useRoute.setState({ preference: pref });
     const view = p.get("view");
     if (view === "analysis" || view === "presentation")
       useRoute.getState().setView(view as RouteView);
@@ -80,6 +103,8 @@ export function StageShell({ children }: { children: ReactNode }) {
         useRig,
         useStage,
         frameRouteView,
+        switchCity,
+        useBusy,
       };
     }
   }, []);
@@ -126,7 +151,11 @@ export function StageShell({ children }: { children: ReactNode }) {
       } else {
         await rs.loadScenarios();
         const sc = useRoute.getState().scenarios;
-        const id = route === "hero" ? sc[0]?.id : route;
+        const wantSun = p.get("pref") === "sun";
+        const id =
+          route === "hero"
+            ? (sc.find((x) => (x.preference ?? "shade") === (wantSun ? "sun" : "shade")) ?? sc[0])?.id
+            : route;
         if (!id) return;
         useRoute.getState().applyScenario(id);
         // explicit date/time win over the scenario's own
@@ -138,6 +167,8 @@ export function StageShell({ children }: { children: ReactNode }) {
       const sel = p.get("sel");
       if (sel === "fastest" || sel === "balanced" || sel === "coolest")
         useRoute.getState().setSelected(sel as RouteKey);
+      if (sel === "sunniest" || sel === "best")
+        useRoute.getState().setSelected("coolest");
       const cam = p.get("cam");
       const res = useRoute.getState().result;
       if (!cam && res) useRig.getState().setView(frameRouteView(res.coolest));

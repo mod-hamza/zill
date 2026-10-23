@@ -1,5 +1,6 @@
 // Typed API client (CONTRACTS sections 3, 5, 6). All calls go through Next's /api proxy.
 import { assetUrl, isFixture } from "./assets";
+import { fetchRetrying } from "./busy";
 
 export type Grid = {
   x0: number;
@@ -90,8 +91,13 @@ export type RouteStats = {
   sun_saved_s: number;
   sun_saved_pct: number;
   rhl_saved_pct: number;
+  /** sun mode only: extra direct sun vs fastest */
+  sun_gained_s?: number;
+  sun_gained_pct?: number;
   note?: string;
 };
+
+export type Preference = "shade" | "sun";
 
 export type Segment = {
   edge: number;
@@ -123,13 +129,116 @@ export type Place = {
   z?: number;
 };
 
+// Well-being block of the route response (CONTRACTS "Overnight additions — Stream A").
+export type Wellbeing = {
+  preference: Preference;
+  uv: {
+    index: number | null;
+    band: string;
+    advice: string;
+    basis?: string;
+    source?: string;
+  } | null;
+  heat_stress: {
+    apparent_c: number | null;
+    band: string;
+    advice: string;
+    indicative?: boolean;
+    source?: string;
+    route_rhl?: number;
+  } | null;
+  daylight_window: {
+    active: boolean;
+    text: string;
+    sun_alt_deg: number;
+    shadow_ratio: number | null;
+    shadow_text: string;
+    uv_index?: number | null;
+    cloud_cover_pct?: number | null;
+    reasons?: string[];
+    rule?: string;
+    disclaimer?: string;
+  } | null;
+  breaks: {
+    hot: boolean;
+    every_sun_min?: number;
+    prompts: { at_s: number; sun_min: number; text: string }[];
+    rule?: string;
+  } | null;
+  overcast: { cloud_cover_pct: number; text: string } | null;
+  weather: {
+    source: string;
+    label: string;
+    at?: string;
+    apparent_c?: number | null;
+    uv_index?: number | null;
+    cloud_cover_pct?: number | null;
+    shortwave_wm2?: number | null;
+  } | null;
+  disclaimer?: string;
+};
+
+/** `coolest` is the third (lambda 3) route in BOTH modes on the client: in sun mode the API's
+ *  `sunniest` is copied into it (normaliseRoute) so the scene and the Film keep one key. */
 export type RouteResponse = {
   fastest: Route;
   balanced: Route;
   coolest: Route;
+  sunniest?: Route;
+  best?: Route;
+  preference?: Preference;
+  wellbeing?: Wellbeing | null;
   origin: Place;
   dest: Place;
   date_key: string;
+};
+
+export function normaliseRoute(
+  r: Omit<RouteResponse, "coolest"> & { coolest?: Route },
+): RouteResponse {
+  const third = r.coolest ?? r.sunniest ?? r.best ?? r.balanced;
+  return { ...r, coolest: third, preference: r.preference ?? "shade" };
+}
+
+// Places (CONTRACTS "Overnight additions — Stream E").
+export type PlaceHit = {
+  id: string;
+  name: string;
+  alt_names?: string[];
+  kind: string;
+  lat: number;
+  lon: number;
+  x: number;
+  z: number;
+  node: number;
+  snap_m?: number;
+  score?: number;
+  source?: "index" | "online" | string;
+  matched?: string;
+  label?: string;
+  curated?: boolean;
+};
+export type PlaceSearch = {
+  city: string;
+  q: string;
+  results: PlaceHit[];
+  online_enabled: boolean;
+  timing_ms?: number;
+};
+export type PlaceParse = {
+  origin: PlaceHit | null;
+  dest: PlaceHit | null;
+  origin_candidates: PlaceHit[];
+  dest_candidates: PlaceHit[];
+  ambiguous: { origin: boolean; dest: boolean };
+  confidence: number;
+  parsed: { origin_text?: string; dest_text?: string };
+  depart_at?: string;
+  depart_time?: string;
+  depart_date?: string;
+  mode?: Mode;
+  preference?: Preference;
+  city: string;
 };
 
 export type Scenario = {
@@ -143,11 +252,20 @@ export type Scenario = {
   fastest: Route;
   balanced: Route;
   coolest: Route;
+  /** sun scenarios (hero.json "sun" block) */
+  preference?: Preference;
+  sunniest?: Route;
+  wellbeing?: Wellbeing | null;
 };
-export type ScenariosJson = { generated_at?: string; scenarios: Scenario[] };
+export type ScenariosJson = {
+  generated_at?: string;
+  scenarios: Scenario[];
+  sun?: { scenarios: Scenario[] };
+};
 
 async function getJson<T>(url: string, init?: RequestInit): Promise<T> {
-  const r = await fetch(url, init);
+  const r = await fetchRetrying(url, init);
+  if (r.status === 429) throw new Error("The service is busy. Please try again shortly.");
   if (!r.ok) throw new Error(`${r.status} ${r.statusText} for ${url}`);
   return (await r.json()) as T;
 }
@@ -177,15 +295,34 @@ export const api = {
     depart_at: string;
     date_key?: string;
     lambdas?: number[];
+    preference?: Preference;
   }): Promise<RouteResponse> => {
     if (isFixture()) {
       const { fixtureRoute } = await import("./fixtureRoute");
       return fixtureRoute(body);
     }
-    return getJson<RouteResponse>("/api/route", {
+    const r = await getJson<RouteResponse>("/api/route", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
     });
+    return normaliseRoute(r);
   },
+  searchPlaces: (
+    city: string,
+    q: string,
+    limit = 8,
+    init?: RequestInit,
+  ): Promise<PlaceSearch> =>
+    getJson<PlaceSearch>(
+      `/api/places/search?city=${encodeURIComponent(city)}&q=${encodeURIComponent(q)}&limit=${limit}`,
+      init,
+    ),
+  parsePlaces: (city: string, text: string, init?: RequestInit) =>
+    getJson<PlaceParse>("/api/places/parse", {
+      ...init,
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ city, text }),
+    }),
 };

@@ -66,3 +66,132 @@
 .zill-range:focus-visible::-webkit-slider-thumb {
   box-shadow: 0 0 0 3px rgb(200 161 90 / 0.25);
 }
+
+/* ---- App layout (Stream F): desktop rails, phone bottom sheet ------------------------------ */
+.zill-brand {
+  left: 24px;
+  top: 20px;
+}
+.zill-brand-name {
+  font-size: 28px;
+}
+.zill-brand-ar {
+  font-size: 20px;
+}
+.zill-journey {
+  right: 24px;
+  top: 96px;
+  width: 344px;
+  max-height: calc(100vh - 260px);
+}
+.zill-timebar {
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1180px, calc(100vw - 48px));
+}
+.zill-hint {
+  bottom: 162px;
+}
+.zill-busy {
+  top: 84px;
+}
+
+@media (max-width: 639px) {
+  .zill-brand {
+    left: 16px;
+    top: 12px;
+  }
+  .zill-brand-name {
+    font-size: 21px;
+  }
+  .zill-brand-ar {
+    font-size: 15px;
+  }
+  .zill-commandbar {
+    top: 96px !important;
+    width: calc(100vw - 32px) !important;
+  }
+  .zill-commandbar .zill-command {
+    font-size: 17px;
+  }
+  .zill-journey {
+    left: 12px;
+    right: 12px;
+    top: auto;
+    bottom: 132px;
+    width: auto;
+    max-height: 40vh;
+    padding: 12px 14px 14px;
+  }
+  .zill-journey--closed .zill-journey-body {
+    display: none;
+  }
+  .zill-timebar {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    transform: none;
+    width: auto;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 12px;
+  }
+  .zill-timebar-dates {
+    order: 1;
+    flex: 1 1 auto;
+  }
+  .zill-timebar-sub {
+    display: none !important;
+  }
+  .zill-timebar-dates button {
+    padding: 2px 6px;
+    font-size: 10.5px;
+  }
+  .zill-timebar-clock {
+    order: 2;
+  }
+  .zill-timebar-clock > span:first-child {
+    font-size: 22px;
+  }
+  .zill-timebar-play {
+    order: 3;
+    width: 30px;
+    height: 30px;
+  }
+  .zill-timebar-scrub {
+    order: 4;
+    flex: 1 1 0;
+  }
+  .zill-timebar-now {
+    order: 5;
+  }
+  .zill-busy {
+    top: 146px;
+  }
+  .zill-hint {
+    bottom: auto;
+    top: 150px;
+    width: calc(100vw - 32px);
+  }
+  .zill-desktop-only,
+  .zill-brand-city {
+    display: none !important;
+  }
+}
+@media (max-width: 639px) {
+  .zill-agent {
+    left: auto !important;
+    right: 16px;
+    top: 12px !important;
+    z-index: 45;
+  }
+  .zill-agent-body {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    top: 56px;
+    width: auto !important;
+    max-height: calc(100vh - 220px) !important;
+  }
+}

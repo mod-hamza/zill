@@ -2,14 +2,16 @@
 import { create } from "zustand";
 import {
   api,
+  normaliseRoute,
   type Mode,
+  type Preference,
   type Route,
   type RouteResponse,
   type Scenario,
 } from "@/lib/api";
 import { useCity } from "./city";
 import { useSun } from "./sun";
-import { minutesToHHMM, TZ_OFFSET } from "@/lib/sun";
+import { localIso } from "@/lib/sun";
 
 export type Endpoint = {
   node: number;
@@ -26,6 +28,8 @@ type RouteState = {
   a: Endpoint | null;
   b: Endpoint | null;
   mode: Mode;
+  /** shade = least direct sun (default); sun = most direct sun / daylight */
+  preference: Preference;
   lambda: number;
   result: RouteResponse | null;
   selected: RouteKey;
@@ -43,6 +47,7 @@ type RouteState = {
   setEndpoint: (which: "a" | "b", e: Endpoint | null) => void;
   clickPoint: (e: Endpoint) => void;
   setMode: (m: Mode) => void;
+  setPreference: (p: Preference) => void;
   setLambda: (l: number) => void;
   setSelected: (k: RouteKey) => void;
   setView: (v: RouteView) => void;
@@ -59,6 +64,7 @@ export const useRoute = create<RouteState>((set, get) => ({
   a: null,
   b: null,
   mode: "walk",
+  preference: "shade",
   lambda: 1,
   result: null,
   selected: "coolest",
@@ -104,15 +110,21 @@ export const useRoute = create<RouteState>((set, get) => ({
     set({ mode });
     if (get().a && get().b) void get().request();
   },
+  setPreference: (preference) => {
+    if (preference === get().preference) return;
+    set({ preference, activeScenario: null });
+    if (get().a && get().b) void get().request();
+    else set({ result: null });
+  },
   setLambda: (lambda) => set({ lambda }),
   setSelected: (selected) => set({ selected }),
   setView: (view) => set({ view }),
   setFlyT: (flyT) => set({ flyT }),
   request: async () => {
-    const { a, b, mode, lambda } = get();
+    const { a, b, mode, lambda, preference } = get();
     if (!a || !b) return;
     const city = useCity.getState().cityId;
-    const { dateIso, dateKey, minutes } = useSun.getState();
+    const { dateIso, dateKey, minutes, tz } = useSun.getState();
     const seq = ++reqSeq;
     set({ loading: true, error: null });
     try {
@@ -121,9 +133,10 @@ export const useRoute = create<RouteState>((set, get) => ({
         mode,
         origin: { lat: a.lat, lon: a.lon, node: a.node },
         dest: { lat: b.lat, lon: b.lon, node: b.node },
-        depart_at: `${dateIso}T${minutesToHHMM(minutes, ":")}:00${TZ_OFFSET}`,
+        depart_at: localIso(dateIso, minutes, tz),
         date_key: dateKey,
         lambdas: [0, lambda, 3],
+        preference,
       });
       if (seq !== reqSeq) return;
       set({ result: res, loading: false });
@@ -136,8 +149,15 @@ export const useRoute = create<RouteState>((set, get) => ({
     }
   },
   loadScenarios: async () => {
-    const j = await api.scenarios(useCity.getState().cityId);
-    set({ scenarios: j?.scenarios ?? [] });
+    const city = useCity.getState().cityId;
+    const j = await api.scenarios(city);
+    if (useCity.getState().cityId !== city) return;
+    const sun = (j?.sun?.scenarios ?? []).map((s) => ({
+      ...s,
+      preference: "sun" as const,
+      coolest: s.coolest ?? s.sunniest ?? s.balanced,
+    }));
+    set({ scenarios: [...(j?.scenarios ?? []), ...sun] });
   },
   applyScenario: (id) => {
     const s = get().scenarios.find((x) => x.id === id);
@@ -158,18 +178,23 @@ export const useRoute = create<RouteState>((set, get) => ({
     sun.setDate(s.date_id);
     const [hh, mm] = s.depart.split(":").map(Number);
     sun.setMinutes((hh ?? 13) * 60 + (mm ?? 0));
+    const preference: Preference = s.preference ?? "shade";
     set({
       a: mk(s.origin),
       b: mk(s.dest),
       mode: s.mode,
-      result: {
+      preference,
+      result: normaliseRoute({
         fastest: s.fastest,
         balanced: s.balanced,
         coolest: s.coolest,
+        sunniest: s.sunniest,
+        preference,
+        wellbeing: s.wellbeing ?? null,
         origin: s.origin,
         dest: s.dest,
         date_key: s.date_id,
-      },
+      }),
       activeScenario: id,
       selected: "coolest",
       error: null,

@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { colors } from "@/design/tokens";
 import type { AutonomyLevel, Persona, SimulateType } from "@/lib/agentApi";
 import { fmtMin, fmtPct } from "@/lib/format";
+import { bestColor, bestLabel } from "@/lib/preference";
 import { useRoute, type RouteKey } from "@/state/route";
 import { badgeOf, useAgent } from "@/state/useAgent";
 import { ActivityFeed, SourceBadge } from "../feed";
@@ -74,7 +75,7 @@ function RouteCards() {
   const cards: { k: RouteKey; label: string; color: string }[] = [
     { k: "fastest", label: "Fastest", color: colors.slate },
     { k: "balanced", label: "Balanced", color: colors.bronze },
-    { k: "coolest", label: "Coolest", color: colors.brass },
+    { k: "coolest", label: bestLabel(result.preference), color: bestColor(result.preference) },
   ];
   return (
     <div className="my-2 border border-[color:var(--zill-hairline)]" data-testid="agent-route-cards">
@@ -222,7 +223,7 @@ export function AgentPanel() {
   };
 
   return (
-    <aside className="pointer-events-auto fixed left-6 top-[104px] z-30" data-testid="agent-panel">
+    <aside className="zill-agent pointer-events-auto fixed left-6 top-[104px] z-30" data-testid="agent-panel">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -232,7 +233,7 @@ export function AgentPanel() {
         Agent
       </button>
       {open ? (
-        <div className="mt-2 flex max-h-[calc(100vh-340px)] min-h-[320px] w-[372px] flex-col border border-[color:var(--zill-hairline)] bg-umber/[0.94]">
+        <div className="zill-agent-body mt-2 flex max-h-[calc(100vh-340px)] min-h-[320px] w-[372px] flex-col border border-[color:var(--zill-hairline)] bg-umber/[0.94]">
           <div className="border-b border-[color:var(--zill-hairline)] px-4 pb-3 pt-3">
             <h2 className="font-display text-[18px] font-light text-champagne">Planning agent</h2>
             {badge ? (

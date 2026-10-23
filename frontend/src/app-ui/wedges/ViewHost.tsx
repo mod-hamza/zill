@@ -2,6 +2,7 @@
 // Tabs + host for the P1 views: /app?view=planner | fleet | crew. (view=analysis|presentation is
 // the scene's own route-view flag and is left alone.) Opening a view closes the agent panel.
 import { useCallback, useEffect, useState } from "react";
+import { DEFAULT_CITY, useCity } from "@/state/city";
 import { useAgent } from "@/state/useAgent";
 import { PlannerView } from "../planner/PlannerView";
 import { CrewView } from "./CrewView";
@@ -22,6 +23,8 @@ function readView(): ViewId | null {
 export function ViewHost() {
   const [view, setView] = useState<ViewId | null>(null);
   const agentOpen = useAgent((s) => s.open);
+  // the B2B views are authored around Downtown Dubai's gazetteer (depots, attractions)
+  const cityId = useCity((s) => s.cityId);
 
   useEffect(() => {
     const v = readView();
@@ -45,10 +48,11 @@ export function ViewHost() {
     if (id) useAgent.getState().setOpen(false);
   }, []);
 
+  if (cityId !== DEFAULT_CITY) return null;
   return (
     <>
       <nav
-        className="pointer-events-auto fixed left-[112px] top-[104px] z-30 flex"
+        className="zill-desktop-only pointer-events-auto fixed left-[112px] top-[104px] z-30 flex"
         aria-label="Views"
         data-testid="view-tabs"
       >

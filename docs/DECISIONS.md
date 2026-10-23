@@ -97,3 +97,9 @@
 - 2026-10-23 A: Oslo 2026-12-21 weather = Open-Meteo archive for 2025-12-21 re-dated and labelled "stand-in" — no forecast exists that far ahead and the Dubai representative profile would be fabricated for Oslo; non-Dubai representative fallback now carries no temperatures.
 - 2026-10-23 A: Oslo sun hero written to hero_oslo.json (the file the API serves for oslo), not Dubai's hero.json.
 - 2026-10-23 A: sun-mode heat alert re-plan keeps the sun preference but picks the balanced route (less direct sun) — safety first without silently switching modes; auto-apply in sun mode judged on lost sun (≤ 10 %).
+- 2026-10-24 F: client keeps one key for the lambda-3 route — `normaliseRoute` copies the API's `sunniest` into `coolest` — so the scene, agent cards and the Film need no second code path; labels/colours (Coolest brass / Sunniest ember) come from `lib/preference.ts`.
+- 2026-10-24 F: the clock is timezone-aware (`lib/sun.ts` `localIso/tzOffset/nowMinutes`, Intl offsets) and preset dates come from each city's meta `dates`; Dubai keeps its fixed +04:00 and authored camera preset so the Film is unchanged.
+- 2026-10-24 F: a parsed `depart_date` is applied only when the text names a day (today/tomorrow/ISO); shade is baked for preset dates, so a non-preset day keeps the current preset and says so.
+- 2026-10-24 F: the Day plan / Fleet / Crew tabs show only in Dubai (their stop lists are Dubai gazetteer ids); /film always switches the shared canvas back to Dubai.
+- 2026-10-24 F: 429s are waited out (Retry-After, max 3 retries) with a calm "Busy, retrying in Ns" notice; the agent SSE client is not wrapped (owned by the agent stream).
+- 2026-10-24 F: brand.SHORT="Zill" added for tight spots (agent feed speaker); backend test_smoke brand assertion updated to the new NAME.

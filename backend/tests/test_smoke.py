@@ -29,7 +29,8 @@ def test_config_endpoint_and_no_key():
 
 
 def test_brand():
-    assert brand.NAME == "Zill"
+    assert brand.NAME == "Zill & Shams"
+    assert brand.SHORT == "Zill"
 
 
 def test_geo_round_trip():
