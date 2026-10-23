@@ -39,6 +39,13 @@ class SessionState:
         self.replay_scenario: str | None = None
 
 
+def _session_llm(session_id: str) -> Any:
+    """Per-conversation view of the LLM chain (OpenCode wants a stable session header)."""
+    llm = get_llm()
+    view = getattr(llm, "for_session", None)
+    return view(session_id) if callable(view) else llm
+
+
 def get_llm() -> Any:
     global _llm
     with _lock:
@@ -180,7 +187,7 @@ def create_session(body: SessionIn) -> dict[str, Any]:
         raise HTTPException(
             400, detail={"error": "bad_session", "message": f"Cannot start session: {exc}"}
         ) from exc
-    SESSIONS[s.id] = SessionState(s, Agent(s, get_llm()), True)
+    SESSIONS[s.id] = SessionState(s, Agent(s, _session_llm(s.id)), True)
     return {**s.public(), "mode": "live", "llm": get_llm().status()}
 
 

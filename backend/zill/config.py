@@ -77,15 +77,39 @@ TOOL_TIMEOUT_S = 8
 FILM_DURATION_S = 780
 
 # --- env-driven LLM settings (key never leaves the backend) ------------------------------------
-LLM_BASE_URL = os.environ.get("ZILL_LLM_BASE_URL", "https://www.vokeapi.com/v1")
-LLM_API_KEY = (
-    os.environ.get("ZILL_LLM_API_KEY")
+def _env_list(name: str, default: str) -> list[str]:
+    return [x.strip() for x in os.environ.get(name, default).split(",") if x.strip()]
+
+
+# Providers in priority order. Per provider: ZILL_<NAME>_API_KEY / _BASE_URL / _MODEL / _MODEL_FAST.
+LLM_PROVIDERS = _env_list("ZILL_LLM_PROVIDERS", "opencode,voke")
+# Voke (OpenAI-compatible). The legacy ZILL_LLM_* / ZILL_MODEL* names keep working as provider "voke".
+VOKE_BASE_URL = os.environ.get("ZILL_VOKE_BASE_URL") or os.environ.get(
+    "ZILL_LLM_BASE_URL", "https://www.vokeapi.com/v1"
+)
+VOKE_API_KEY = (
+    os.environ.get("ZILL_VOKE_API_KEY")
+    or os.environ.get("ZILL_LLM_API_KEY")
     or os.environ.get("OPENAI_API_KEY")
     or os.environ.get("ANTHROPIC_API_KEY")
     or ""
 )
-MODEL = os.environ.get("ZILL_MODEL", "claude-sonnet-5-5")
-MODEL_FAST = os.environ.get("ZILL_MODEL_FAST", "claude-haiku-5-5")
+VOKE_MODEL = os.environ.get("ZILL_VOKE_MODEL") or os.environ.get("ZILL_MODEL", "claude-sonnet-5-5")
+VOKE_MODEL_FAST = os.environ.get("ZILL_VOKE_MODEL_FAST") or os.environ.get(
+    "ZILL_MODEL_FAST", "claude-haiku-5-5"
+)
+# OpenCode Go (OpenAI Chat Completions). Docs: https://opencode.ai/docs/go/
+OPENCODE_BASE_URL = os.environ.get("ZILL_OPENCODE_BASE_URL", "https://opencode.ai/inference/go/openai/v1")
+OPENCODE_MODELS_URL = os.environ.get("ZILL_OPENCODE_MODELS_URL", "https://opencode.ai/inference/go/v1/models")
+OPENCODE_API_KEY = os.environ.get("ZILL_OPENCODE_API_KEY", "")
+OPENCODE_MODEL = os.environ.get("ZILL_OPENCODE_MODEL", "kimi-k3")
+OPENCODE_MODEL_FAST = os.environ.get("ZILL_OPENCODE_MODEL_FAST", "glm-5.3-flash")
+OPENCODE_FALLBACK_MODELS = _env_list("ZILL_OPENCODE_FALLBACK_MODELS", "kimi-k3.1-pro,glm-5.3,glm-5.3-flash")
+# Backward-compatible aliases: the legacy single-provider names (Voke) plus "any provider has a key".
+LLM_BASE_URL = VOKE_BASE_URL
+LLM_API_KEY = VOKE_API_KEY or OPENCODE_API_KEY
+MODEL = VOKE_MODEL
+MODEL_FAST = VOKE_MODEL_FAST
 REPLAY = os.environ.get("ZILL_REPLAY", "0").strip().lower() in ("1", "true", "yes", "on")
 OVERPASS_URLS = [
     u.strip()
@@ -147,3 +171,11 @@ RHL_BREAK_WINDOW_MIN = 30
 COOLDOWN_BREAK_MIN = 10
 PLAN_MAX_PERMUTE_STOPS = 6
 GAZETTEER_ONLINE = os.environ.get("ZILL_NOMINATIM", "1").strip().lower() not in ("0", "false", "no", "off")
+
+# --- appended by overnight Stream A (sun mode / well-being) ---
+PREFERENCES = ("shade", "sun")  # shade = least direct sun (default); sun = most direct sun / daylight
+DAYLIGHT_MIN_ALT_DEG = 45.0  # shadow-rule heuristic: your shadow is no longer than you are
+DAYLIGHT_MIN_UV = 3.0  # WHO "moderate" band starts at 3
+OVERCAST_CLOUD_PCT = 70.0  # cloud cover at/above which a sunny route has little direct sun
+WELLBEING_BREAK_SUN_MIN = 10.0  # hydration / shade-break prompt every N minutes of direct sun (when hot)
+WELLBEING_HOT_APPARENT_C = 32.2  # NWS heat-index "extreme caution" lower bound (90 F), indicative

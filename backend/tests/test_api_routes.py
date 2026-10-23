@@ -189,7 +189,7 @@ def test_health_extended(client):
     j = client.get("/api/health").json()
     assert j["ok"] is True and j["service"] == "zill"
     assert {"city", "shade", "replay_available", "llm"} <= set(j)
-    assert {"base_url", "model", "key_present"} <= set(j["llm"])
+    assert {"providers", "model", "key_present"} <= set(j["llm"])
 
 
 def test_shade_compute_validation(client):

@@ -32,7 +32,7 @@ def health_payload() -> dict[str, Any]:
         "version": VERSION,
         "replay": config.REPLAY,
         "llm": {
-            "base_url": config.LLM_BASE_URL,
+            "providers": list(config.LLM_PROVIDERS),
             "model": config.MODEL,
             "key_present": bool(config.LLM_API_KEY),
         },
