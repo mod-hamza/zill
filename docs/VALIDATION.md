@@ -1,13 +1,13 @@
 # VALIDATION
 
-What we measured, what the tests prove, and where the model is weak. Every number cites the file it came from. Test totals were refreshed with `python scripts/zill.py test` on 2026-10-23 08:02 (`data/test_results.json`).
+What we measured, what the tests prove, and where the model is weak. Every number cites the file it came from. Test totals were refreshed with `python scripts/zill.py test` on 2026-10-24 04:11 (`data/test_results.json`).
 
 ## 1. Test results
 
 | Suite | Result | Source |
 | --- | --- | --- |
-| Backend pytest | 222 passed, 0 failed | `data/test_results.json` |
-| Frontend vitest | 74 passed, 0 failed | `data/test_results.json` |
+| Backend pytest | 375 passed, 0 failed | `data/test_results.json` |
+| Frontend vitest | 95 passed, 0 failed | `data/test_results.json` |
 | Frontend typecheck, ESLint | clean at the time of the run | `python scripts/zill.py test` |
 
 Backend tests per file (from `pytest --collect-only` at 221 tests; one has been added since): tokens 34, agent orchestrator/monitor 26, routing 15, shade ray-march 14, replay 14, heights 13, LLM client 13, agent tools 12, API routes 12, sun 10, API cities 7, synthetic bake 7, planner 7, weather 7, departure 5, geo 4, Dubai data 4, shade pipeline 4, real-engine agent 4, smoke 4, scenarios 3, SSE 2.
