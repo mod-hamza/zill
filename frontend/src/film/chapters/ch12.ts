@@ -1,4 +1,4 @@
-// Ch.12 "The ask." (35 s) — golden hour on the Burj on the hero date, sun low, long shadows. The
+// Ch.12 "Try it." (35 s) — golden hour on the Burj on the hero date, sun low, long shadows. The
 // closing line, the team in small caps, a quiet "Try it live (A)". Holds; no cut to black.
 import { NAME } from "@/brand";
 import { dollyRig } from "@/three/rigs";

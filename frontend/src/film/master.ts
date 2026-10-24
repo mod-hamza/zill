@@ -32,14 +32,14 @@ export const CHAPTERS: ChapterDef[] = [
   { id: "ch05", title: "The shade engine.", dur_s: 66, fn: ch05, blendIn: 0, notes: 5 },
   { id: "ch06", title: "The route.", dur_s: 120, fn: ch06, blendIn: 4, notes: 6 },
   { id: "ch07", title: "Leave later.", dur_s: 54, fn: ch07, dipIn: 2.2, notes: 7 },
-  { id: "directions", title: "Two directions.", dur_s: 50, fn: directions, dipIn: 2.4 },
-  { id: "oslo", title: "Winter in Oslo.", dur_s: 56, fn: oslo, dipIn: 2.8 },
+  { id: "directions", title: "Two directions.", dur_s: 50, fn: directions, dipIn: 2.4, notes: 13 },
+  { id: "oslo", title: "Winter in Oslo.", dur_s: 56, fn: oslo, dipIn: 2.8, notes: 14 },
   { id: "agent", title: "An agent, not a map.", dur_s: 50, fn: ch08, dipIn: 2.8, notes: 8 },
   { id: "who", title: "Who pays.", dur_s: 56, fn: ch09, blendIn: 3, notes: 9 },
   { id: "evidence", title: "Does it work?", dur_s: 44, fn: ch10, blendIn: 3, notes: 10 },
-  { id: "safety", title: "Safe and cheap to run.", dur_s: 42, fn: safety, dipIn: 2.4 },
+  { id: "safety", title: "Safe and cheap to run.", dur_s: 42, fn: safety, dipIn: 2.4, notes: 15 },
   { id: "anycity", title: "Any city.", dur_s: 32, fn: ch11, blendIn: 3, notes: 11 },
-  { id: "ask", title: "The ask.", dur_s: 30, fn: ch12, dipIn: 2.4, notes: 12 },
+  { id: "ask", title: "Try it.", dur_s: 30, fn: ch12, dipIn: 2.4, notes: 12 },
 ];
 
 export const TOTAL_S = CHAPTERS.reduce((a, c) => a + c.dur_s, 0);

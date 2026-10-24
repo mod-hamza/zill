@@ -4,6 +4,8 @@ For the 12-14 minute pitch to the judges. The Film runs 13:00 at speed 1.0 (780 
 
 Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter headings are `## Chapter N`; bullets under them become the presenter's talking points. Do not start any other heading with a number.
 
+Numbering: chapters 1-12 keep their original note ids. The three newer film chapters ("Two directions", "Winter in Oslo", "Safe and cheap to run") are note ids 13, 14 and 15; the Presenter finds them through the `notes` field in `frontend/src/film/master.ts` (currently unset for those three, so add `notes: 13`, `notes: 14`, `notes: 15`). Film order and times now: 1-7, Two directions (13), Winter in Oslo (14), 8, 9, 10, Safe and cheap to run (15), 11, 12; total 13:10. Start times printed on older headings predate the three new chapters.
+
 ## Chapter 1 — Dubai, 13:00 (0:00, 40 s)
 
 - Dubai in summer is built for people who walk, and the sun decides where they can.
@@ -38,7 +40,7 @@ Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter head
 - Sun position from a solar model, then a ray from every two-metre cell toward the sun; if a building top is higher than the ray, the cell is in shade.
 - That gives a shade raster per ten-minute step, and an exposure number for every street segment.
 - Routing is time-aware: a street's shade is looked up for the minute the walker arrives, not the minute they leave.
-- It is tested: 222 backend tests and 74 frontend tests pass, including shadow-length geometry checks.
+- It is tested: 470 automated tests pass (375 backend, 95 frontend, data/test_results.json 2026-10-24), including shadow-length geometry checks.
 - Say the limits: buildings, mapped trees and covered links only. Awnings, unmapped trees and wind are not modelled.
 - Transition: "Let's use it. A tourist at Burj Park wants to get to the metro."
 
@@ -96,6 +98,31 @@ Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter head
 - Zill: the agent that routes you through the shade.
 - What we want today: feedback on the buyer and the pricing, and introductions to a hotel group or fleet operator. [TEAM TO FILL — the specific ask]
 - Press `A` and take any trip the judges want to try.
+
+## Chapter 13 — Two directions (7:10, 50 s) [film order: after "Leave later", before "Winter in Oslo"]
+
+- Same trip, same minute, two different needs: in a hot month you want shade, in a dark month you want sun.
+- Shade mode shows the Burj Park to Business Bay Metro walk we just saw. Sun mode shows a real Dubai walk from the sun search in `data/scenarios/hero.json` (key `sun`): Business Bay Metro to Burj Park on 15 April at 10:30 gains 524 s of direct sun (+48 percent) for 269 s more walking.
+- One engine; only the preference flips. The well-being card beside it shows the UV band and the daylight window as guidance, not medical advice.
+- Say the limit: clear-sky geometry, model estimates, no field measurements yet.
+- Transition: "Now the place where the sun is the scarce thing."
+
+## Chapter 14 — Winter in Oslo (8:00, 56 s)
+
+- Oslo is our second city, baked with the same pipeline and no city-specific code: 13,841 buildings in the shadow ring, 10,082 street segments, 20,208 trees, 53 places (`data/cities/oslo/meta.json`).
+- At the December solstice the sun is about 6.6 degrees high, so shadows are about 8.6 times a building's height. The engine is tested at exactly that angle.
+- The sunniest route is for daylight and mood. Be explicit: UV at midwinter is about 0.1, so this is not vitamin D, and it is not medical advice.
+- Honest note: Oslo's winter weather in the app is a labelled stand-in (the 2025 solstice). Oslo has about 5 h 54 min of daylight at the solstice.
+- Summer scenario for contrast: National Museum to Byporten Shopping at 12:00 on 21 June, 613 s to 1,288 s of direct sun (+110 percent) for 131 s more walking.
+- Transition: "So who pays, and is it safe to run?"
+
+## Chapter 15 — Safe and cheap to run (11:26, 42 s) [film order: after "Does it work?", before "Any city"]
+
+- Privacy by design: no accounts, no stored user data, location used per request and discarded, logs scrub coordinates and keys, no ads.
+- Controls on the live site: per-IP rate limits (tightest on the agent), 64 KB request cap, CORS allow-list, CSP and HSTS. pip-audit is clean; npm audit has 2 findings inside Next's build-time PostCSS. UAE PDPL and GDPR alignment is an aim, not a certification; a penetration test comes before any B2B launch (`docs/SECURITY.md`).
+- Costs: the AI agent is $10 a month flat on OpenCode Go (about 3,630 conversations a month on glm-5.3-flash). Adding a city costs no money: Dubai data bake 7.5 s and shade bake 487.5 s for four dates. The Contabo price and cost per 1,000 users are [TEAM TO FILL] (`docs/COSTS.md`).
+- Capacity, measured: local machine about 26 requests per second at 20 users (p95 596 ms); live VM 16.9 requests per second at 20 users, p95 1.6 s, 0 errors, run capped at 20 users.
+- Transition: "And it is not only Dubai and Oslo."
 
 ## Managerial story
 

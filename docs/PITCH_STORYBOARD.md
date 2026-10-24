@@ -26,3 +26,14 @@ Best still per chapter: ch01 `phase7/iter2/ch01_end.png`, ch02 `phase8/iter2/ch0
 ch04 `phase8/iter2/ch04_mid.png`, ch05 `phase8/iter2/ch05_mid.png`, ch06 `phase8/iter2/ch06_mid.png`, ch07 `phase8/iter2/ch07_mid.png`,
 ch08 `phase8/iter2/t_0618.0.png`, ch09 `phase8/iter2/t_0632.0.png`, ch10 `phase8/iter2/ch10_mid.png`, ch11 `phase8/iter2/t_0744.0.png`,
 ch12 `phase8/iter2/ch12_end.png`.
+
+## Overnight additions (film now 15 chapters, 13:10)
+
+Film order and start times: 1 Zill & Shams 0:00 · 2 The problem 0:36 · 3 Shade moves 1:22 · 4 A city, built in seconds 2:06 · 5 The shade engine 3:10 · 6 The route 4:16 · 7 Leave later 6:16 · **Two directions 7:10 (50 s)** · **Winter in Oslo 8:00 (56 s)** · 8 An agent, not a map 8:56 · 9 Who pays 9:46 · 10 Does it work? 10:42 · **Safe and cheap to run 11:26 (42 s)** · 11 Any city 12:08 · 12 The ask 12:40.
+The table above keeps the original numbering and times of chapters 1-12 for reference; speaker-note ids for the new chapters are 13 (Two directions), 14 (Winter in Oslo), 15 (Safe and cheap to run).
+
+| Chapter | On screen | Sources |
+|---|---|---|
+| Two directions | Shade walk, then a sun walk, then both together; caption "Same trip. Same minute. Two different needs."; well-being card | `data/scenarios/hero.json` (shade and `sun`) |
+| Winter in Oslo | Establishing orbit over Oslo, sun time-lapse, fastest vs sunniest walk, Oslo card, well-being card, caption "Daylight and mood, not vitamin D: UV n" | `data/scenarios/hero_oslo.json`, `data/cities/oslo/meta.json` |
+| Safe and cheap to run | Privacy card then costs card over a slow dolly | `docs/SECURITY.md`, `docs/COSTS.md` |
