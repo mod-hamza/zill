@@ -20,7 +20,8 @@ DATA_DIR = REPO_ROOT / "data"
 CITIES_DIR = DATA_DIR / "cities"
 REPLAY_DIR = REPO_ROOT / "backend" / "replay"
 
-load_dotenv(REPO_ROOT / ".env")
+if os.environ.get("ZILL_DOTENV", "1") != "0":  # tests set 0 so a local live key never reaches them
+    load_dotenv(REPO_ROOT / ".env")
 
 # --- geography ---------------------------------------------------------------------------------
 ORIGIN_LAT = 25.1972
@@ -56,10 +57,12 @@ TREE_BLOCK = 0.65  # transmissivity 0.35
 TREE_ROW_SPACING_M = 6.0
 
 # --- routing -------------------------------------------------------------------------------------
-SPEEDS = {"walk": 1.4, "cycle": 4.5, "scooter": 5.0}  # m/s
-CROSSING_WAIT_S = {"walk": 8.0, "cycle": 10.0, "scooter": 10.0}
+# run: 2.8 m/s = about 6:00 min/km, a steady recreational running pace (assumption, not measured).
+# Runners use the walk graph (stairs slow them like walkers) and wait at crossings like pedestrians.
+SPEEDS = {"walk": 1.4, "cycle": 4.5, "scooter": 5.0, "run": 2.8}  # m/s
+CROSSING_WAIT_S = {"walk": 8.0, "cycle": 10.0, "scooter": 10.0, "run": 8.0}
 STAIRS_WALK_FACTOR = 0.5
-SUN_WEIGHT = {"walk": 1.0, "scooter": 0.85, "cycle": 0.8}
+SUN_WEIGHT = {"walk": 1.0, "scooter": 0.85, "cycle": 0.8, "run": 1.0}
 COMFORT = {"indoor": 0.1, "ac_link": 0.1, "covered": 0.5, "open": 1.0}
 CROWD = {"indoor": 1.15, "ac_link": 1.15}
 RHL_SUN = 1.0
@@ -98,6 +101,8 @@ VOKE_MODEL = os.environ.get("ZILL_VOKE_MODEL") or os.environ.get("ZILL_MODEL", "
 VOKE_MODEL_FAST = os.environ.get("ZILL_VOKE_MODEL_FAST") or os.environ.get(
     "ZILL_MODEL_FAST", "claude-haiku-5-5"
 )
+# Optional explicit model fallback order for the voke/custom slot (e.g. Groq: one token bucket per model).
+VOKE_FALLBACK_MODELS = _env_list("ZILL_VOKE_FALLBACK_MODELS", "") or None
 # OpenCode Go (OpenAI Chat Completions). Docs: https://opencode.ai/docs/go/
 OPENCODE_BASE_URL = os.environ.get("ZILL_OPENCODE_BASE_URL", "https://opencode.ai/inference/go/openai/v1")
 OPENCODE_MODELS_URL = os.environ.get("ZILL_OPENCODE_MODELS_URL", "https://opencode.ai/inference/go/v1/models")

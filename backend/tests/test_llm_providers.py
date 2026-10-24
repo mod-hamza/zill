@@ -158,7 +158,7 @@ def test_model_fallback_within_provider(stubs):
 
 
 def test_all_fail_raises_without_secrets(stubs, caplog):
-    a, b = stubs([(401, err(f"bad key {SECRET_A}"))] * 3), stubs([(429, err(f"slow {SECRET_B}"))] * 3)
+    a, b = stubs([(401, err(f"bad key {SECRET_A}"))] * 3), stubs([(429, err(f"slow {SECRET_B}"))] * 8)
     c = chain(a, b)
     with caplog.at_level(logging.DEBUG):
         with pytest.raises(LLMError) as ei:
@@ -293,3 +293,15 @@ def test_replay_flag_forces_replay_mode(monkeypatch):
     _cfg(monkeypatch, OPENCODE_API_KEY=SECRET_A)
     monkeypatch.setattr(config, "REPLAY", True)
     assert llm_mod.status()["mode"] == "replay"
+
+
+def test_rate_limit_walks_models_on_last_provider(stubs):
+    # per-model token buckets (Groq): a 429 on the primary model moves to the next model
+    a = stubs([(429, err("tpm")), (200, ok("from small", model="small"))])
+    c = LLMClient(
+        endpoints=[_Endpoint("voke", a.url, SECRET_B, "big", "small", fallbacks=["small"])],
+        sleep=lambda s: None,
+    )
+    res = c.chat(MSG)
+    assert res.content == "from small"
+    assert [r["body"]["model"] for r in a.requests] == ["big", "small"]

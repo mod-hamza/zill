@@ -4,3 +4,5 @@
 import os
 
 os.environ.setdefault("ZILL_RATE_LIMIT", "0")
+os.environ["ZILL_DOTENV"] = "0"  # ignore a local .env (live LLM keys) so tests see the defaults
+os.environ["ZILL_DOTENV"] = "0"  # ignore the developer's .env (live LLM keys) in tests

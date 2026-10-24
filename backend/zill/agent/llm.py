@@ -26,6 +26,7 @@ PROBE_TIMEOUT_S = 4.0
 CALL_TIMEOUT_S = 30.0
 AVAIL_CACHE_S = 60.0
 RETRIES = 2
+RATE_WAIT_MAX_S = 20.0  # longest single wait when every model is rate-limited
 COOLDOWN_S = 30.0
 USER_AGENT = "Zill-hackathon-prototype/0.1"
 _THINK = re.compile(r"<think>.*?</think>", re.S)
@@ -131,6 +132,16 @@ class _EmptyResponse(Exception):
 def _status_of(exc: BaseException) -> int | None:
     code = getattr(exc, "status_code", None)
     return code if isinstance(code, int) else None
+
+
+def _retry_after(exc: BaseException) -> float:
+    """Seconds from a 429's Retry-After header (default 5)."""
+    resp = getattr(exc, "response", None)
+    raw = getattr(resp, "headers", {}).get("retry-after") if resp is not None else None
+    try:
+        return max(0.5, float(raw)) if raw is not None else 5.0
+    except (TypeError, ValueError):
+        return 5.0
 
 
 def classify(exc: BaseException) -> str:
@@ -240,7 +251,12 @@ def configured_endpoints() -> list[_Endpoint]:
         elif n in ("voke", "custom") and config.VOKE_API_KEY:
             out.append(
                 _Endpoint(
-                    n, config.VOKE_BASE_URL, config.VOKE_API_KEY, config.VOKE_MODEL, config.VOKE_MODEL_FAST
+                    n,
+                    config.VOKE_BASE_URL,
+                    config.VOKE_API_KEY,
+                    config.VOKE_MODEL,
+                    config.VOKE_MODEL_FAST,
+                    fallbacks=list(config.VOKE_FALLBACK_MODELS) if config.VOKE_FALLBACK_MODELS else None,
                 )
             )
     return out
@@ -424,9 +440,9 @@ class LLMClient:
         if model == "fast":
             model = ep.fast_model
         candidates = [model] if model else [ep.chosen_model or ep.model]
-        if not model:
-            candidates += [m for m in ep.fallback_models() if m not in candidates]
+        candidates += [m for m in ep.fallback_models() if m not in candidates]
         last: BaseException | None = None
+        throttled: list[float] = []  # Retry-After of each model that answered 429
         for mdl in candidates:
             attempt = 0
             use_tool_choice = True
@@ -439,6 +455,9 @@ class LLMClient:
                     if kind == "bad" and tools and use_tool_choice:
                         use_tool_choice = False  # provider rejects tool_choice: retry once without it
                         continue
+                    if kind == "rate":
+                        throttled.append(_retry_after(exc))
+                        break  # per-model token buckets (e.g. Groq): try the next model
                     if kind in ("notfound", "empty", "bad") and not model:
                         break  # next model in this provider's list
                     if kind != "transient":
@@ -447,8 +466,22 @@ class LLMClient:
                         break
                     attempt += 1
                     self._sleep(0.6 * (2**attempt))
-            if model or (last is not None and classify(last) in ("transient", "auth", "rate")):
-                break  # provider down or throttled: do not walk its whole model list
+            if last is not None and classify(last) == "rate":
+                if retries:
+                    continue  # last provider: walk its models (separate per-model buckets)
+                break  # a later provider can take the call
+            if model or (last is not None and classify(last) in ("transient", "auth")):
+                break  # provider down: do not walk its whole model list
+        if retries and throttled and len(throttled) == len(candidates):
+            # every model is throttled: wait once for the soonest bucket (bounded), then retry it
+            wait = min(throttled)
+            if wait <= RATE_WAIT_MAX_S:
+                self._sleep(wait)
+                best = candidates[throttled.index(wait)]
+                try:
+                    return self._once(ep, best, messages, tools, temperature, sid, True)
+                except Exception as exc:
+                    last = exc
         if last is not None and classify(last) in ("auth", "rate"):
             raise LLMError(f"{ep.name}: {classify(last)} ({_describe(last)})") from None
         raise LLMError(f"{ep.name}: call failed ({_describe(last)})") from None
