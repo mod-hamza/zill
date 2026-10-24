@@ -97,6 +97,15 @@
   top: 84px;
 }
 
+/* Mid widths: a centred bar would run over the brand block, so it sits to the brand's right. */
+@media (min-width: 640px) and (max-width: 1239px) {
+  .zill-commandbar {
+    left: 340px !important;
+    translate: none !important; /* Tailwind 4 centres with the `translate` property */
+    width: min(560px, calc(100vw - 364px)) !important;
+  }
+}
+
 @media (max-width: 639px) {
   .zill-brand {
     left: 16px;
