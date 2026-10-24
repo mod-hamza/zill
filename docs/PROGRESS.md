@@ -195,3 +195,16 @@ Rebuilt `docs/pitch/deck/index.html` to 17 slides (new: sun-mode proof, Oslo, we
 
 ## 2026-10-24 - Stream H final pass
 Deck photo slides now use `docs/qa/best/film_overnight_*_clean.jpg` (no baked film UI); Oslo slide uses the Oslo film still + the app's Oslo sun-mode still; well-being slide shows a crop of the real app well-being card (`deck/img/`). PPTX is now editable: `deck/extract.mjs` (from index.html: text runs, panels, rules, photo-only backgrounds) + `deck/build_pptx.py` (native text boxes in Georgia/Calibri, speaker notes on 17 slides); verified by exporting each slide through PowerPoint and comparing. Test counts cited: 470 (375 backend + 95 frontend). SPEAKER_NOTES.md gains chapters 13-15 for the film's new chapters (needs `notes: 13/14/15` in `frontend/src/film/master.ts`); PITCH_STORYBOARD.md gains the 15-chapter order.
+
+## 2026-10-24 04:40 — Overnight pivot summary (orchestrator)
+Zill & Shams is live at https://zill.itshamza.me (auto-deployed from main). 16 commits since `d28b582`.
+- **Sun mode**: sunniest-route routing (non-negative costs), `best`/`preference` API, departure + day plan; Dubai sun scenarios (winter morning, office lunch, spring daylight walk) and Oslo (winter solstice, summer) found by the documented search.
+- **Well-being**: UV (WHO bands), heat stress (indicative), daylight / vitamin D window (sun ≥ 45°, UV ≥ 3, not overcast by measured radiation vs Haurwitz clear sky), break prompts; "not medical advice" everywhere.
+- **Oslo**: second city, 13,841 buildings, 10,082 edges, 20,208 trees; low-sun shadow tests; night flags; low-sun lighting grade.
+- **Typed places**: 1,066 Dubai + 2,670 Oslo named places, "from X to Y at 15:30 sunny" parsing, Nominatim fallback (bounded, rate-limited, labelled).
+- **LLM**: OpenCode Go + Voke provider chain with fallback (`docs/LLM.md`). No key set yet: agent uses labelled recordings.
+- **Security**: rate limits, input caps, CORS allow-list, CSP/HSTS/frame headers, log scrubbing (`docs/SECURITY.md`).
+- **Costs + load test**: `docs/COSTS.md` (one worker: 26 req/s at 20 users, p95 0.6 s locally; live VM 20 users p95 1.6 s, 0 errors).
+- **Accuracy**: `docs/ACCURACY.md`. **Film**: 15 chapters incl. Two directions, Winter in Oslo, Safe and cheap to run. **Decks**: 17 slides, PDF + editable PPTX, speaker notes.
+- Tests: 470 passing (375 backend, 95 frontend).
+- Open for the team: see `docs/OPEN_ITEMS.md` "Overnight pivot".

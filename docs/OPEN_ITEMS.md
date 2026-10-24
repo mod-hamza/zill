@@ -51,3 +51,12 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 - [ ] Film Ch.11 roadmap cities (Doha, Riyadh, Singapore, Phoenix) are a team choice from the PRD; confirm.
 - [ ] [data] 2 auto-generated `entrance_link` edges (≤ 30 m, from OSM doors 8423933513 and 8423933514 to the nearest outdoor path) are `verified:false` — confirm the doors open onto those paths
 - [ ] [data] Burj Khalifa POI now snaps to the tower's OSM entrance, whose only mapped path is the indoor link into The Dubai Mall — confirm the public visitor route (At the Top visitors enter through the mall)
+
+## Overnight pivot (2026-10-24): what the humans must do
+- [ ] **LLM key (most important for judging):** add `ZILL_OPENCODE_API_KEY=...` (and/or `ZILL_VOKE_API_KEY`) to `/home/hamza/zill/.env` on the VM, then run `/home/hamza/zill/deploy/cd.sh --force`. Until then the agent plays labelled recordings. See `docs/LLM.md`. Then re-record the replays live (`python scripts/record_replay.py`).
+- [ ] **Contabo plan price** for `docs/COSTS.md`, the cost slide and film chapter "Safe and cheap to run" (`[TEAM TO FILL]`), plus per-token prices if you move off the OpenCode Go subscription.
+- [ ] **OpenCode Go monthly caps**: confirm the per-model limits in `docs/LLM.md` against opencode.ai/docs/go (the scrape merged the Go and Go Plus columns).
+- [ ] **Oslo winter weather** is a labelled stand-in (2025-12-21 archive), because 2026-12-21 is beyond the forecast range.
+- [ ] **npm audit**: 2 findings in PostCSS bundled with `next`; the fix is next@16 (breaking), not applied.
+- [ ] **Weekly map re-bake** is the stated production plan, not yet scheduled (`docs/ACCURACY.md`).
+- [ ] Optional: apply the header lines in `deploy/Caddyfile.snippet` to the VM's Caddyfile (the API already sends its own security headers).
