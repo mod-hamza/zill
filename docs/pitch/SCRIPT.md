@@ -90,8 +90,8 @@ it would do the opposite: find you the sun.
   Numbers are inserted from tool results, so the model cannot invent a statistic.
 - **Autonomy, with consent:** three levels. It suggests, it plans, or on autopilot it watches your trip.
   If you are delayed or a heat alert comes in, it replans, and it asks before it changes your plan. Every action can be undone.
-- **Models:** provider-agnostic. Today it runs live on Google Gemini Flash with automatic fallback between
-  models and providers, and replays labelled as recordings if the model is down.
+- **Models:** provider-agnostic. Today it runs live on DeepSeek, with automatic fallback to Google Gemini if
+  DeepSeek fails, and replays labelled as recordings if every model is down. One full plan takes under 30 seconds.
 
 ### Film 5:10–5:50 · "Who pays" (Abhay) · MANAGERIAL
 - **Free for people, no ads.** We never sell location, so ads are off the table.
@@ -126,7 +126,7 @@ it would do the opposite: find you the sun.
 5. **Agent panel** (press A or click Agent). Type: `I'm walking from Burj Park to the metro, I tire easily in the heat`.
    Narrate as it works: "It is calling tools... comparing routes... the verifier is checking every number...
    now it asks me to approve." Approve.
-   - **If the live model is slow** (free tier, about 10 requests a minute): open a recorded session from the
+   - **If the live model is slow or fails:** open a recorded session from the
      agent panel's list. It is labelled "Recorded session"; say so.
 
 ---
