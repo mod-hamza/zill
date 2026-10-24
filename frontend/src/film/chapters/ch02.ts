@@ -86,7 +86,7 @@ export const ch02: ChapterFn = (t, data) => {
         label: "fastest",
       },
       { kind: "caption", text: "Maps optimise for time.", opacity: win(s, 9, 20, 1.2, 1.2) },
-      { kind: "caption", text: "Nobody optimises for shade.", opacity: win(s, 29, 48.5, 1.2, 1.5) },
+      { kind: "caption", text: "Nobody optimises for shade, or for sun.", opacity: win(s, 29, 48.5, 1.2, 1.5) },
     ],
   };
 };

@@ -1,6 +1,6 @@
 // Film types (PRD 14.1). evaluate(t) -> FrameState is PURE; everything on screen is derived from
 // a FrameState plus FilmData (loaded once, real engine output). No timers anywhere.
-import type { CityMeta, Route, Scenario } from "@/lib/api";
+import type { CityMeta, Route, RouteResponse, Scenario } from "@/lib/api";
 import type { RoutePolyline } from "@/lib/routeGeom";
 import type { RigState, V3 } from "@/three/rigs";
 import type { AgentEvent } from "@/app-ui/feed";
@@ -72,6 +72,58 @@ export type Departure = {
 
 export type HeroScenario = Scenario & { departure?: Departure | null };
 
+/** Business facts extracted verbatim from docs/COSTS.md, SECURITY.md, ACCURACY.md by
+ *  scripts/sync-film-data.mjs (public/film-data/facts.json). null = not found -> [TEAM TO FILL]. */
+export type LoadRow = {
+  users: number | null;
+  requests: number | null;
+  rps: number | null;
+  p50_ms: number | null;
+  p95_ms: number | null;
+  errors: number | null;
+};
+export type Facts = {
+  costs: {
+    source: string;
+    vps_price: string | null;
+    go_usd_month: number | null;
+    goplus_usd_month: number | null;
+    llm: { model: string; go_requests_month: number | null; go_conversations_month: number | null }[];
+    requests_per_conversation: number | null;
+    local_load: LoadRow[];
+    live_load: LoadRow[];
+    shade_bake_s: number | null;
+    shade_bake_dates: string | null;
+    data_bake_s: number | null;
+  };
+  security: { source: string; tests: number | null; body_cap_kb: number | null };
+  accuracy: {
+    source: string;
+    shadow_step_min: number | null;
+    grid_m: number | null;
+    departure_step_min: number | null;
+    weather_hourly: boolean;
+    sun_within_deg: number | null;
+    heights_fallback_pct: number | null;
+    weekly_rebake: string | null;
+    field_validation: string | null;
+  };
+};
+
+/** "Two directions" (Ch.8): one trip, the same minute, shade mode vs sun mode. The sun side is a
+ *  hero.json `sun` scenario verbatim; the shade side is /api/route (preference shade) for the same
+ *  origin, destination and departure, computed at load. */
+export type Directions = {
+  scenario: HeroScenario;
+  /** shade-mode best route for the same trip (null if the API was unreachable) */
+  shade: Route | null;
+  /** how the scenario was chosen (documented rule) */
+  rule: string;
+};
+
+/** A route set the Film can put on the shared Routes layer by key (FrameState.routes.result). */
+export type RouteSet = RouteResponse & { city: string };
+
 export type AcLinkStory = {
   origin?: string;
   dest?: string;
@@ -127,12 +179,21 @@ export type FilmData = {
   bakedCities: { id: string; name: string; lat: number; lon: number }[];
   /** Burj Khalifa top height from meta (m) */
   burjH: number;
+  /** Ch.8 shade-vs-sun pair (null if hero.json has no sun scenarios) */
+  directions: Directions | null;
+  /** Ch.9: Oslo meta + the hero_oslo.json `sun` winter scenario (null if Oslo is not baked) */
+  oslo: { meta: CityMeta; scenario: HeroScenario } | null;
+  /** extra route sets by key ("dir_shade", "dir_sun", "dir_both", "oslo_sun") */
+  routeSets: Record<string, RouteSet>;
+  /** preset dates per city id (for the sun clock when the Film switches city) */
+  cityDates: Record<string, Record<string, string>>;
+  facts: Facts | null;
 };
 
 // ---------------------------------------------------------------------------------------------
 // Overlays (DOM) — each with its own opacity; the Overlay component draws them.
 export type OverlayItem =
-  | { kind: "title"; text: string; sub?: string; opacity: number; size?: "hero" | "card"; subOpacity?: number }
+  | { kind: "title"; text: string; sub?: string; ar?: string; opacity: number; size?: "hero" | "card"; subOpacity?: number }
   | { kind: "caption"; text: string; opacity: number; align?: "left" | "center" }
   | { kind: "command"; text: string; caret: boolean; opacity: number; label?: string }
   | { kind: "buildlog"; rows: { label: string; step: string; count?: number; ms?: number }[]; opacity: number; badge: string }
@@ -157,7 +218,14 @@ export type OverlayItem =
   | { kind: "splitline"; opacity: number; left: string; right: string }
   | { kind: "edgelabels"; opacity: number; segs: number[] }
   | { kind: "arclabels"; opacity: number; marks: { hhmm: string; opacity: number }[] }
-  | { kind: "globelabels"; opacity: number };
+  | { kind: "globelabels"; opacity: number }
+  | { kind: "directions"; opacity: number; phase: "shade" | "sun" | "both"; progress: number }
+  | { kind: "wellbeing"; opacity: number; which: "directions" | "oslo" }
+  | { kind: "oslo"; opacity: number; progress: number }
+  | { kind: "privacy"; opacity: number; progress: number }
+  | { kind: "costs"; opacity: number; progress: number }
+  | { kind: "accuracy"; opacity: number; progress: number }
+  | { kind: "pricing"; opacity: number };
 
 export type HudState = {
   sunS: number;
@@ -169,8 +237,13 @@ export type HudState = {
   color?: string;
 };
 
+/** the Film's home city (every chapter except "Winter in Oslo") */
+export const FILM_HOME_CITY = "dubai_downtown";
+
 export type FrameState = {
   t: number;
+  /** city id whose 3D scene this frame shows (the Film switches the shared scene by id) */
+  city: string;
   chapter: number;
   localT: number;
   localS: number;
@@ -214,6 +287,8 @@ export type ChapterDef = {
   title: string;
   dur_s: number;
   fn: ChapterFn;
+  /** docs/SPEAKER_NOTES.md chapter number of this chapter's notes (written before the renumbering) */
+  notes?: number;
   /** seconds of continuous camera/sun blend from the previous chapter's end (0 = cut) */
   blendIn?: number;
   /** a soft ink dip across the boundary into this chapter (seconds, total) */

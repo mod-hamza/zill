@@ -1,4 +1,4 @@
-// Ch.11 "Any hot city." (40 s) — crane pull-back from Downtown into darkness, then a dark matte
+// "Any city." (40 s design; was Ch.11 "Any hot city.") — crane pull-back from Downtown into darkness, then a dark matte
 // globe: only cities that are actually baked (/api/cities status=ready) are filled brass; the
 // roadmap cities are hollow rings labelled "roadmap". Roadmap line + go-to-market lines.
 import { craneRig, orbitRig, type RigState } from "@/three/rigs";
@@ -46,7 +46,7 @@ export const ch11: ChapterFn = (t, data) => {
     fade,
     globe: globe * ramp(s, CH11.globe0, CH11.globe0 + 2),
     overlays: [
-      { kind: "title", text: "Any hot city.", opacity: win(s, 0.5, 4.5, 1, 1), size: "card" },
+      { kind: "title", text: "Any city.", opacity: win(s, 0.5, 4.5, 1, 1), size: "card" },
       { kind: "globelabels", opacity: win(s, CH11.globe0 + 1.5, CH11_DUR + 1, 1.2, 0.01) },
       { kind: "roadmap", opacity: win(s, CH11.globe0 + 3, CH11_DUR + 1, 1.2, 0.01), progress: ramp(s, CH11.globe0 + 3, CH11.globe0 + 12) },
     ],

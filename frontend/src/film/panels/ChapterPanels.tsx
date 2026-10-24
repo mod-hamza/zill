@@ -1,5 +1,6 @@
 "use client";
-// Panels for chapters 8–12. Every number comes from FilmData (hero.json scenarios, recorded agent
+// Panels for the agent, who-pays, evidence, any-city and closing chapters (new pivot panels live in
+// PivotPanels.tsx). Every number comes from FilmData (hero.json scenarios, recorded agent
 // sessions, meta.json, test_results.json, /api/route for the concierge walks); text that is a PRD
 // business hypothesis is labelled as such; market sizes are [TEAM TO FILL] placeholders.
 import { colors } from "@/design/tokens";
@@ -9,6 +10,7 @@ import { personaScenarios } from "../chapters/ch08";
 import { closingLine, TEAM } from "../chapters/ch12";
 import { payloadOf, timeline } from "../replay";
 import type { FilmData, FrameState, OverlayItem } from "../types";
+import { PivotPanels } from "./PivotPanels";
 
 const n0 = (v: number) => Math.round(v).toLocaleString("en-GB");
 const min1 = (s: number) => (s / 60).toFixed(1);
@@ -236,11 +238,16 @@ function Vignette({ o, data }: { o: Extract<OverlayItem, { kind: "vignette" }>; 
   );
 }
 
+// Pricing hypotheses (PIVOT_PLAN 4 + 8; team to validate). Company names are TARGET customers only.
 const REVENUE = [
-  ["Hotels / hospitality / tourism boards", "Guests complain about heat, avoid walking, miss attractions", "Concierge widget, white-label", "Per-property monthly SaaS; tourism board = annual licence"],
-  ["Delivery / micro-mobility fleets", "Rider heat stress, productivity loss, incidents", "Fleet dashboard + rider app", "Per active rider per month, or per-route API call"],
-  ["Outdoor-worker employers", "Heat illness risk; UAE midday-break compliance", "Crew shift planner", "Per site per month"],
-  ["Individuals", "Heat, convenience", "Free consumer app", "Free (acquisition)"],
+  ["Delivery & quick-commerce fleets", "Rider heat stress, incidents, lost productivity (targets: e.g. Talabat, Deliveroo, Careem)", "Heat-aware routing API, fleet dashboard", "Per active rider per month, or per API call"],
+  ["Hotels & tourism boards", "Guests avoid walking in the heat", "Concierge widget, white-label", "Per property per month; board licence"],
+  ["Outdoor-worker employers", "Heat illness; UAE midday-break compliance", "Crew shift planner", "Per site per month"],
+  ["Municipalities & city planners", "Where to plant trees or add shade", "Planning analytics (B2G)", "City licence"],
+  ["Schools, elderly care, events", "Safe walking and waiting in heat or cold", "Shade and sun plans for sites and venues", "Per site or per event"],
+  ["Corporate well-being & insurers", "Daylight-poor winters, employee well-being", "Daylight-walks programme + reports", "Per employee per year"],
+  ["Cold and dark cities", "Short winter days, low mood", "Sun mode + city partnership", "City licence"],
+  ["Individuals", "Comfort, heat, daylight", "Free app (optional premium)", "Free"],
 ];
 
 function Revenue({ o }: { o: Extract<OverlayItem, { kind: "revenue" }> }) {
@@ -259,12 +266,12 @@ function Revenue({ o }: { o: Extract<OverlayItem, { kind: "revenue" }> }) {
         </thead>
         <tbody>
           {REVENUE.map((r, i) => (
-            <tr key={r[0]} style={{ opacity: Math.min(1, Math.max(0, o.progress * 5 - i)) }}>
+            <tr key={r[0]} style={{ opacity: Math.min(1, Math.max(0, o.progress * (REVENUE.length + 1) - i)) }}>
               <td className="font-display">{r[0]}</td>
               <td>{r[1]}</td>
               <td>{r[2]}</td>
               <td>{r[3]}</td>
-              <td>{i < 3 ? <ToFill what={`market size: ${r[0]}`} /> : "—"}</td>
+              <td>{i < REVENUE.length - 1 ? <ToFill what={`market size: ${r[0]}`} /> : "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -304,12 +311,12 @@ function FieldTest({ o, data }: { o: Extract<OverlayItem, { kind: "fieldtest" }>
 }
 
 function Roadmap({ o }: { o: Extract<OverlayItem, { kind: "roadmap" }> }) {
-  const steps = ["Downtown prototype", "UAE cities", "Global open-data pipeline"];
+  const steps = ["Dubai + Oslo baked", "Gulf and Nordic pilots", "Global open-data pipeline"];
   const gtm = [
-    "Free consumer app for reach and data",
-    "Hotels and tourism boards: concierge widget",
-    "Delivery fleets: per-rider routing API",
-    "Outdoor employers: crew shift planner",
+    "Free consumer app, no ads, for reach",
+    "Dubai: one delivery fleet and one hotel pilot",
+    "A winter sun-mode pilot with one northern city",
+    "Cities: shade planning analytics",
   ];
   return (
     <>
@@ -366,6 +373,6 @@ export function ChapterPanels({ o, data }: { o: OverlayItem; data: FilmData; fra
     case "closing":
       return <Closing o={o} />;
     default:
-      return null;
+      return <PivotPanels o={o} data={data} />;
   }
 }

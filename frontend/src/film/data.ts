@@ -4,20 +4,25 @@
 // scripts/sync-film-data.mjs because the API has no endpoint for replay bodies).
 import { create } from "zustand";
 import type { Object3D } from "three";
-import { api, type Route, type ScenariosJson } from "@/lib/api";
+import { api, type CityMeta, type Route, type ScenariosJson } from "@/lib/api";
 import { assetUrl } from "@/lib/assets";
 import { routePolyline } from "@/lib/routeGeom";
+import { DEFAULT_TZ, hhmmToMinutes, localIso } from "@/lib/sun";
 import { useCity } from "@/state/city";
+import { SHADE_ROUTE } from "./chapters/directions";
 import { authorFlyPath } from "@/three/AppDrivers";
 import type { V3 } from "@/three/rigs";
 import type {
   AcLinkStory,
   BuildLogRow,
+  Directions,
+  Facts,
   FilmData,
   HeroScenario,
   HotelWalk,
   Replay,
   RouteGeo,
+  RouteSet,
   TestResults,
   Weather,
 } from "./types";
@@ -142,6 +147,71 @@ export function pickStreet(route: Route): {
   return { labelSegs, focus: { x: cx, z: cz, bearing: away } };
 }
 
+const sameRoute = (a: Route, b: Route) =>
+  Math.abs(a.stats.sun_exposure_s - b.stats.sun_exposure_s) < 1 &&
+  Math.abs(a.stats.distance_m - b.stats.distance_m) < 1;
+
+/** documented rule for the Ch.8 pair (also in docs/DECISIONS.md) */
+export const DIRECTIONS_RULE =
+  "First Dubai sun scenario (hero.json `sun`, in file order) whose shade-mode best route differs from its fastest route";
+
+/**
+ * Ch.8 "Two directions": for each Dubai sun scenario in file order, ask the engine for the
+ * shade-mode routes of the SAME trip at the SAME minute; take the first scenario where shade mode
+ * actually picks a different street from the fastest (so both directions are visible).
+ */
+async function loadDirections(
+  cityId: string,
+  meta: CityMeta,
+  sunScenarios: HeroScenario[],
+): Promise<Directions | null> {
+  if (!sunScenarios.length) return null;
+  for (const sc of sunScenarios) {
+    if (!sc.sunniest) continue;
+    const dateIso = meta.dates[sc.date_id] ?? sc.date_id;
+    const departIso = localIso(dateIso, hhmmToMinutes(sc.depart), meta.timezone || DEFAULT_TZ);
+    const r = await j<{ coolest?: Route; best?: Route }>("/api/route", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        city: cityId,
+        mode: sc.mode,
+        origin: { lat: sc.origin.lat, lon: sc.origin.lon, node: sc.origin.node },
+        dest: { lat: sc.dest.lat, lon: sc.dest.lon, node: sc.dest.node },
+        depart_at: departIso,
+        date_key: sc.date_id,
+        lambdas: [0, 1, 3],
+        preference: "shade",
+      }),
+    });
+    const shade = r?.coolest ?? r?.best ?? null;
+    if (shade && !sameRoute(shade, sc.fastest)) return { scenario: sc, shade, rule: DIRECTIONS_RULE };
+  }
+  const first = sunScenarios.find((s) => s.sunniest) ?? null;
+  return first ? { scenario: first, shade: null, rule: DIRECTIONS_RULE } : null;
+}
+
+function setFrom(
+  sc: HeroScenario,
+  city: string,
+  fastest: Route,
+  coolest: Route,
+  preference: "shade" | "sun",
+  filmColors?: RouteSet["filmColors"],
+): RouteSet {
+  return {
+    fastest,
+    balanced: sc.balanced,
+    coolest,
+    preference,
+    origin: sc.origin,
+    dest: sc.dest,
+    date_key: sc.date_id,
+    city,
+    ...(filmColors ? { filmColors } : {}),
+  };
+}
+
 type DataStore = {
   data: FilmData | null;
   status: "idle" | "loading" | "ready" | "error";
@@ -184,7 +254,7 @@ export const useFilmData = create<DataStore>((set, get) => ({
         const policy = manifest.includes("policy_uae_outdoor_work.json")
           ? await j<FilmData["policy"]>("/film-data/policy_uae_outdoor_work.json")
           : null;
-        const [replayList, weather, tests, bake, notes, field, cities] = await Promise.all([
+        const [replayList, weather, tests, bake, notes, field, cities, facts] = await Promise.all([
           Promise.all(
             replayIds.map((id) => j<Replay>(`/film-data/replays/${id}.json`)),
           ),
@@ -198,6 +268,7 @@ export const useFilmData = create<DataStore>((set, get) => ({
           j<{ id: string; name: string; status?: string; origin?: { lat: number; lon: number } }[]>(
             "/api/cities",
           ),
+          manifest.includes("facts.json") ? j<Facts>("/film-data/facts.json") : Promise.resolve(null),
         ]);
         const replays: Record<string, Replay> = {};
         replayIds.forEach((id, i) => {
@@ -242,6 +313,28 @@ export const useFilmData = create<DataStore>((set, get) => ({
             if (r?.coolest) hotelWalks.push({ dest: dests[i]!.p.name, route: r.coolest });
           });
         }
+        set({ progress: 0.7 });
+
+        // Ch.8 "Two directions" (Dubai sun scenarios + engine shade routes for the same trips)
+        const sunScenarios = ((sc?.sun?.scenarios ?? []) as HeroScenario[]).filter((s) => !!s.sunniest);
+        const directions = await loadDirections(cityId, meta, sunScenarios);
+        // Ch.9 "Winter in Oslo": the baked second city, its hero_oslo.json winter sun scenario
+        const OSLO = "oslo";
+        let oslo: FilmData["oslo"] = null;
+        if ((cities ?? []).some((c) => c.id === OSLO && c.status === "ready")) {
+          const [om, os] = await Promise.all([
+            j<CityMeta>(assetUrl(OSLO, "meta.json")),
+            api.scenarios(OSLO),
+          ]);
+          const list = ((os?.sun?.scenarios ?? []) as HeroScenario[]).filter((s) => !!s.sunniest);
+          const winter = list.find((s) => s.date_id === "winter") ?? list[0];
+          if (om && winter) {
+            oslo = { meta: om, scenario: winter };
+            // warm the browser cache so the city switch inside the Film is quick (no await)
+            for (const f of ["buildings.glb", "graph.json", "trees.json", "pois.json", `shade/${winter.date_id}/index.json`])
+              void fetch(assetUrl(OSLO, f)).catch(() => null);
+          }
+        }
         set({ progress: 0.75 });
 
         const buildings = city.buildings;
@@ -256,6 +349,26 @@ export const useFilmData = create<DataStore>((set, get) => ({
               ? heroGeo
               : { fastest: routeGeo(s.fastest, buildings), coolest: routeGeo(s.coolest, buildings) };
         const street = pickStreet(hero.coolest);
+        // extra route sets (Ch.8 / Ch.9) and their geometry for travellers and framing
+        const routeSets: Record<string, RouteSet> = {};
+        if (directions?.scenario.sunniest) {
+          const d = directions.scenario;
+          const sun = d.sunniest!;
+          routeSets.dir_sun = setFrom(d, cityId, d.fastest, sun, "sun");
+          scenarioGeo.dir_sun = { fastest: routeGeo(d.fastest, buildings), coolest: routeGeo(sun, buildings) };
+          if (directions.shade) {
+            routeSets.dir_shade = setFrom(d, cityId, d.fastest, directions.shade, "shade", { coolest: SHADE_ROUTE });
+            routeSets.dir_both = setFrom(d, cityId, directions.shade, sun, "sun", { fastest: SHADE_ROUTE });
+            scenarioGeo.dir_shade = { fastest: scenarioGeo.dir_sun.fastest, coolest: routeGeo(directions.shade, buildings) };
+            scenarioGeo.dir_both = { fastest: scenarioGeo.dir_shade.coolest, coolest: scenarioGeo.dir_sun.coolest };
+          }
+        }
+        if (oslo?.scenario.sunniest) {
+          const o = oslo.scenario;
+          routeSets.oslo_sun = setFrom(o, OSLO, o.fastest, o.sunniest!, "sun");
+          // Oslo buildings are not loaded yet: flat fly paths (the chapter uses aerial shots only)
+          scenarioGeo.oslo_sun = { fastest: routeGeo(o.fastest, null), coolest: routeGeo(o.sunniest!, null) };
+        }
         let acLinkArea: FilmData["acLinkArea"] = null;
         if (city.graph) {
           const e = city.graph.raw.edges;
@@ -300,6 +413,14 @@ export const useFilmData = create<DataStore>((set, get) => ({
             lon: c.origin?.lon ?? meta.origin.lon,
           })),
           burjH: burj,
+          directions,
+          oslo,
+          routeSets,
+          cityDates: {
+            [cityId]: meta.dates,
+            ...(oslo ? { [OSLO]: oslo.meta.dates } : {}),
+          },
+          facts: facts ?? null,
         };
         set({ data, status: "ready", progress: 1 });
       } catch (e) {

@@ -4,6 +4,7 @@
 import { ActivityFeed } from "@/app-ui/feed";
 import { colors } from "@/design/tokens";
 import { fmtSigned } from "@/lib/format";
+import { useCity } from "@/state/city";
 import { useFilmData } from "./data";
 import { DepartureChart } from "./charts/DepartureChart";
 import { CHAPTERS } from "./master";
@@ -27,6 +28,11 @@ function Title({ o, chapter }: { o: Extract<OverlayItem, { kind: "title" }>; cha
     return (
       <div className="film-hero-title" style={{ opacity: o.opacity }} aria-hidden>
         <div className="font-display film-hero-name">{o.text}</div>
+        {o.ar ? (
+          <div className="font-display film-hero-ar" lang="ar" dir="rtl" style={{ opacity: o.subOpacity ?? 1 }}>
+            {o.ar}
+          </div>
+        ) : null}
         {o.sub ? (
           <p className="font-display" style={{ opacity: o.subOpacity ?? 1 }}>
             {o.sub}
@@ -268,6 +274,8 @@ export function Overlay() {
   const frame = useFilm((s) => s.frame);
   const data = useFilmData((s) => s.data);
   const hidden = useFilm((s) => s.chromeHidden);
+  // the frame's city must be on screen: veil while the shared scene switches city (a load gate)
+  const cityReady = useCity((s) => !!frame && s.cityId === frame.city && s.loaded);
   if (!frame || !data) return null;
   const vis = frame.overlays.filter((o) => o.opacity > 0.002);
   const scrim = Math.max(
@@ -324,7 +332,7 @@ export function Overlay() {
             return <ChapterPanels key={k} o={o} data={data} frame={frame} />;
         }
       })}
-      <div className="film-fade" style={{ opacity: frame.fade }} />
+      <div className="film-fade" style={{ opacity: cityReady ? frame.fade : 1 }} />
       {hidden ? null : null}
     </div>
   );

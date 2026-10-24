@@ -5,7 +5,8 @@ import { describe, expect, it } from "vitest";
 import { CHAPTERS, CHAPTER_STARTS, TOTAL_S, chapterAt, evaluate } from "./master";
 import { pickStreet, routeGeo } from "./data";
 import { travel } from "./helpers";
-import type { FilmData, HeroScenario, Replay } from "./types";
+import { FILM_HOME_CITY, type FilmData, type HeroScenario, type Replay, type RouteSet } from "./types";
+import { osloCaption } from "./chapters/oslo";
 
 const ROOT = join(__dirname, "..", "..", "..");
 const read = (p: string) => JSON.parse(readFileSync(join(ROOT, p), "utf8"));
@@ -22,6 +23,25 @@ function loadData(): FilmData {
   for (const f of readdirSync(join(ROOT, "backend", "replay")).filter((x) => x.endsWith(".json")))
     replays[f.replace(".json", "")] = read(`backend/replay/${f}`);
   const street = pickStreet(hero.coolest);
+  // sun scenarios: Dubai pair (shade side stubbed with the balanced route: tests do not call the API)
+  const sunSc = (hj.sun?.scenarios ?? []) as HeroScenario[];
+  const d = sunSc.find((x) => x.id === "office_lunch_walk") ?? sunSc[0]!;
+  const oj = read("data/scenarios/hero_oslo.json");
+  const os = (oj.sun.scenarios as HeroScenario[]).find((x) => x.date_id === "winter")!;
+  const set = (sc: HeroScenario, city: string, f: HeroScenario["fastest"], c: HeroScenario["fastest"], p: "shade" | "sun"): RouteSet => ({
+    fastest: f, balanced: sc.balanced, coolest: c, preference: p, origin: sc.origin, dest: sc.dest, date_key: sc.date_id, city,
+  });
+  const routeSets: Record<string, RouteSet> = {
+    dir_shade: set(d, FILM_HOME_CITY, d.fastest, d.balanced, "shade"),
+    dir_sun: set(d, FILM_HOME_CITY, d.fastest, d.sunniest!, "sun"),
+    dir_both: set(d, FILM_HOME_CITY, d.balanced, d.sunniest!, "sun"),
+    oslo_sun: set(os, "oslo", os.fastest, os.sunniest!, "sun"),
+  };
+  scenarioGeo.dir_shade = geo({ ...d, coolest: d.balanced });
+  scenarioGeo.dir_sun = geo({ ...d, coolest: d.sunniest! });
+  scenarioGeo.dir_both = { fastest: scenarioGeo.dir_shade.coolest, coolest: scenarioGeo.dir_sun.coolest };
+  scenarioGeo.oslo_sun = geo({ ...os, coolest: os.sunniest! });
+  const osloMeta = read("data/cities/oslo/meta.json");
   return {
     meta,
     hero,
@@ -43,20 +63,25 @@ function loadData(): FilmData {
     policy: null,
     bakedCities: [{ id: "dubai_downtown", name: "Downtown Dubai", lat: 25.2, lon: 55.27 }],
     burjH: 828,
+    directions: { scenario: d, shade: d.balanced, rule: "test" },
+    oslo: { meta: osloMeta, scenario: os },
+    routeSets,
+    cityDates: { [FILM_HOME_CITY]: meta.dates, oslo: osloMeta.dates },
+    facts: null,
   };
 }
 
 const data = loadData();
 
 describe("film master timeline", () => {
-  it("has 12 chapters summing to 780 s (13:00)", () => {
-    expect(CHAPTERS).toHaveLength(12);
-    expect(TOTAL_S).toBe(780);
-    expect(CHAPTER_STARTS[11]! + CHAPTERS[11]!.dur_s).toBe(780);
+  it("has 15 chapters summing to 790 s (13:10, about the pre-pivot 13:00)", () => {
+    expect(CHAPTERS).toHaveLength(15);
+    expect(TOTAL_S).toBe(790);
+    expect(CHAPTER_STARTS[14]! + CHAPTERS[14]!.dur_s).toBe(790);
   });
 
   it("evaluate(t) is pure: same t twice -> deep-equal frames, in any order", () => {
-    const ts = Array.from({ length: 160 }, (_, i) => ((i * 7919) % 7800) / 10);
+    const ts = Array.from({ length: 160 }, (_, i) => ((i * 7919) % (TOTAL_S * 10)) / 10);
     const a = ts.map((t) => JSON.stringify(evaluate(t, data)));
     const b = [...ts].reverse().map((t) => JSON.stringify(evaluate(t, data))).reverse();
     expect(a).toEqual(b);
@@ -64,7 +89,7 @@ describe("film master timeline", () => {
 
   it("chapter index is monotonic in t and frames are finite", () => {
     let prev = -1;
-    for (let t = 0; t <= 780; t += 0.73) {
+    for (let t = 0; t <= TOTAL_S; t += 0.73) {
       const f = evaluate(t, data);
       expect(f.chapter).toBeGreaterThanOrEqual(prev);
       expect(f.chapter).toBe(chapterAt(t));
@@ -76,7 +101,7 @@ describe("film master timeline", () => {
 
   it("no frame shows more than 2 text overlays besides HUD/panels", () => {
     const TEXT = new Set(["title", "caption", "command", "pipeline", "honest", "closing"]);
-    for (let t = 0; t <= 780; t += 0.5) {
+    for (let t = 0; t <= TOTAL_S; t += 0.5) {
       const n = evaluate(t, data).overlays.filter((o) => TEXT.has(o.kind) && o.opacity > 0.05).length;
       expect(n, `t=${t}`).toBeLessThanOrEqual(2);
     }
@@ -88,5 +113,35 @@ describe("film master timeline", () => {
     const end = evaluate(CHAPTER_STARTS[1]! + CHAPTERS[1]!.dur_s - 0.01, data);
     const hud = end.overlays.find((o) => o.kind === "hud");
     expect(hud && hud.kind === "hud" ? hud.hud.sunS : -1).toBeCloseTo(data.hero.fastest.stats.sun_exposure_s, 6);
+  });
+
+  it("only the Oslo chapter switches the scene to Oslo, at Oslo's own date", () => {
+    const io = CHAPTERS.findIndex((c) => c.id === "oslo");
+    for (let t = 0; t <= TOTAL_S; t += 1.1) {
+      const f = evaluate(t, data);
+      expect(f.city).toBe(f.chapter === io ? "oslo" : FILM_HOME_CITY);
+    }
+    const mid = evaluate(CHAPTER_STARTS[io]! + 30, data);
+    expect(mid.routes.result).toBe("oslo_sun");
+    expect(mid.sun.dateKey).toBe(data.oslo!.scenario.date_id);
+  });
+
+  it("Oslo caption and note quote the scenario's own sun height, shadow and UV", () => {
+    const w = data.oslo!.scenario.wellbeing!;
+    const cap = osloCaption(data)!;
+    expect(cap).toContain(`${w.daylight_window!.sun_alt_deg.toFixed(1)}°`);
+    expect(cap).toContain(w.daylight_window!.shadow_text);
+    const io = CHAPTERS.findIndex((c) => c.id === "oslo");
+    const end = evaluate(CHAPTER_STARTS[io]! + CHAPTERS[io]!.dur_s - 1, data);
+    const note = end.overlays.find((o) => o.kind === "caption" && o.opacity > 0.5);
+    expect(note && note.kind === "caption" ? note.text : "").toContain(`UV ${w.uv!.index!.toFixed(1)}`);
+  });
+
+  it("Two directions shows shade, then sun, then both route sets", () => {
+    const i = CHAPTERS.findIndex((c) => c.id === "directions");
+    const at = (s: number) => evaluate(CHAPTER_STARTS[i]! + s * (CHAPTERS[i]!.dur_s / 50), data).routes.result;
+    expect(at(10)).toBe("dir_shade");
+    expect(at(25)).toBe("dir_sun");
+    expect(at(45)).toBe("dir_both");
   });
 });

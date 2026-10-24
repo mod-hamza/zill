@@ -268,6 +268,8 @@ function styleFor(
   view: RouteView,
   selected: RouteKey,
   bestColor: string = colors.brass,
+  /** Film-only presentation colour override for this route (RouteResponse.filmColors) */
+  override?: string,
 ): Style | null {
   const isSel = k === selected;
   if (view === "analysis") {
@@ -295,11 +297,12 @@ function styleFor(
   }
   if (k === "balanced" && !isSel) return null;
   const color =
-    k === "fastest"
+    override ??
+    (k === "fastest"
       ? colors.slate
       : k === "coolest"
         ? bestColor
-        : colors.bronze;
+        : colors.bronze);
   return {
     color,
     ramp: false,
@@ -337,7 +340,7 @@ export function Routes({
         const p = polys[k];
         const r = result[k];
         if (!p || !r) return null;
-        const st = styleFor(k, view, selected, bestColor);
+        const st = styleFor(k, view, selected, bestColor, result.filmColors?.[k]);
         if (!st) return null;
         return (
           <RouteRibbon

@@ -102,7 +102,7 @@ export const ch04: ChapterFn = (t, data) => {
         kind: "pipeline",
         progress: rampUI(s, 77, 85),
         opacity: win(s, 77, 90.5, 1.2, 0.01),
-        line: "Open data in. Any hot city out.",
+        line: "Open data in. Any city out.",
       },
       { kind: "title", text: "A city, built in seconds.", opacity: win(s, 1.5, 5.5, 1, 1), size: "card" },
     ],

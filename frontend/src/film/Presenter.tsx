@@ -18,7 +18,10 @@ export function Presenter() {
   if (!on) return null;
   const c = CHAPTERS[ch]!;
   const next = CHAPTERS[ch + 1];
-  const nextNote = next ? (notes?.[String(ch + 2)]?.[0] ?? `Next: ${next.title}`) : "End: press A for the live app";
+  // SPEAKER_NOTES.md predates the renumbering: each chapter names its notes section (or has none)
+  const nextNote = next
+    ? ((next.notes ? notes?.[String(next.notes)]?.[0] : undefined) ?? `Next: ${next.title}`)
+    : "End: press A for the live app";
   const target = CHAPTER_STARTS[ch]! + c.dur_s;
   return (
     <div className="film-presenter tabular">

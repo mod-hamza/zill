@@ -3,7 +3,7 @@ import type { GraphJson, Route } from "./api";
 import { exposureColor, hexToLinear, linearToHex } from "./color";
 import { buildRibbons, CityGraph } from "./graph";
 import { pointAt, progressAt, routePolyline } from "./routeGeom";
-import { lightingFor } from "@/three/lighting";
+import { lightingFor, lowSunWeight, noonAltitudeDeg } from "@/three/lighting";
 
 describe("exposure ramp (PRD 12.3)", () => {
   it("hits the token stops exactly", () => {
@@ -147,5 +147,29 @@ describe("lighting model", () => {
     expect(night.dusk).toBeGreaterThan(0.9);
     expect(noon.dusk).toBe(0);
     expect(noon.groundSun[0]).toBeGreaterThan(noon.groundShade[0]);
+  });
+});
+
+describe("low-sun day grade (generic, by the day's noon altitude)", () => {
+  // warmth = how much redder than blue the sun light is (linear RGB)
+  const warmth = (rgb: [number, number, number]) => rgb[0] / Math.max(1e-6, rgb[2]);
+  it("computes the noon altitude from latitude and date", () => {
+    expect(noonAltitudeDeg(59.91, "2026-12-21")).toBeCloseTo(6.7, 0);
+    expect(noonAltitudeDeg(25.2, "2026-06-21")).toBeGreaterThan(87);
+    expect(noonAltitudeDeg(25.2, "2026-10-24")).toBeGreaterThan(50);
+  });
+  it("is off for tropical / hot-city days and at the horizon, full at a midwinter high-latitude noon", () => {
+    expect(lowSunWeight(7, noonAltitudeDeg(25.2, "2026-10-24"))).toBe(0);
+    expect(lowSunWeight(7, noonAltitudeDeg(25.2, "2026-01-15"))).toBe(0);
+    expect(lowSunWeight(6.3, 6.7)).toBeGreaterThan(0.95);
+    expect(lowSunWeight(1, 6.7)).toBeLessThan(0.05);
+    expect(lowSunWeight(-2, 6.7)).toBe(0);
+  });
+  it("makes a 7 deg midwinter noon sun paler than a 7 deg golden hour, which is unchanged", () => {
+    const golden = lightingFor(7, 250);
+    expect(lightingFor(7, 250, 60)).toEqual(golden);
+    const winter = lightingFor(6.5, 180, 6.7);
+    expect(warmth(winter.sunColor)).toBeLessThan(warmth(golden.sunColor) * 0.8);
+    expect(winter.saturation).toBeLessThan(golden.saturation);
   });
 });

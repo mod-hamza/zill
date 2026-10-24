@@ -188,6 +188,9 @@ export type RouteResponse = {
   best?: Route;
   preference?: Preference;
   wellbeing?: Wellbeing | null;
+  /** Film only: per-route presentation colour overrides (e.g. a shade route drawn brass in the
+   *  fastest slot next to a sunniest route); the App never sets it */
+  filmColors?: Partial<Record<"fastest" | "balanced" | "coolest", string>>;
   origin: Place;
   dest: Place;
   date_key: string;

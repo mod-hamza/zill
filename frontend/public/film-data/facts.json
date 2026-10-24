@@ -1,0 +1,149 @@
+{
+ "costs": {
+  "source": "docs/COSTS.md",
+  "vps_price": "[TEAM TO FILL — Contabo plan price]",
+  "go_usd_month": 10,
+  "goplus_usd_month": 40,
+  "llm": [
+   {
+    "model": "kimi-k3",
+    "go_requests_month": 490,
+    "go_conversations_month": 56
+   },
+   {
+    "model": "kimi-k3.1-pro",
+    "go_requests_month": 735,
+    "go_conversations_month": 84
+   },
+   {
+    "model": "glm-5.3",
+    "go_requests_month": 1080,
+    "go_conversations_month": 124
+   },
+   {
+    "model": "deepseek-v4-pro",
+    "go_requests_month": 5200,
+    "go_conversations_month": 598
+   },
+   {
+    "model": "minimax-m3.1-flash",
+    "go_requests_month": 19380,
+    "go_conversations_month": 2228
+   },
+   {
+    "model": "glm-5.3-flash",
+    "go_requests_month": 31580,
+    "go_conversations_month": 3630
+   },
+   {
+    "model": "deepseek-v4.1-flash",
+    "go_requests_month": 173330,
+    "go_conversations_month": 19900
+   }
+  ],
+  "requests_per_conversation": 8.7,
+  "local_load": [
+   {
+    "users": 1,
+    "requests": 34,
+    "rps": 1.7,
+    "p50_ms": 21,
+    "p95_ms": 135,
+    "errors": 0
+   },
+   {
+    "users": 2,
+    "requests": 71,
+    "rps": 3.4,
+    "p50_ms": 28,
+    "p95_ms": 128,
+    "errors": 0
+   },
+   {
+    "users": 5,
+    "requests": 186,
+    "rps": 8.9,
+    "p50_ms": 28,
+    "p95_ms": 158,
+    "errors": 0
+   },
+   {
+    "users": 10,
+    "requests": 358,
+    "rps": 17.4,
+    "p50_ms": 43,
+    "p95_ms": 207,
+    "errors": 0
+   },
+   {
+    "users": 20,
+    "requests": 560,
+    "rps": 26.4,
+    "p50_ms": 224,
+    "p95_ms": 596,
+    "errors": 0
+   },
+   {
+    "users": 40,
+    "requests": 378,
+    "rps": 17.1,
+    "p50_ms": 1723,
+    "p95_ms": 2604,
+    "errors": 0
+   }
+  ],
+  "live_load": [
+   {
+    "users": 1,
+    "requests": 15,
+    "rps": 1.2,
+    "p50_ms": 245,
+    "p95_ms": 620,
+    "errors": 0
+   },
+   {
+    "users": 5,
+    "requests": 75,
+    "rps": 5.9,
+    "p50_ms": 222,
+    "p95_ms": 758,
+    "errors": 0
+   },
+   {
+    "users": 10,
+    "requests": 133,
+    "rps": 10.4,
+    "p50_ms": 323,
+    "p95_ms": 1048,
+    "errors": 0
+   },
+   {
+    "users": 20,
+    "requests": 223,
+    "rps": 16.9,
+    "p50_ms": 540,
+    "p95_ms": 1607,
+    "errors": 0
+   }
+  ],
+  "shade_bake_s": 487.5,
+  "shade_bake_dates": "four",
+  "data_bake_s": 7.5
+ },
+ "security": {
+  "source": "docs/SECURITY.md",
+  "tests": 16,
+  "body_cap_kb": 64
+ },
+ "accuracy": {
+  "source": "docs/ACCURACY.md",
+  "shadow_step_min": 10,
+  "grid_m": 2,
+  "departure_step_min": 5,
+  "weather_hourly": true,
+  "sun_within_deg": 0.5,
+  "heights_fallback_pct": 79,
+  "weekly_rebake": "planned",
+  "field_validation": "pending"
+ }
+}

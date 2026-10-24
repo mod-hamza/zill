@@ -1,5 +1,5 @@
 // Backup film recorder (PRD 17.6): Playwright video of the autoplaying Film at 1920x1080.
-//   npx tsx scripts/record-film.ts [--out ../docs/deck_assets/backup_film] [--rate 1] [--seconds 780]
+//   npx tsx scripts/record-film.ts [--out ../docs/deck_assets/backup_film] [--rate 1] [--seconds 790]
 //                                  [--swiftshader] [--base http://localhost:3000] [--no-mp4] [--crf 20]
 // Realtime (rate 1) takes ~13 min: run it in the background. `--rate N` uses the film's `?rate=N`
 // QA speed-up (only for smoke-testing the recorder; a real backup must be realtime).
@@ -22,7 +22,9 @@ import {
   waitReady,
 } from "./record-common";
 
-const FILM_NOMINAL_S = 780; // PRD 14.2, sum of the chapter durations (src/film/master.ts)
+import { TOTAL_S } from "../src/film/master";
+
+const FILM_NOMINAL_S = TOTAL_S; // sum of the chapter durations (src/film/master.ts)
 
 async function main() {
   await ensureServer();

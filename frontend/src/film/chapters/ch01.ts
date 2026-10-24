@@ -1,7 +1,7 @@
 // Ch.1 "Dubai, 13:00." (40 s) — black -> pre-dawn blue-umber -> sunrise on the hackathon date,
-// 05:40 -> 07:10 time-lapse, slow CraneRig from the south-west towards the skyline. Title *Zill*,
+// 05:40 -> 07:10 time-lapse, slow CraneRig from the south-west towards the skyline. Title *Zill & Shams* (+ Arabic),
 // then the one-liner; caption "The sun is the first thing you plan around."
-import { NAME, TAGLINE } from "@/brand";
+import { ARABIC, NAME, TAGLINE } from "@/brand";
 import { craneRig } from "@/three/rigs";
 import { ramp, rampIO, win } from "../ease";
 import type { ChapterFn } from "../types";
@@ -36,6 +36,7 @@ export const ch01: ChapterFn = (t) => {
       {
         kind: "title",
         text: NAME,
+        ar: ARABIC,
         sub: TAGLINE,
         opacity: win(s, 7, 27, 2.4, 2),
         subOpacity: win(s, 11.5, 27, 2, 2),

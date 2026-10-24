@@ -10,7 +10,7 @@ export const CH12_DUR = 35;
 export const TEAM = "Abhamzay: Mohammed Hamza Ansari · Abhay Preethan";
 
 export function closingLine() {
-  return `${NAME}: the agent that routes you through the shade.`;
+  return `${NAME}: the agent that plans your walk around the sun.`;
 }
 
 export const ch12: ChapterFn = (t, data) => {

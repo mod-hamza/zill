@@ -1,11 +1,13 @@
 {
  "files": [
   "replays/crew_shuttle.json",
+  "replays/daylight_seeker.json",
   "replays/replan_demo.json",
   "replays/rider_cycle.json",
   "replays/tourist_walk.json",
   "test_results.json",
   "policy_uae_outdoor_work.json",
-  "notes.json"
+  "notes.json",
+  "facts.json"
  ]
 }

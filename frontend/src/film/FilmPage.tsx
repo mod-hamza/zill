@@ -1,7 +1,7 @@
 "use client";
 // /film: tall scroll container + keyboard controls + overlays. The canvas lives in the shared
 // stage layout; the frame loop (FilmWorld) lives inside it.
-//   Space autoplay · [ ] speed 0.85–1.15 · ←/→ chapter · 1–9,0,-,= chapters 1–12 · Esc pause
+//   Space autoplay · [ ] speed 0.85–1.15 · ←/→ chapter · 1–9,0,-,= chapters 1–12 (←/→ for 13–15) · Esc pause
 //   F fullscreen · T elapsed · H hide chrome · L low quality · A -> /app (city/date/time kept)
 //   ?qa=1&t=<s> (capture; sets window.__zillFrameReady) · &rate=<x> (QA autoplay speed)
 //   ?presenter=1 strip · ?ch=<n> start at chapter n · ?autoplay=1
@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { StillsFallback, webglAvailable } from "./StillsFallback";
 import { NAME, TAGLINE } from "@/brand";
 import { minutesToHHMM } from "@/lib/sun";
+import { useCity } from "@/state/city";
 import { useStage } from "@/state/stage";
 import { useSun } from "@/state/sun";
 import { useFilmData } from "./data";
@@ -18,6 +19,7 @@ import { Overlay } from "./Overlay";
 import { Presenter } from "./Presenter";
 import { attachScroll, PX_PER_S } from "./scroll";
 import { useFilm } from "./store";
+import { FILM_HOME_CITY } from "./types";
 import "./film.css";
 
 /** the "scroll to begin" cue fades out over the first film seconds (driven by t, not a timer) */
@@ -111,7 +113,9 @@ export function FilmPage() {
       } else if (k === "a" || k === "A") {
         const sun = useSun.getState();
         st.setPlaying(false);
-        router.push(`/app?date=${sun.dateKey}&time=${minutesToHHMM(sun.minutes)}`);
+        const city = useCity.getState().cityId;
+        const cq = city !== FILM_HOME_CITY ? `city=${encodeURIComponent(city)}&` : "";
+        router.push(`/app?${cq}date=${sun.dateKey}&time=${minutesToHHMM(sun.minutes)}`);
       }
     };
     window.addEventListener("keydown", onKey);

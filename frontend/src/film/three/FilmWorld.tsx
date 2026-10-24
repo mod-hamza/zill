@@ -15,7 +15,7 @@ import {
   Vector2,
   WebGLRenderTarget,
 } from "three";
-import { useCity } from "@/state/city";
+import { cityFromUrl, useCity } from "@/state/city";
 import { useRig } from "@/state/rig";
 import { useRoute } from "@/state/route";
 import { useStage } from "@/state/stage";
@@ -28,7 +28,7 @@ import { setIndoorAmount } from "@/three/useLighting";
 import { useFilmData } from "../data";
 import { evaluate, TOTAL_S } from "../master";
 import { JUMP_S, useFilm } from "../store";
-import type { FrameState } from "../types";
+import { FILM_HOME_CITY, type FrameState } from "../types";
 import { power2InOut } from "@/three/rigs";
 import { FilmExtras, travellerGroups } from "./FilmExtras";
 import { tickScroll } from "../scroll";
@@ -78,6 +78,10 @@ function FilmLoop() {
       useRoute.getState().setReveal({ fastest: 1, balanced: 1, coolest: 1 }, 1);
       useRoute.getState().clear();
       window.__zillFrameReady = false;
+      // leaving the Film (e.g. after scrubbing into Oslo): the scene follows the new URL's
+      // ?city= (the A key carries it), else the Film's home city
+      const want = cityFromUrl() ?? FILM_HOME_CITY;
+      if (useCity.getState().cityId !== want) void useCity.getState().load(want);
     };
   }, [camera]);
 
@@ -104,9 +108,15 @@ function FilmLoop() {
     window.__zillFilm = { t, chapter: f.chapter + 1 };
     tickScroll(performance.now());
 
-    // sun clock
+    // city: the Film switches the shared scene by id ("Winter in Oslo"); the overlay veils the
+    // frame until the city's assets are in (a load gate, not animation logic)
+    const city = useCity.getState();
+    if (city.cityId !== f.city) void city.load(f.city);
+
+    // sun clock (the date key resolves against the frame city's own preset dates)
     const sun = useSun.getState();
-    if (sun.dateKey !== f.sun.dateKey) sun.setDate(f.sun.dateKey, data.meta.dates[f.sun.dateKey]);
+    const iso = data.cityDates[f.city]?.[f.sun.dateKey];
+    if (sun.dateKey !== f.sun.dateKey || (iso && sun.dateIso !== iso)) sun.setDate(f.sun.dateKey, iso);
     if (Math.abs(sun.minutes - f.sun.minutes) > 1e-4) sun.setMinutes(f.sun.minutes);
     useStage.getState().setFrameT(t);
 
@@ -133,8 +143,10 @@ function FilmLoop() {
       lastRouteKey.current = rkey;
       if (!rkey) useRoute.setState({ result: null });
       else {
+        const set = data.routeSets[rkey];
         const sc = rkey === "hero" ? data.hero : data.scenarios.find((x) => x.id === rkey);
-        if (sc)
+        if (set) useRoute.setState({ result: set, a: null, b: null });
+        else if (sc)
           useRoute.setState({
             result: {
               fastest: sc.fastest,
@@ -169,8 +181,8 @@ function FilmLoop() {
       lastT.current = t;
       stable.current = 0;
     } else stable.current++;
-    const ready =
-      useCity.getState().loaded && useStage.getState().shadeReady && stable.current > 12;
+    const cs = useCity.getState();
+    const ready = cs.loaded && cs.cityId === f.city && useStage.getState().shadeReady && stable.current > 12;
     window.__zillFrameReady = ready;
   }, -50);
 

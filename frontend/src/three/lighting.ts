@@ -179,7 +179,46 @@ const addc = (a: RGB, b: RGB): RGB => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
 const GROUND_ALBEDO = scale(hexToLinear(colors.sand), 0.36);
 const SHADE = hexToLinear(colors.shade);
 
-export function lightingFor(altDeg: number, azDeg: number): Lighting {
+/**
+ * Sun altitude at local solar noon (deg) for an ISO date and latitude: 90 - |lat - declination|,
+ * declination from the standard day-of-year approximation (±0.5°, plenty for a colour grade).
+ */
+export function noonAltitudeDeg(latDeg: number, dateIso: string): number {
+  const d = new Date(`${dateIso.slice(0, 10)}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return 90;
+  const n = Math.floor((d.getTime() - Date.UTC(d.getUTCFullYear(), 0, 0)) / 86_400_000);
+  const decl = 23.44 * Math.sin((2 * Math.PI * (284 + n)) / 365);
+  return 90 - Math.abs(latDeg - decl);
+}
+
+// Low-sun day grade (generic, by the day's own sun height — never by city): when the sun's
+// highest point of the day is low (high-latitude winter), a 6–10° sun at midday is thin, pale
+// daylight, not a golden hour. Shift towards a cool, pale, slightly desaturated look, inside the
+// palette (slate / ivory greys; no blue neon). Sunrise/sunset on such days keep their warmth.
+const LOW_DAY = {
+  /** the grade is full when the day's noon altitude is <= full, gone when >= none (deg) */
+  full: 10,
+  none: 26,
+  sun: "#F4E6D2",
+  horizon: "#CDCBC4",
+  zenith: "#6E8092",
+  fog: "#B8BAB6",
+  hemiSky: "#98A3AC",
+  hemiGround: "#57534D",
+  tint: "#EFF0EE",
+} as const;
+
+/** 0..1 weight of the low-sun day grade for a sun at altDeg on a day whose noon altitude is noonAltDeg */
+export function lowSunWeight(altDeg: number, noonAltDeg: number): number {
+  const day = Math.max(0, Math.min(1, (LOW_DAY.none - noonAltDeg) / (LOW_DAY.none - LOW_DAY.full)));
+  if (day <= 0 || altDeg <= 0) return 0;
+  // how close to the day's highest sun we are: near noon -> full, near the horizon -> keep warmth
+  const r = altDeg / Math.max(0.5, noonAltDeg);
+  const x = Math.max(0, Math.min(1, (r - 0.35) / 0.55));
+  return day * x * x * (3 - 2 * x);
+}
+
+export function lightingFor(altDeg: number, azDeg: number, noonAltDeg = 90): Lighting {
   const alt = Math.max(
     KEYS[0]!.alt,
     Math.min(KEYS[KEYS.length - 1]!.alt, altDeg),
@@ -207,10 +246,28 @@ export function lightingFor(altDeg: number, azDeg: number): Lighting {
     tint = mix(tint, hexToLinear(DAWN_TINT), dawnW * 0.6);
   }
 
-  const sunColor = c((k) => k.sunColor);
-  const sunIntensity = n((k) => k.sunIntensity);
-  const hemiSky = c((k) => k.hemiSky);
-  const hemiIntensity = n((k) => k.hemiIntensity);
+  let sunColor = c((k) => k.sunColor);
+  let sunIntensity = n((k) => k.sunIntensity);
+  let hemiSky = c((k) => k.hemiSky);
+  let hemiIntensity = n((k) => k.hemiIntensity);
+  let zenith = c((k) => k.zenith);
+  let fog = c((k) => k.fog);
+  let hemiGround = c((k) => k.hemiGround);
+  let saturation = n((k) => k.saturation);
+  const w = lowSunWeight(altDeg, noonAltDeg);
+  if (w > 0) {
+    const L = (hex: string) => hexToLinear(hex);
+    sunColor = mix(sunColor, L(LOW_DAY.sun), 0.75 * w);
+    sunIntensity *= 1 - 0.12 * w;
+    horizon = mix(horizon, L(LOW_DAY.horizon), 0.75 * w);
+    zenith = mix(zenith, L(LOW_DAY.zenith), 0.6 * w);
+    fog = mix(fog, L(LOW_DAY.fog), 0.75 * w);
+    hemiSky = mix(hemiSky, L(LOW_DAY.hemiSky), 0.6 * w);
+    hemiIntensity *= 1 + 0.25 * w;
+    hemiGround = mix(hemiGround, L(LOW_DAY.hemiGround), 0.6 * w);
+    tint = mix(tint, L(LOW_DAY.tint), 0.85 * w);
+    saturation *= 1 - 0.22 * w;
+  }
   const sinAlt = Math.max(0, Math.sin((altDeg * Math.PI) / 180));
 
   const ambient = scale(hemiSky, hemiIntensity);
@@ -226,20 +283,21 @@ export function lightingFor(altDeg: number, azDeg: number): Lighting {
   );
 
   return {
-    zenith: c((k) => k.zenith),
+    zenith,
     horizon,
     sunColor,
     sunIntensity,
     hemiSky,
-    hemiGround: c((k) => k.hemiGround),
+    hemiGround,
     hemiIntensity,
-    fog: c((k) => k.fog),
+    fog,
     fogDensity: n((k) => k.fogDensity),
     dusk: n((k) => k.dusk),
     tint,
-    saturation: n((k) => k.saturation),
+    saturation,
     contrast: n((k) => k.contrast),
-    exposure: n((k) => k.exposure),
+    // thin winter daylight reads a touch brighter and flatter, not dimmer and browner
+    exposure: n((k) => k.exposure) + 0.12 * w,
     groundSun,
     groundShade,
     sunDisc: altDeg > -1 ? 18 + 10 * Math.min(1, Math.max(0, altDeg / 30)) : 0,

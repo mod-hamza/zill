@@ -18,6 +18,7 @@ playwright-report/
 # bulky QA iterations (best stills kept in docs/qa/best)
 docs/qa/phase7/
 docs/qa/phase8/
+docs/qa/overnight-film/
 docs/deck_assets/*.mp4
 docs/deck_assets/*.webm
 docs/pitch/qa/
