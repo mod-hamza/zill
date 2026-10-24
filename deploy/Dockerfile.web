@@ -6,7 +6,7 @@ RUN npm ci --no-audit --no-fund
 # the prebuild step (sync-film-data) reads ../data, ../backend/replay and ../docs
 COPY data /app/data
 COPY backend/replay /app/backend/replay
-COPY docs/SPEAKER_NOTES.md /app/docs/SPEAKER_NOTES.md
+COPY docs/SPEAKER_NOTES.md docs/COSTS.md docs/SECURITY.md docs/ACCURACY.md /app/docs/
 COPY frontend ./
 # rewrites are compiled into the build: point /api at the API container by name
 ENV ZILL_API_ORIGIN=http://zill-api:8000 NEXT_TELEMETRY_DISABLED=1

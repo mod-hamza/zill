@@ -1,11 +1,11 @@
 # Costs (Zill & Shams)
 
 Every figure is either measured (method stated) or labelled as an assumption. Prices we could not verify are
-`[TEAM TO FILL]`. Measured 2026-10-23.
+`[TEAM TO FILL]`. Measured 2026-10-23; VPS price added 2026-10-24 (team).
 
 ## 1. Fixed cost: the VPS
 
-- Contabo VPS plan price: `[TEAM TO FILL — Contabo plan price]`. The VM is shared with other apps (n8n stack, Caddy),
+- Contabo VPS plan price: `$6.93 per month` (team, 2026-10-24; 4 vCPU AMD EPYC, 8 GB RAM per `nproc` / `free` on the VM). The VM is shared with other apps (n8n stack, Caddy),
   so the real marginal cost of Zill is a fraction of it.
 - Domain: itshamza.me already owned; `zill.` is a subdomain, so marginal cost is zero.
 - TLS: Caddy automatic certificates, free.
@@ -116,8 +116,8 @@ the network round trip from the test machine, and the live site at that time did
 | 10 | 133 | 10.4 | 323 ms | 1,048 ms | 0 | 0 |
 | 20 | 223 | 16.9 | 540 ms | 1,607 ms | 0 | 0 |
 
-Raw results: `data/raw/logs/loadtest-local.json`, `data/raw/logs/loadtest-live.json`. The VM's CPU count and the
-Contabo plan are `[TEAM TO FILL]`; the live run did not reach the saturation point (20 concurrent was the agreed cap).
+Raw results: `data/raw/logs/loadtest-local.json`, `data/raw/logs/loadtest-live.json`. The VM has 4 vCPU and 8 GB RAM
+($6.93 per month); the live run did not reach the saturation point (20 concurrent was the agreed cap).
 
 ### Cost per 1,000 users (assumptions labelled)
 
@@ -126,10 +126,13 @@ Contabo plan are `[TEAM TO FILL]`; the live run did not reach the saturation poi
 - Assumption B: 10% of visits use the agent, 1 conversation each (8.7 LLM requests).
 - Compute: 1,000 visits x 20 requests = 20,000 requests. At the local saturated rate of 26 req/s that is about
   770 s of one worker, which is 0.03% of a month (770 s / 2.63 million s). So the VPS share is
-  **P x 0.0003** where P = `[TEAM TO FILL — Contabo plan price]` per month. The static shade tiles and the 3D scene
+  **P x 0.0003** where P = $6.93 per month, i.e. **about $0.002 per 1,000 users**. The static shade tiles and the 3D scene
   are served by Caddy and Next, not counted here.
 - LLM: 100 conversations. On Go with `glm-5.3-flash` that is inside a single month's quota (about 3,630 conversations),
   so marginal cost is $0 and the fixed cost is $10 per month. On `kimi-k3` it would exceed the Go quota after 56.
   Per-token pricing alternative: 100 x (30,300 x price_in + 600 x price_out) = `[TEAM TO FILL]`.
+- Total fixed cost today: $6.93 (VPS, shared) + $10 (OpenCode Go) = **about $17 per month**, which covers
+  thousands of visits under the assumptions above. Per 1,000 users that is about $0.002 of server plus $0 of LLM
+  inside the Go quota.
 - Practical conclusion from the data: the first bottleneck is the single API worker (about 26 req/s for this mix), not
   money. The second is the LLM monthly quota if the agent is used heavily.

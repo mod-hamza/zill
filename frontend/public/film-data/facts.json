@@ -1,7 +1,7 @@
 {
  "costs": {
   "source": "docs/COSTS.md",
-  "vps_price": "[TEAM TO FILL — Contabo plan price]",
+  "vps_price": "$6.93 per month",
   "go_usd_month": 10,
   "goplus_usd_month": 40,
   "llm": [
