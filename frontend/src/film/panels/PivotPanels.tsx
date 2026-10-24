@@ -3,25 +3,27 @@
 // "Does it work?" accuracy, "Safe and cheap to run"). Pure views: every number is read from
 // FilmData — hero.json / hero_oslo.json `sun` scenarios, /api/route at load, and facts.json
 // (extracted verbatim from docs/COSTS.md, SECURITY.md, ACCURACY.md). Missing values render the
-// [TEAM TO FILL] placeholder; nothing is authored or rounded beyond display formatting.
+// nothing (the row is dropped); nothing is authored or rounded beyond display formatting.
 import { colors } from "@/design/tokens";
 import type { Route, Wellbeing } from "@/lib/api";
 import { SHADE_ROUTE } from "../chapters/directions";
 import { longDate } from "../chapters/oslo";
-import type { FilmData, LoadRow, OverlayItem } from "../types";
+import type { CaseRouteStats, FilmData, LoadRow, OverlayItem } from "../types";
 
 const n0 = (v: number) => Math.round(v).toLocaleString("en-GB");
 const min1 = (s: number) => (s / 60).toFixed(1);
 const reveal = (p: number, i: number, n = 5) => Math.min(1, Math.max(0, p * n - i));
 
+/** text if present, else nothing (never a placeholder on screen) */
 function ToFill({ text }: { text?: string | null }) {
-  return <span className="film-tofill">{text ?? "[TEAM TO FILL — cite source]"}</span>;
+  return text ? <>{text}</> : null;
 }
 
-/** the number if present, else the placeholder */
+/** the number if present, else nothing */
 function N({ v, f = n0 }: { v: number | null | undefined; f?: (x: number) => string }) {
-  return v === null || v === undefined ? <ToFill /> : <>{f(v)}</>;
+  return v === null || v === undefined ? null : <>{f(v)}</>;
 }
+const has = (...v: (number | string | null | undefined)[]) => v.every((x) => x !== null && x !== undefined);
 
 function RouteRow({ label, color, r, i, p, note }: { label: string; color: string; r: Route; i: number; p: number; note?: string }) {
   return (
@@ -225,9 +227,11 @@ function Privacy({ o, data }: { o: Extract<OverlayItem, { kind: "privacy" }>; da
             {x}
           </li>
         ))}
-        <li style={{ opacity: reveal(o.progress, 5, 6) }}>
-          <N v={sec?.tests} /> security tests in the suite
-        </li>
+        {has(sec?.tests) ? (
+          <li style={{ opacity: reveal(o.progress, 5, 6) }}>
+            <N v={sec?.tests} /> security tests in the suite
+          </li>
+        ) : null}
       </ul>
       <span className="film-tag">UAE PDPL / GDPR alignment: an aim, not a certification</span>
     </div>
@@ -246,20 +250,22 @@ function Costs({ o, data }: { o: Extract<OverlayItem, { kind: "costs" }>; data: 
   const loc = bestLocal(c?.local_load ?? []);
   const live = topLive(c?.live_load ?? []);
   const llm = (m: string) => c?.llm.find((x) => x.model === m)?.go_conversations_month ?? null;
-  const rows: [string, React.ReactNode][] = [
-    ["Server (VPS) per month", <ToFill key="vps" text={c?.vps_price} />],
+  const all: [string, React.ReactNode, boolean][] = [
+    ["Server (VPS) per month", <ToFill key="vps" text={c?.vps_price} />, !!c?.vps_price],
     [
       "One API worker (local machine)",
       <>
         <N v={loc?.rps} f={(x) => x.toFixed(1)} /> requests/s at <N v={loc?.users} /> concurrent users · p95 <N v={loc?.p95_ms} /> ms ·{" "}
         <N v={loc?.errors} /> errors
       </>,
+      has(loc?.rps, loc?.users, loc?.p95_ms, loc?.errors),
     ],
     [
       "Live server, gentle test",
       <>
         <N v={live?.users} /> concurrent users · p95 <N v={live?.p95_ms} /> ms · <N v={live?.errors} /> errors
       </>,
+      has(live?.users, live?.p95_ms, live?.errors),
     ],
     [
       "AI agent (OpenCode Go)",
@@ -267,14 +273,17 @@ function Costs({ o, data }: { o: Extract<OverlayItem, { kind: "costs" }>; data: 
         $<N v={c?.go_usd_month} />/month ≈ <N v={llm("glm-5.3-flash")} /> conversations (glm-5.3-flash), <N v={llm("kimi-k3")} /> on
         kimi-k3
       </>,
+      has(c?.go_usd_month, llm("glm-5.3-flash"), llm("kimi-k3")),
     ],
     [
       "A new city",
       <>
-        open data, free · shade bake <N v={c?.shade_bake_s} f={(x) => x.toFixed(1)} /> s for {c?.shade_bake_dates ?? "—"} dates
+        open data, free · shade bake <N v={c?.shade_bake_s} f={(x) => x.toFixed(1)} /> s for {c?.shade_bake_dates} dates
       </>,
+      has(c?.shade_bake_s, c?.shade_bake_dates),
     ],
   ];
+  const rows = all.filter((r) => r[2]).map(([k, v]) => [k, v] as [string, React.ReactNode]);
   return (
     <div className="film-panel film-costs" style={{ opacity: o.opacity }}>
       <span className="smallcaps film-panel-k">What it costs to run · how many users</span>
@@ -298,17 +307,18 @@ function Costs({ o, data }: { o: Extract<OverlayItem, { kind: "costs" }>; data: 
 // ---------------------------------------------------------------------------------------------
 function Accuracy({ o, data }: { o: Extract<OverlayItem, { kind: "accuracy" }>; data: FilmData }) {
   const a = data.facts?.accuracy;
-  const up: [string, React.ReactNode][] = [
-    ["Shadows", <>every <N v={a?.shadow_step_min} /> min · <N v={a?.grid_m} /> m grid</>],
-    ["Weather", a?.weather_hourly ? "hourly (Open-Meteo)" : <ToFill key="w" />],
-    ["Departure times", <>every <N v={a?.departure_step_min} /> min</>],
-    ["Maps", a?.weekly_rebake === "planned" ? "re-baked from OpenStreetMap on demand · weekly job planned" : "re-baked from OpenStreetMap on demand"],
-  ];
-  const acc: [string, React.ReactNode][] = [
-    ["Sun position", <>within <N v={a?.sun_within_deg} f={(x) => String(x)} />° of the reference model</>],
-    ["Building heights", <><N v={a?.heights_fallback_pct} />% of Dubai footprints use typical heights by type</>],
-    ["Field validation", a?.field_validation === "pending" ? "pending: no accuracy percentage claimed" : <ToFill key="f" />],
-  ];
+  const keep = (rows: [string, React.ReactNode, boolean][]) => rows.filter((r) => r[2]).map(([k, v]) => [k, v] as [string, React.ReactNode]);
+  const up = keep([
+    ["Shadows", <>every <N v={a?.shadow_step_min} /> min · <N v={a?.grid_m} /> m grid</>, has(a?.shadow_step_min, a?.grid_m)],
+    ["Weather", "hourly (Open-Meteo)", !!a?.weather_hourly],
+    ["Departure times", <>every <N v={a?.departure_step_min} /> min</>, has(a?.departure_step_min)],
+    ["Maps", a?.weekly_rebake === "planned" ? "re-baked from OpenStreetMap on demand · weekly job planned" : "re-baked from OpenStreetMap on demand", true],
+  ]);
+  const acc = keep([
+    ["Sun position", <>within <N v={a?.sun_within_deg} f={(x) => String(x)} />° of the reference model</>, has(a?.sun_within_deg)],
+    ["Building heights", <><N v={a?.heights_fallback_pct} />% of Dubai footprints use typical heights by type</>, has(a?.heights_fallback_pct)],
+    ["Field validation", "pending: no accuracy percentage claimed", a?.field_validation === "pending"],
+  ]);
   const table = (rows: [string, React.ReactNode][], off: number) => (
     <table className="tabular">
       <tbody>
@@ -353,6 +363,109 @@ function Pricing({ o }: { o: Extract<OverlayItem, { kind: "pricing" }> }) {
   );
 }
 
+// ---------------------------------------------------------------------------------------------
+// Short cut "Case studies": every number is case_studies.json's (verbatim, one decimal as stored).
+// The who/what lines are presentation copy; company names are example target customers only.
+const CASE_COPY: Record<string, { k: string; h: string; note?: string }> = {
+  hotel_guest: { k: "Hotels → their guests", h: "A shaded walk from the hotel, instead of a cab." },
+  delivery_rider: {
+    k: "Responsible employers → their riders",
+    h: "Less direct sun on every delivery trip.",
+    note: "Example target customers: delivery fleets such as Talabat or Noon. Not partners or clients.",
+  },
+  run_dubai_dawn: { k: "Running clubs · Dubai summer", h: "A dawn run that stays in the shade." },
+  winter_daylight: { k: "Winter cities → residents", h: "More daylight on a December walk." },
+  run_oslo_lunch: { k: "Running clubs · Oslo winter", h: "A sunny lunchtime run." },
+};
+const MODE_WORD: Record<string, string> = { walk: "walking", cycle: "cycling", scooter: "scooter", run: "running" };
+const pace = (m?: number) => (m ? `${Math.floor(m)}:${String(Math.round((m % 1) * 60)).padStart(2, "0")} min/km` : null);
+
+function CaseRow({ label, color, st, i, p }: { label: string; color: string; st: CaseRouteStats; i: number; p: number }) {
+  if (st.direct_sun_min === undefined) return null;
+  return (
+    <div className="film-dir-row" style={{ opacity: reveal(p, i, 5) }}>
+      <i style={{ background: color }} />
+      <span className="smallcaps" style={{ color }}>
+        {label}
+      </span>
+      <span className="font-display tabular film-dir-v">
+        {st.direct_sun_min.toFixed(1)}
+        <small> min in direct sun</small>
+      </span>
+      {st.duration_min !== undefined && st.distance_m !== undefined ? (
+        <span className="tabular film-dir-sub">
+          {st.duration_min.toFixed(1)} min · {(st.distance_m / 1000).toFixed(1)} km
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+function CaseStudyPanel({ o, data }: { o: Extract<OverlayItem, { kind: "casestudy" }>; data: FilmData }) {
+  const cs = data.cases[o.index];
+  if (!cs) return null;
+  const c = cs.c;
+  const copy = CASE_COPY[c.id] ?? { k: c.label ?? c.persona ?? "Case study", h: c.label ?? "" };
+  const sun = c.preference === "sun";
+  const d = c.delta ?? {};
+  // ONE headline: shade mode -> % less direct sun; sun mode -> minutes of direct sun gained
+  const head = sun
+    ? d.sun_gained_min !== undefined
+      ? { v: `+${d.sun_gained_min.toFixed(1)}`, u: "min of direct sun" }
+      : null
+    : d.sun_saved_pct !== undefined
+      ? { v: `${Math.round(d.sun_saved_pct)}%`, u: "less direct sun" }
+      : null;
+  const perTrip = c.persona === "rider" ? " per trip" : "";
+  const color = sun ? colors.ember : colors.brass;
+  const loop = !!c.turnaround;
+  const date = c.date ? longDate(c.date) : (data.cityDates[c.city]?.[c.date_id] ? longDate(data.cityDates[c.city]![c.date_id]!) : null);
+  const meta = [date, c.depart, MODE_WORD[c.mode] ?? c.mode].filter(Boolean).join(" · ");
+  const city = c.city === "oslo" ? "Oslo" : "Dubai";
+  const uv = c.wellbeing?.uv_index;
+  const ps = c.per_shift;
+  return (
+    <div className="film-panel film-dir film-case" style={{ opacity: o.opacity }}>
+      <span className="smallcaps film-panel-k">
+        {copy.k} · {city}
+      </span>
+      <p className="font-display film-vignette-h">{copy.h}</p>
+      <span className="smallcaps film-panel-sub">
+        {c.origin.name} &rarr; {loop ? `${c.turnaround} → back` : c.dest.name}
+      </span>
+      <span className="smallcaps film-panel-sub">{meta}</span>
+      {head ? (
+        <p className="font-display tabular film-vignette-num film-case-num" style={{ color, opacity: reveal(o.progress, 0, 5) }}>
+          {head.v} <small>{head.u}{perTrip}</small>
+        </p>
+      ) : null}
+      {c.fastest ? <CaseRow label="Fastest" color={colors.slate} st={c.fastest} i={1} p={o.progress} /> : null}
+      {c.best ? <CaseRow label={sun ? "Sunniest" : "Shadiest"} color={color} st={c.best} i={2} p={o.progress} /> : null}
+      {d.added_time_min !== undefined ? (
+        <p className="tabular film-dir-gain" style={{ opacity: reveal(o.progress, 3, 5) }}>
+          for {d.added_time_min.toFixed(1)} min more {c.mode === "run" ? "running" : c.mode === "cycle" ? "riding" : "walking"}
+          {loop ? " over the whole loop" : ""}
+        </p>
+      ) : null}
+      <div className="film-case-notes" style={{ opacity: reveal(o.progress, 4, 5) }}>
+        {copy.note ? <span className="film-panel-sub">{copy.note}</span> : null}
+        {ps?.is_assumption && ps.trips !== undefined && ps.sun_saved_min !== undefined ? (
+          <span className="film-panel-sub">
+            Assumption, not measured: {ps.trips} such trips a shift ≈ {ps.sun_saved_min.toFixed(1)} min less direct sun.
+          </span>
+        ) : null}
+        {sun && uv !== undefined && uv !== null ? (
+          <span className="film-panel-sub">Daylight and mood, not vitamin D: UV {uv.toFixed(1)}.</span>
+        ) : null}
+        {c.mode === "run" && pace(c.pace?.min_per_km) ? (
+          <span className="film-panel-sub">Assumed pace {pace(c.pace?.min_per_km)} · outbound leg drawn</span>
+        ) : null}
+        <span className="film-tag">Engine estimate, not a measurement</span>
+      </div>
+    </div>
+  );
+}
+
 export function PivotPanels({ o, data }: { o: OverlayItem; data: FilmData }) {
   switch (o.kind) {
     case "directions":
@@ -369,6 +482,8 @@ export function PivotPanels({ o, data }: { o: OverlayItem; data: FilmData }) {
       return <Accuracy o={o} data={data} />;
     case "pricing":
       return <Pricing o={o} />;
+    case "casestudy":
+      return <CaseStudyPanel o={o} data={data} />;
     default:
       return null;
   }

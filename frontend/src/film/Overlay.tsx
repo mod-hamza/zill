@@ -13,12 +13,10 @@ import { useFilm } from "./store";
 import type { FilmData, HudState, OverlayItem } from "./types";
 import { ChapterPanels } from "./panels/ChapterPanels";
 
-export function Placeholder({ what }: { what?: string }) {
-  return (
-    <span className="film-tofill" title={what}>
-      [TEAM TO FILL — cite source]
-    </span>
-  );
+/** a value the data does not have: render nothing (never a placeholder on screen) */
+export function Placeholder(props: { what?: string }) {
+  void props;
+  return null;
 }
 
 const n0 = (v: number) => Math.round(v).toLocaleString("en-GB");
@@ -155,9 +153,10 @@ function testsLine(data: FilmData): string | null {
 
 function Evidence({ o, data }: { o: Extract<OverlayItem, { kind: "evidence" }>; data: FilmData }) {
   const line = testsLine(data);
+  if (!line) return null;
   return (
     <div className="film-evidence" style={{ opacity: o.opacity }}>
-      <p className="font-display">{line ?? <Placeholder what="test results missing" />}</p>
+      <p className="font-display">{line}</p>
       <span className="film-tag">{o.limits}</span>
     </div>
   );

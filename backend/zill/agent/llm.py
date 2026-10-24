@@ -44,6 +44,7 @@ class ToolCall:
     name: str
     arguments: dict[str, Any]
     arguments_error: str | None = None
+    extra: dict[str, Any] | None = None  # provider data to echo back (Gemini thought_signature)
 
 
 @dataclass
@@ -83,6 +84,7 @@ def assistant_message(res: ChatResult) -> dict[str, Any]:
                 "id": tc.id,
                 "type": "function",
                 "function": {"name": tc.name, "arguments": json.dumps(tc.arguments)},
+                **({"extra_content": tc.extra} if tc.extra else {}),
             }
             for tc in res.tool_calls
         ]
@@ -519,7 +521,12 @@ class LLMClient:
         for i, tc in enumerate(getattr(msg, "tool_calls", None) or []):
             fn = tc.function
             args, err = parse_tool_args(getattr(fn, "arguments", None))
-            calls.append(ToolCall(id=tc.id or f"call_{i}", name=fn.name, arguments=args, arguments_error=err))
+            extra = (getattr(tc, "model_extra", None) or {}).get("extra_content")
+            calls.append(
+                ToolCall(
+                    id=tc.id or f"call_{i}", name=fn.name, arguments=args, arguments_error=err, extra=extra
+                )
+            )
         content = _THINK.sub("", _content_text(getattr(msg, "content", None))).strip()
         reasoning = getattr(msg, "reasoning_content", None) or getattr(msg, "reasoning", None) or ""
         if not content and not calls:

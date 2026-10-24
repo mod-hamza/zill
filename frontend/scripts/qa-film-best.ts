@@ -26,7 +26,7 @@ const SHOTS: { name: string; t: number; clean: boolean }[] = [
 async function main() {
   const browser = await chromium.launch({ args: ["--use-angle=d3d11", "--enable-gpu", "--ignore-gpu-blocklist"] });
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  await page.goto(`${BASE}/film?qa=1&t=${SHOTS[0]!.t}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
+  await page.goto(`${BASE}/film2?qa=1&t=${SHOTS[0]!.t}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
   for (const s of SHOTS) {
     await page.evaluate((t) => (window as unknown as { __zillFilmSetT?: (x: number) => void }).__zillFilmSetT?.(t), s.t);
     await page.waitForTimeout(150);

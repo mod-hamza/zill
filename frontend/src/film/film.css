@@ -1398,3 +1398,24 @@
   padding-top: 8px;
   padding-bottom: 8px;
 }
+.film-revenue td.film-revenue-price {
+  color: var(--zill-champagne);
+  white-space: nowrap;
+}
+.film-revenue td {
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+.film-case {
+  width: 460px;
+  top: 15vh;
+}
+.film-case-num {
+  margin: 4px 0 2px !important;
+}
+.film-case-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+}

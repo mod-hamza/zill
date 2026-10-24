@@ -2,7 +2,7 @@
 // Panels for the agent, who-pays, evidence, any-city and closing chapters (new pivot panels live in
 // PivotPanels.tsx). Every number comes from FilmData (hero.json scenarios, recorded agent
 // sessions, meta.json, test_results.json, /api/route for the concierge walks); text that is a PRD
-// business hypothesis is labelled as such; market sizes are [TEAM TO FILL] placeholders.
+// business hypothesis is labelled as such; only sourced market figures are shown (else nothing).
 import { colors } from "@/design/tokens";
 import { fmtSigned } from "@/lib/format";
 import { hhmmToMinutes } from "@/lib/sun";
@@ -16,12 +16,10 @@ const n0 = (v: number) => Math.round(v).toLocaleString("en-GB");
 const min1 = (s: number) => (s / 60).toFixed(1);
 const hm = (iso?: string) => (iso ? iso.slice(11, 16) : "—");
 
-function ToFill({ what }: { what?: string }) {
-  return (
-    <span className="film-tofill" title={what}>
-      [TEAM TO FILL — cite source]
-    </span>
-  );
+/** a value the data does not have: render nothing (never a placeholder on screen) */
+function ToFill(props: { what?: string }) {
+  void props;
+  return null;
 }
 
 const PERSONA_LABEL: Record<string, string> = {
@@ -189,9 +187,6 @@ function Vignette({ o, data }: { o: Extract<OverlayItem, { kind: "vignette" }>; 
         <span className="tabular film-panel-sub">
           time {fmtSigned(st.added_time_s)} · heat load −{st.rhl_saved_pct.toFixed(1)}% · cycling · {sc.depart}
         </span>
-        <span className="film-panel-sub">
-          Per shift: trips per shift <ToFill what="trips per rider shift" />
-        </span>
       </div>
     );
   }
@@ -238,26 +233,31 @@ function Vignette({ o, data }: { o: Extract<OverlayItem, { kind: "vignette" }>; 
   );
 }
 
-// Pricing hypotheses (PIVOT_PLAN 4 + 8; team to validate). Company names are TARGET customers only.
-const REVENUE = [
-  ["Delivery & quick-commerce fleets", "Rider heat stress, incidents, lost productivity (targets: e.g. Talabat, Deliveroo, Careem)", "Heat-aware routing API, fleet dashboard", "Per active rider per month, or per API call"],
-  ["Hotels & tourism boards", "Guests avoid walking in the heat", "Concierge widget, white-label", "Per property per month; board licence"],
-  ["Outdoor-worker employers", "Heat illness; UAE midday-break compliance", "Crew shift planner", "Per site per month"],
-  ["Municipalities & city planners", "Where to plant trees or add shade", "Planning analytics (B2G)", "City licence"],
+// Who pays (PIVOT_PLAN 4 + 8). Prices are HYPOTHESES (docs/SPEAKER_NOTES.md), labelled as such on
+// screen. Company names are example TARGET customers only, never partners or clients. Market
+// figures: only the two sourced ones (docs/pitch/GAMMA_PROMPT.md); no other market size is shown.
+export const REVENUE: [segment: string, pain: string, surface: string, price: string][] = [
+  ["Delivery & quick-commerce fleets", "Rider heat stress, incidents, lost productivity (example targets: Talabat, Noon)", "Heat-aware routing API, fleet dashboard", "~$1 per active rider / month"],
+  ["Hotels & tourism boards", "Guests avoid walking in the heat", "Concierge widget, white-label", "~$99 per property / month"],
+  ["Outdoor-worker employers", "Heat illness; UAE midday-break compliance", "Crew shift planner", "~$49 per site / month"],
+  ["Municipalities & city planners", "Where to plant trees or add shade", "Planning analytics (B2G)", "~$15,000 city licence / year"],
+  ["Cold and dark cities", "Short winter days, low mood", "Sun mode + city partnership", "~$15,000 city licence / year"],
+  ["Corporate well-being & insurers", "Daylight-poor winters, employee well-being", "Daylight-walks programme + reports", "~$12 per employee / year"],
+  ["Running clubs & sports", "Training in heat; winter daylight", "Shade runs and sunny runs for club routes", "Club or event partnership"],
   ["Schools, elderly care, events", "Safe walking and waiting in heat or cold", "Shade and sun plans for sites and venues", "Per site or per event"],
-  ["Corporate well-being & insurers", "Daylight-poor winters, employee well-being", "Daylight-walks programme + reports", "Per employee per year"],
-  ["Cold and dark cities", "Short winter days, low mood", "Sun mode + city partnership", "City licence"],
-  ["Individuals", "Comfort, heat, daylight", "Free app (optional premium)", "Free"],
+  ["Individuals", "Comfort, heat, daylight", "Free app, no ads", "Free · premium ~$2.99 / month"],
 ];
+export const MARKET_SOURCED =
+  "Sourced: 70,000+ delivery riders in Dubai (Dubai RTA) · 18.72 million international overnight visitors in 2024 (Dubai DET via WAM)";
 
 function Revenue({ o }: { o: Extract<OverlayItem, { kind: "revenue" }> }) {
   return (
     <div className="film-panel film-revenue" style={{ opacity: o.opacity }}>
-      <span className="smallcaps film-panel-k">Who pays · pricing hypotheses (team to validate)</span>
+      <span className="smallcaps film-panel-k">Who pays · pricing hypotheses</span>
       <table>
         <thead>
           <tr>
-            {["Segment", "Pain", "Product surface", "Pricing hypothesis", "Market size"].map((h) => (
+            {["Segment", "Pain", "Product surface", "Pricing hypothesis"].map((h) => (
               <th key={h} className="smallcaps">
                 {h}
               </th>
@@ -270,12 +270,14 @@ function Revenue({ o }: { o: Extract<OverlayItem, { kind: "revenue" }> }) {
               <td className="font-display">{r[0]}</td>
               <td>{r[1]}</td>
               <td>{r[2]}</td>
-              <td>{r[3]}</td>
-              <td>{i < REVENUE.length - 1 ? <ToFill what={`market size: ${r[0]}`} /> : "—"}</td>
+              <td className="tabular film-revenue-price">{r[3]}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      <span className="film-panel-sub" style={{ opacity: Math.min(1, Math.max(0, o.progress * (REVENUE.length + 1) - REVENUE.length)) }}>
+        {MARKET_SOURCED}
+      </span>
     </div>
   );
 }
@@ -303,7 +305,6 @@ function FieldTest({ o, data }: { o: Extract<OverlayItem, { kind: "fieldtest" }>
       ) : (
         <>
           <p className="font-display">Boulevard, 14:00 · shaded vs sunny route · result pending</p>
-          <span className="film-panel-sub">IR surface + air readings <ToFill what="field test results" /></span>
         </>
       )}
     </div>

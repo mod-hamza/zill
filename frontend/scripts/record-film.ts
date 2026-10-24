@@ -1,6 +1,6 @@
 // Backup film recorder (PRD 17.6): Playwright video of the autoplaying Film at 1920x1080.
 //   npx tsx scripts/record-film.ts [--out ../docs/deck_assets/backup_film] [--rate 1] [--seconds 790]
-//                                  [--swiftshader] [--base http://localhost:3000] [--no-mp4] [--crf 20]
+//                                  [--cut short|full] [--swiftshader] [--base http://localhost:3000] [--no-mp4] [--crf 20]
 // Realtime (rate 1) takes ~13 min: run it in the background. `--rate N` uses the film's `?rate=N`
 // QA speed-up (only for smoke-testing the recorder; a real backup must be realtime).
 // Output: <out>.webm and <out>.mp4 (H.264, crf 20, yuv420p; ffmpeg from imageio-ffmpeg).
@@ -22,8 +22,12 @@ import {
   waitReady,
 } from "./record-common";
 
-import { TOTAL_S } from "../src/film/master";
+import { setCut, TOTAL_S } from "../src/film/master";
 
+// --cut short (default: /film, the 6-minute cut) | full (/film2, the 13-minute film)
+const CUT = arg("cut", "short") === "full" ? "full" : "short";
+setCut(CUT);
+const FILM_PATH = CUT === "full" ? "/film2" : "/film";
 const FILM_NOMINAL_S = TOTAL_S; // sum of the chapter durations (src/film/master.ts)
 
 async function main() {
@@ -45,7 +49,7 @@ async function main() {
   const logs: string[] = [];
   attachLogs(page, logs);
 
-  const url = `${BASE}/film?qa=1${rate !== 1 ? `&rate=${rate}` : ""}`;
+  const url = `${BASE}${FILM_PATH}?qa=1${rate !== 1 ? `&rate=${rate}` : ""}`;
   console.log(`recording ${url} for ${seconds.toFixed(0)} s (gpu: ${gpu})`);
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 180_000 });
   const ready = await waitReady(page);

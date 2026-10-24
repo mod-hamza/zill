@@ -35,10 +35,23 @@ test.describe("film", () => {
     await page.waitForFunction(() => (window as unknown as { __zillFilm?: { chapter: number } }).__zillFilm?.chapter === 5, undefined, { timeout: 60_000 });
   });
 
-  test("fast autoplay reaches 13:00 without console errors", async ({ page }) => {
+  test("fast autoplay of the 6-minute cut (/film) reaches 6:00 without console errors", async ({ page }) => {
     errors.length = 0;
     watch(page);
     await page.goto("/film?qa=1&t=0&rate=40&autoplay=1&q=low");
+    await page.waitForFunction(
+      () => ((window as unknown as { __zillFilm?: { t: number } }).__zillFilm?.t ?? 0) >= 359.9,
+      undefined,
+      { timeout: 280_000, polling: 1000 },
+    );
+    const real = errors.filter((e) => !/favicon|preload|Download the React DevTools/i.test(e));
+    expect(real).toEqual([]);
+  });
+
+  test("fast autoplay of the full film (/film2) reaches 13:00 without console errors", async ({ page }) => {
+    errors.length = 0;
+    watch(page);
+    await page.goto("/film2?qa=1&t=0&rate=40&autoplay=1&q=low");
     await page.waitForFunction(
       () => ((window as unknown as { __zillFilm?: { t: number } }).__zillFilm?.t ?? 0) >= 779.9,
       undefined,

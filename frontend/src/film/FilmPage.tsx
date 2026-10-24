@@ -1,5 +1,6 @@
 "use client";
-// /film: tall scroll container + keyboard controls + overlays. The canvas lives in the shared
+// /film: the 6-minute cut (business pitch); /film2: the full 13-minute film (?cut=short|full
+// overrides either). Tall scroll container + keyboard controls + overlays. The canvas lives in the shared
 // stage layout; the frame loop (FilmWorld) lives inside it.
 //   Space autoplay · [ ] speed 0.85–1.15 · ←/→ chapter · 1–9,0,-,= chapters 1–12 (←/→ for 13–15) · Esc pause
 //   F fullscreen · T elapsed · H hide chrome · L low quality · A -> /app (city/date/time kept)
@@ -14,7 +15,7 @@ import { useCity } from "@/state/city";
 import { useStage } from "@/state/stage";
 import { useSun } from "@/state/sun";
 import { useFilmData } from "./data";
-import { CHAPTER_STARTS, CHAPTERS, TOTAL_S } from "./master";
+import { CHAPTER_STARTS, CHAPTERS, cutFor, setCut, TOTAL_S } from "./master";
 import { Overlay } from "./Overlay";
 import { Presenter } from "./Presenter";
 import { attachScroll, PX_PER_S } from "./scroll";
@@ -40,6 +41,8 @@ export function FilmPage() {
   const t = useFilm((s) => s.t);
   const playing = useFilm((s) => s.playing);
   const chapter = useFilm((s) => s.frame?.chapter ?? 0);
+  // the cut: re-render when it is chosen (TOTAL_S / CHAPTERS are the master's live bindings)
+  useFilm((s) => s.cut);
   const contextLost = useStage((s) => s.contextLost);
   const [noGl, setNoGl] = useState(false);
   useEffect(() => setNoGl(!webglAvailable()), []);
@@ -47,7 +50,10 @@ export function FilmPage() {
   // URL flags
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
+    const cut = cutFor(window.location.pathname, window.location.search);
+    setCut(cut);
     const st = useFilm.getState();
+    st.set({ cut });
     const isQa = p.has("qa");
     const rate = Number(p.get("rate"));
     st.set({

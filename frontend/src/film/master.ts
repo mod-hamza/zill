@@ -23,8 +23,12 @@ import { ch10 } from "./chapters/ch10";
 import { safety } from "./chapters/safety";
 import { ch11 } from "./chapters/ch11";
 import { ch12 } from "./chapters/ch12";
+import { cases, CASES_DUR } from "./chapters/cases";
+import { whopays } from "./chapters/whopays";
+import type { ChapterFn } from "./types";
 
-export const CHAPTERS: ChapterDef[] = [
+/** The full 13-minute film (served at /film2). */
+export const FULL_CHAPTERS: ChapterDef[] = [
   { id: "ch01", title: "Zill & Shams.", dur_s: 36, fn: ch01, notes: 1 },
   { id: "ch02", title: "The problem.", dur_s: 46, fn: ch02, dipIn: 2.4, notes: 2 },
   { id: "ch03", title: "Shade moves.", dur_s: 44, fn: ch03, dipIn: 2.4, notes: 3 },
@@ -42,12 +46,57 @@ export const CHAPTERS: ChapterDef[] = [
   { id: "ask", title: "Try it.", dur_s: 30, fn: ch12, dipIn: 2.4, notes: 12 },
 ];
 
-export const TOTAL_S = CHAPTERS.reduce((a, c) => a + c.dur_s, 0);
+/**
+ * Plays design seconds [from, to] of a chapter authored for `designDur` seconds as a whole chapter
+ * (pure: a fixed affine map of chapter-local t). Used by the short cut to trim chapters.
+ */
+export function window_(fn: ChapterFn, designDur: number, from: number, to: number): ChapterFn {
+  return (t, data) => fn((from + t * (to - from)) / designDur, data);
+}
 
-export const CHAPTER_STARTS: number[] = CHAPTERS.reduce<number[]>((acc, c, i) => {
-  acc.push(i === 0 ? 0 : acc[i - 1]! + CHAPTERS[i - 1]!.dur_s);
-  return acc;
-}, []);
+/** The pitch cut (served at /film), paced to docs/pitch/SCRIPT.md. */
+export const SHORT_CHAPTERS: ChapterDef[] = [
+  { id: "ch01", title: "Zill & Shams.", dur_s: 25, fn: window_(ch01, 40, 2, 40), notes: 1, cue: "A shade router and a sun router, from one engine." },
+  { id: "ch03", title: "Shade moves.", dur_s: 30, fn: window_(ch03, 55, 0.5, 55), dipIn: 2.2, notes: 3, cue: "The core insight: a shade map is only true for one minute." },
+  { id: "ch04", title: "A city, built in seconds.", dur_s: 35, fn: window_(ch04, 90, 3, 80), dipIn: 2.2, notes: 4, cue: "Open data in, a city's shade out. Cached build replay." },
+  { id: "directions", title: "Two directions.", dur_s: 40, fn: directions, dipIn: 2.2, notes: 13, cue: "Same trip, same minute: shade mode and sun mode." },
+  { id: "cases", title: "Case studies.", dur_s: CASES_DUR, fn: cases, dipIn: 2.2, cue: "Four customers, one number each, all from the engine." },
+  { id: "agent", title: "An agent, not a map.", dur_s: 45, fn: window_(ch08, 50, 0, 50), dipIn: 2.2, notes: 8, cue: "Plans with real tools, checks its own numbers, replans, asks before acting." },
+  { id: "who", title: "Who pays.", dur_s: 40, fn: whopays, dipIn: 2.2, cue: "Free for people, no ads; B2B pays. Prices are hypotheses." },
+  { id: "safety", title: "Safe and cheap to run.", dur_s: 35, fn: safety, dipIn: 2.2, notes: 15, cue: "No accounts, no location stored; one small server." },
+  { id: "ask", title: "Try it.", dur_s: 20, fn: window_(ch12, 35, 0, 35), dipIn: 2.2, notes: 12, cue: "Hand over to the live demo: press A." },
+];
+
+export type Cut = "short" | "full";
+
+/** The active cut's timeline. Live bindings: setCut() swaps them before the film starts. The
+ *  default is the short cut (/film); /film2 (or ?cut=full) selects the full film. */
+export let CUT: Cut = "short";
+export let CHAPTERS: ChapterDef[] = SHORT_CHAPTERS;
+export let TOTAL_S = 0;
+export let CHAPTER_STARTS: number[] = [];
+
+function starts(list: ChapterDef[]): number[] {
+  return list.reduce<number[]>((acc, c, i) => {
+    acc.push(i === 0 ? 0 : acc[i - 1]! + list[i - 1]!.dur_s);
+    return acc;
+  }, []);
+}
+
+export function setCut(cut: Cut): void {
+  CUT = cut;
+  CHAPTERS = cut === "full" ? FULL_CHAPTERS : SHORT_CHAPTERS;
+  TOTAL_S = CHAPTERS.reduce((a, c) => a + c.dur_s, 0);
+  CHAPTER_STARTS = starts(CHAPTERS);
+}
+setCut("short");
+
+/** which cut a URL asks for: ?cut= wins, else /film2 is the full film, anything else the short cut */
+export function cutFor(pathname: string, search: string): Cut {
+  const q = new URLSearchParams(search).get("cut");
+  if (q === "full" || q === "short") return q;
+  return pathname.startsWith("/film2") ? "full" : "short";
+}
 
 export function chapterAt(t: number): number {
   const x = Math.max(0, Math.min(TOTAL_S - 1e-6, t));

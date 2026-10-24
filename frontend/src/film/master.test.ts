@@ -1,11 +1,11 @@
 // Film master timeline: durations, purity/determinism, monotonic chapters, real numbers.
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
-import { CHAPTERS, CHAPTER_STARTS, TOTAL_S, chapterAt, evaluate } from "./master";
+import { beforeEach, describe, expect, it } from "vitest";
+import { CHAPTERS, CHAPTER_STARTS, TOTAL_S, chapterAt, evaluate, setCut, cutFor } from "./master";
 import { pickStreet, routeGeo } from "./data";
 import { travel } from "./helpers";
-import { FILM_HOME_CITY, type FilmData, type HeroScenario, type Replay, type RouteSet } from "./types";
+import { FILM_HOME_CITY, type CaseStudyJson, type FilmData, type HeroScenario, type Replay, type RouteSet } from "./types";
 import { osloCaption } from "./chapters/oslo";
 
 const ROOT = join(__dirname, "..", "..", "..");
@@ -68,12 +68,59 @@ function loadData(): FilmData {
     routeSets,
     cityDates: { [FILM_HOME_CITY]: meta.dates, oslo: osloMeta.dates },
     facts: null,
+    // case studies verbatim; drawn routes stubbed with the hero pair (tests do not call the API)
+    cases: (read("data/scenarios/case_studies.json").cases as CaseStudyJson[])
+      .sort((a, b) => Number(a.city !== FILM_HOME_CITY) - Number(b.city !== FILM_HOME_CITY))
+      .map((c) => ({ c, routeKey: hero.id })),
   };
 }
 
 const data = loadData();
 
-describe("film master timeline", () => {
+describe("short cut (/film)", () => {
+  it("is the default, 9 chapters, 405 s; /film2 and ?cut= pick the cut", () => {
+    setCut("short");
+    expect(CHAPTERS.map((c) => c.id)).toEqual(["ch01", "ch03", "ch04", "directions", "cases", "agent", "who", "safety", "ask"]);
+    expect(TOTAL_S).toBe(405);
+    expect(cutFor("/film", "")).toBe("short");
+    expect(cutFor("/film2", "")).toBe("full");
+    expect(cutFor("/film", "?cut=full")).toBe("full");
+    expect(cutFor("/film2", "?qa=1&cut=short")).toBe("short");
+  });
+  it("is pure and its chapters are monotonic", () => {
+    setCut("short");
+    const ts = Array.from({ length: 120 }, (_, i) => ((i * 7919) % (TOTAL_S * 10)) / 10);
+    const a = ts.map((t) => JSON.stringify(evaluate(t, data)));
+    const b = [...ts].reverse().map((t) => JSON.stringify(evaluate(t, data))).reverse();
+    expect(a).toEqual(b);
+    let last = 0;
+    for (let t = 0; t <= TOTAL_S; t += 0.61) {
+      const f = evaluate(t, data);
+      expect(f.chapter).toBeGreaterThanOrEqual(last);
+      last = f.chapter;
+    }
+  });
+  it("case studies: every case gets a vignette, Oslo cases switch the city, no placeholder text", () => {
+    setCut("short");
+    const i = CHAPTERS.findIndex((c) => c.id === "cases");
+    const seen = new Set<number>();
+    for (let s = 5; s < CHAPTERS[i]!.dur_s; s += 0.5) {
+      const f = evaluate(CHAPTER_STARTS[i]! + s, data);
+      const o = f.overlays.find((x) => x.kind === "casestudy");
+      if (o && o.kind === "casestudy" && o.opacity > 0.5) {
+        seen.add(o.index);
+        expect(f.city).toBe(data.cases[o.index]!.c.city);
+      }
+    }
+    expect(seen.size).toBe(data.cases.length);
+    for (let t = 0; t <= TOTAL_S; t += 1.3)
+      expect(JSON.stringify(evaluate(t, data).overlays)).not.toMatch(/TEAM TO FILL|TO VALIDATE/i);
+  });
+});
+
+
+describe("film master timeline (full film, /film2)", () => {
+  beforeEach(() => setCut("full"));
   it("has 15 chapters summing to 790 s (13:10, about the pre-pivot 13:00)", () => {
     expect(CHAPTERS).toHaveLength(15);
     expect(TOTAL_S).toBe(790);

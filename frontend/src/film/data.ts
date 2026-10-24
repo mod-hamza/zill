@@ -4,7 +4,7 @@
 // scripts/sync-film-data.mjs because the API has no endpoint for replay bodies).
 import { create } from "zustand";
 import type { Object3D } from "three";
-import { api, type CityMeta, type Route, type ScenariosJson } from "@/lib/api";
+import { api, type CityMeta, type Route, type RouteResponse, type ScenariosJson } from "@/lib/api";
 import { assetUrl } from "@/lib/assets";
 import { routePolyline } from "@/lib/routeGeom";
 import { DEFAULT_TZ, hhmmToMinutes, localIso } from "@/lib/sun";
@@ -15,6 +15,8 @@ import type { V3 } from "@/three/rigs";
 import type {
   AcLinkStory,
   BuildLogRow,
+  CaseStudy,
+  CaseStudyJson,
   Directions,
   Facts,
   FilmData,
@@ -212,6 +214,59 @@ function setFrom(
   };
 }
 
+/**
+ * Short cut "Case studies": the numbers are case_studies.json's (verbatim); the drawn routes are
+ * the engine's for the same trip (/api/route at load, same origin/destination/minute/mode/
+ * preference). Loops (runs) draw their outbound leg. Dubai cases first, then Oslo (one city switch).
+ */
+async function loadCases(
+  list: CaseStudyJson[],
+  geoFor: (cityId: string) => Object3D | null,
+  routeSets: Record<string, RouteSet>,
+  scenarioGeo: FilmData["scenarioGeo"],
+  cityTz: Record<string, string>,
+): Promise<CaseStudy[]> {
+  const ordered = [...list].sort((a, b) => Number(a.city !== FILM_HOME) - Number(b.city !== FILM_HOME));
+  const res = await Promise.all(
+    ordered.map((c) =>
+      j<RouteResponse>("/api/route", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          city: c.city,
+          mode: c.mode,
+          origin: { lat: c.origin.lat, lon: c.origin.lon, node: c.origin.node },
+          dest: { lat: c.dest.lat, lon: c.dest.lon, node: c.dest.node },
+          depart_at: c.depart_iso ?? localIso(c.date ?? c.date_id, hhmmToMinutes(c.depart), cityTz[c.city] ?? DEFAULT_TZ),
+          date_key: c.date_id,
+          lambdas: [0, 1, 3],
+          preference: c.preference,
+        }),
+      }),
+    ),
+  );
+  return ordered.map((c, i) => {
+    const r = res[i];
+    const best = c.preference === "sun" ? (r?.sunniest ?? r?.best) : (r?.coolest ?? r?.best);
+    if (!r?.fastest || !best) return { c, routeKey: null };
+    const key = `case_${c.id}`;
+    routeSets[key] = {
+      fastest: r.fastest,
+      balanced: r.balanced ?? best,
+      coolest: best,
+      preference: c.preference,
+      origin: r.origin,
+      dest: r.dest,
+      date_key: c.date_id,
+      city: c.city,
+    };
+    const b = geoFor(c.city);
+    scenarioGeo[key] = { fastest: routeGeo(r.fastest, b), coolest: routeGeo(best, b) };
+    return { c, routeKey: key };
+  });
+}
+const FILM_HOME = "dubai_downtown";
+
 type DataStore = {
   data: FilmData | null;
   status: "idle" | "loading" | "ready" | "error";
@@ -254,7 +309,7 @@ export const useFilmData = create<DataStore>((set, get) => ({
         const policy = manifest.includes("policy_uae_outdoor_work.json")
           ? await j<FilmData["policy"]>("/film-data/policy_uae_outdoor_work.json")
           : null;
-        const [replayList, weather, tests, bake, notes, field, cities, facts] = await Promise.all([
+        const [replayList, weather, tests, bake, notes, field, cities, facts, caseJson] = await Promise.all([
           Promise.all(
             replayIds.map((id) => j<Replay>(`/film-data/replays/${id}.json`)),
           ),
@@ -269,6 +324,9 @@ export const useFilmData = create<DataStore>((set, get) => ({
             "/api/cities",
           ),
           manifest.includes("facts.json") ? j<Facts>("/film-data/facts.json") : Promise.resolve(null),
+          manifest.includes("case_studies.json")
+            ? j<{ cases?: CaseStudyJson[] }>("/film-data/case_studies.json")
+            : Promise.resolve(null),
         ]);
         const replays: Record<string, Replay> = {};
         replayIds.forEach((id, i) => {
@@ -369,6 +427,14 @@ export const useFilmData = create<DataStore>((set, get) => ({
           // Oslo buildings are not loaded yet: flat fly paths (the chapter uses aerial shots only)
           scenarioGeo.oslo_sun = { fastest: routeGeo(o.fastest, null), coolest: routeGeo(o.sunniest!, null) };
         }
+        const cases = await loadCases(
+          (caseJson?.cases ?? []).filter((c) => c.city === cityId || (c.city === OSLO && !!oslo)),
+          (id) => (id === cityId ? buildings : null),
+          routeSets,
+          scenarioGeo,
+          { [cityId]: meta.timezone || DEFAULT_TZ, ...(oslo ? { [OSLO]: oslo.meta.timezone || DEFAULT_TZ } : {}) },
+        );
+        set({ progress: 0.85 });
         let acLinkArea: FilmData["acLinkArea"] = null;
         if (city.graph) {
           const e = city.graph.raw.edges;
@@ -421,6 +487,7 @@ export const useFilmData = create<DataStore>((set, get) => ({
             ...(oslo ? { [OSLO]: oslo.meta.dates } : {}),
           },
           facts: facts ?? null,
+          cases,
         };
         set({ data, status: "ready", progress: 1 });
       } catch (e) {

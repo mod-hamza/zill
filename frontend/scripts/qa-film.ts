@@ -5,7 +5,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { chromium } from "@playwright/test";
-import { CHAPTER_STARTS, CHAPTERS } from "../src/film/master";
+import { CHAPTER_STARTS, CHAPTERS, setCut } from "../src/film/master";
 
 const arg = (k: string, d?: string) => {
   const i = process.argv.indexOf(`--${k}`);
@@ -15,8 +15,12 @@ const flag = (k: string) => process.argv.includes(`--${k}`);
 const BASE = arg("base", "http://localhost:3000")!;
 const OUT = resolve(arg("out", join(__dirname, "..", "..", "docs", "qa", "phase7", "iter1"))!);
 const Q = arg("q", "high");
+// --cut short (default: /film) | full (/film2)
+const CUT = arg("cut", "short") === "full" ? "full" : "short";
+setCut(CUT);
+const FILM_PATH = CUT === "full" ? "/film2" : "/film";
 const SWIFT = flag("swiftshader");
-const [c0, c1] = (arg("chapters", "1-12")!.split("-").map(Number) as [number, number?]);
+const [c0, c1] = (arg("chapters", "1-15")!.split("-").map(Number) as [number, number?]);
 const EXTRA = arg("times")?.split(",").map(Number).filter((x) => Number.isFinite(x)) ?? [];
 const POINTS = (arg("points", "start,mid,end")!).split(",");
 
@@ -52,7 +56,7 @@ async function main() {
   });
   page.on("pageerror", (e) => logs.push(`[pageerror] ${e.message}`));
   const first = shots[0]?.t ?? 0;
-  await page.goto(`${BASE}/film?qa=1&q=${Q}&t=${first}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
+  await page.goto(`${BASE}${FILM_PATH}?qa=1&q=${Q}&t=${first}`, { waitUntil: "domcontentloaded", timeout: 180_000 });
   const report: Record<string, unknown> = { base: BASE, gpu: SWIFT ? "swiftshader" : "angle-d3d11", shots: {} };
   for (const s of shots) {
     const t0 = Date.now();

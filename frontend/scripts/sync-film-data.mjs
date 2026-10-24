@@ -1,6 +1,7 @@
 // Copies the Film's non-API inputs VERBATIM into public/film-data/ (served statically, no network):
 //   backend/replay/*.json      -> public/film-data/replays/   (the API has no replay-body endpoint)
 //   data/test_results.json     -> public/film-data/test_results.json
+//   data/scenarios/case_studies.json -> public/film-data/case_studies.json
 //   data/validation/field_test.json (if it exists) -> public/film-data/field_test.json
 //   docs/SPEAKER_NOTES.md      -> public/film-data/notes.json  ({ "<chapter number>": [points] })
 //   docs/COSTS.md · SECURITY.md · ACCURACY.md -> public/film-data/facts.json (values extracted, never edited)
@@ -27,6 +28,11 @@ const tr = join(ROOT, "data", "test_results.json");
 if (existsSync(tr)) {
   copyFileSync(tr, join(OUT, "test_results.json"));
   log.push("test_results.json");
+}
+const cs = join(ROOT, "data", "scenarios", "case_studies.json");
+if (existsSync(cs)) {
+  copyFileSync(cs, join(OUT, "case_studies.json"));
+  log.push("case_studies.json");
 }
 const pp = join(ROOT, "data", "curated", "policy_packs", "uae_outdoor_work.json");
 if (existsSync(pp)) {

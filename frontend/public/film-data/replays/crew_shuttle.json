@@ -293,7 +293,7 @@
     "payload": {
      "name": "check_policy",
      "ok": true,
-     "summary": "Policy pack: UAE midday break (v1, verify): 1 conflict(s) (pack unverified).",
+     "summary": "Policy pack: UAE midday break (v1, MoHRE 2025): 1 conflict(s).",
      "duration_ms": 0
     }
    },
@@ -579,7 +579,7 @@
     "payload": {
      "name": "check_policy",
      "ok": true,
-     "summary": "Policy pack: UAE midday break (v1, verify): no conflicts (pack unverified).",
+     "summary": "Policy pack: UAE midday break (v1, MoHRE 2025): no conflicts.",
      "duration_ms": 0
     }
    },
@@ -4540,7 +4540,7 @@
       "route_compliant.coolest.added_time_min": "0.7 min",
       "route_compliant.coolest.covered_pct": "26%",
       "route.depart_time": "14:30",
-      "policy.label": "Policy pack: UAE midday break (v1, verify)",
+      "policy.label": "Policy pack: UAE midday break (v1, MoHRE 2025)",
       "policy.midday_window_start": "12:30",
       "policy.midday_window_end": "15:00"
      },
@@ -4580,7 +4580,7 @@
     "ts": "2026-10-23T04:00:27.906+00:00",
     "type": "message",
     "payload": {
-     "text": "Movement plan: Address Boulevard to Address Sky View by the coolest route, leaving 15:00, arriving 15:10. The coolest walk spends 3.5 min in direct sun against 5.7 min on the fastest, saving 2.2 min of sun, and 67% of it is shaded. It takes 0.7 min longer than the fastest. 26% of it is under cover. There is a heat alert: carry water and take shade breaks. I moved this from 14:30 to 15:00 because Policy pack: UAE midday break (v1, verify) bars outdoor work in direct sun between 12:30 and 15:00; the new timing has no conflict. Please verify the rule before relying on it. Shade counts buildings, mapped trees and covered links only; awnings and wind are not modelled.",
+     "text": "Movement plan: Address Boulevard to Address Sky View by the coolest route, leaving 15:00, arriving 15:10. The coolest walk spends 3.5 min in direct sun against 5.7 min on the fastest, saving 2.2 min of sun, and 67% of it is shaded. It takes 0.7 min longer than the fastest. 26% of it is under cover. There is a heat alert: carry water and take shade breaks. I moved this from 14:30 to 15:00 because Policy pack: UAE midday break (v1, MoHRE 2025) bars outdoor work in direct sun between 12:30 and 15:00; the new timing has no conflict. Please verify the rule before relying on it. Shade counts buildings, mapped trees and covered links only; awnings and wind are not modelled.",
      "resolved": [
       {
        "token": "route_compliant.origin",
@@ -4632,7 +4632,7 @@
       },
       {
        "token": "policy.label",
-       "value": "Policy pack: UAE midday break (v1, verify)"
+       "value": "Policy pack: UAE midday break (v1, MoHRE 2025)"
       },
       {
        "token": "policy.midday_window_start",

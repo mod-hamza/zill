@@ -62,7 +62,8 @@ export default function config(phase: string): NextConfig {
     devIndicators: false,
     // `next dev` writes to its own folder: a `next build` (demo, record, deck) used to overwrite the
     // chunks a running dev server was serving, which surfaced as "Application error" (ChunkLoadError)
-    distDir: phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next",
+    // ZILL_DIST_DIR: a second server/build (e.g. a parallel agent on another port) gets its own folder
+    distDir: process.env.ZILL_DIST_DIR ?? (phase === PHASE_DEVELOPMENT_SERVER ? ".next-dev" : ".next"),
     async headers() {
       return securityHeaders(phase === PHASE_DEVELOPMENT_SERVER);
     },

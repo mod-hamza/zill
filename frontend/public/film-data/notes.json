@@ -1,7 +1,7 @@
 {
  "1": [
   "Dubai in summer is built for people who walk, and the sun decides where they can.",
-  "Midday heat in these districts is routinely above 40 degrees [TEAM TO FILL — cite source].",
+  "Dubai International Airport's mean daily maximum is 41.5 C in July and 41.9 C in August (NOAA 1991-2020 normals, tabulated at https://en.wikipedia.org/wiki/Climate_of_Dubai), so a midday walk in summer is in the low forties before the sun on your skin.",
   "We are Abhamzay. This is Zill: the agent that routes you through the shade.",
   "Transition: \"To see why that matters, let's stand in the street at one thirty.\""
  ],
@@ -58,9 +58,9 @@
   "Problem: heat costs real people time, comfort and safety, and nobody sells a shade-aware route.",
   "Buyers, our hypotheses to validate with mentors: hotels and tourism boards (per-property subscription or annual licence), delivery fleets (per active rider or per route call), outdoor-worker employers (per site). Individuals use it free.",
   "Our engine numbers for the wedges: rider route 38 percent less sun for 1.6 minutes more; crew shuttle 40 percent less sun for 0.7 minutes more. The crew policy pack for the UAE midday break is marked \"verify\".",
-  "Market size [TEAM TO FILL — cite source]. Pricing [TEAM TO FILL — validate with mentors].",
+  "Market context (sourced, not a forecast): more than 154,000 hotel rooms across 827 establishments in Dubai at the end of 2025 (DET figures as reported by Khaleej Times, https://www.khaleejtimes.com/business/dubai-tourism-hits-record-1959m-visitors-in-2025-marking-third-year-of-growth); 70,000+ delivery riders (Dubai RTA); 19.59 million international overnight visitors in 2025 (DET via Khaleej Times). We have no sourced size for outdoor employers, so we do not state one. Pricing hypotheses, not validated: hotels about $99 per property per month; delivery fleets about $1 per rider per month; outdoor employers about $49 per site per month; city or tourism licence about $15,000 per year; corporate well-being about $12 per employee per year; consumer premium about $2.99 per month, no ads.",
   "Go-to-market: start with a few hotels in Downtown as a concierge widget, use the free app for distribution and data, then fleets.",
-  "Why we win: real shade computed per minute from open data, an agent that verifies its own numbers, and a pipeline that is city-agnostic. [TEAM TO FILL — competitors, cite sources]",
+  "Why we win: real shade computed per minute from open data, an agent that verifies its own numbers, and a pipeline that is city-agnostic. Mainstream routing apps optimise time and distance; we make no claim beyond that.",
   "Transition: \"You should ask: does it actually work?\""
  ],
  "10": [
@@ -77,7 +77,7 @@
  ],
  "12": [
   "Zill: the agent that routes you through the shade.",
-  "What we want today: feedback on the buyer and the pricing, and introductions to a hotel group or fleet operator. [TEAM TO FILL — the specific ask]",
+  "We are not asking for funding. We want pilot partners: a Downtown hotel group or a delivery fleet operator willing to trial Zill, plus feedback on the buyer and the pricing.",
   "Press `A` and take any trip the judges want to try."
  ],
  "13": [
@@ -98,7 +98,7 @@
  "15": [
   "Privacy by design: no accounts, no stored user data, location used per request and discarded, logs scrub coordinates and keys, no ads.",
   "Controls on the live site: per-IP rate limits (tightest on the agent), 64 KB request cap, CORS allow-list, CSP and HSTS. pip-audit is clean; npm audit has 2 findings inside Next's build-time PostCSS. UAE PDPL and GDPR alignment is an aim, not a certification; a penetration test comes before any B2B launch (`docs/SECURITY.md`).",
-  "Costs: the AI agent is $10 a month flat on OpenCode Go (about 3,630 conversations a month on glm-5.3-flash). Adding a city costs no money: Dubai data bake 7.5 s and shade bake 487.5 s for four dates. The Contabo price and cost per 1,000 users are [TEAM TO FILL] (`docs/COSTS.md`).",
+  "Costs: the AI agent is $10 a month flat on OpenCode Go (about 3,630 conversations a month on glm-5.3-flash). Adding a city costs no money: Dubai data bake 7.5 s and shade bake 487.5 s for four dates. The server is $6.93 a month (Contabo VPS, 4 vCPU, 8 GB, shared), so fixed cost is about $17 a month with the agent; server cost per 1,000 users is about $0.002 (`docs/COSTS.md`).",
   "Capacity, measured: local machine about 26 requests per second at 20 users (p95 596 ms); live VM 16.9 requests per second at 20 users, p95 1.6 s, 0 errors, run capped at 20 users.",
   "Transition: \"And it is not only Dubai and Oslo.\""
  ]

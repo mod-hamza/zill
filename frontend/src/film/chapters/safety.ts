@@ -1,7 +1,7 @@
 // "Safe and cheap to run." (42 s design) — the mentors' questions on security, privacy and cost,
 // answered from the committed docs only (film-data/facts.json <- docs/SECURITY.md, docs/COSTS.md).
 // Dusk over Downtown (lit windows), a slow dolly; first privacy by design + controls, then what it
-// costs to run and how many users one server handles. Unverified prices stay [TEAM TO FILL].
+// costs to run and how many users one server handles. A value the docs do not have is not shown.
 import { dollyRig } from "@/three/rigs";
 import { sunTimesMinutes } from "@/lib/sun";
 import { ramp, win } from "../ease";

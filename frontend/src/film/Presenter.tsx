@@ -3,7 +3,7 @@
 // point (docs/SPEAKER_NOTES.md, embedded by scripts/sync-film-data.mjs; falls back to the next
 // chapter's title while the notes are not written).
 import { useFilmData } from "./data";
-import { CHAPTER_STARTS, CHAPTERS, TOTAL_S } from "./master";
+import { CHAPTER_STARTS, CHAPTERS, CUT, TOTAL_S } from "./master";
 import { useFilm } from "./store";
 
 const clock = (s: number) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
@@ -20,7 +20,10 @@ export function Presenter() {
   const next = CHAPTERS[ch + 1];
   // SPEAKER_NOTES.md predates the renumbering: each chapter names its notes section (or has none)
   const nextNote = next
-    ? ((next.notes ? notes?.[String(next.notes)]?.[0] : undefined) ?? `Next: ${next.title}`)
+    ? ((CUT === "short" ? next.cue : undefined) ??
+      (next.notes ? notes?.[String(next.notes)]?.[0] : undefined) ??
+      next.cue ??
+      `Next: ${next.title}`)
     : "End: press A for the live app";
   const target = CHAPTER_STARTS[ch]! + c.dur_s;
   return (

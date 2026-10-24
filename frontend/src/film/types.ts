@@ -73,7 +73,7 @@ export type Departure = {
 export type HeroScenario = Scenario & { departure?: Departure | null };
 
 /** Business facts extracted verbatim from docs/COSTS.md, SECURITY.md, ACCURACY.md by
- *  scripts/sync-film-data.mjs (public/film-data/facts.json). null = not found -> [TEAM TO FILL]. */
+ *  scripts/sync-film-data.mjs (public/film-data/facts.json). null = not found -> the row is not shown. */
 export type LoadRow = {
   users: number | null;
   requests: number | null;
@@ -154,6 +154,46 @@ export type RouteGeo = {
   bbox: { x0: number; x1: number; z0: number; z1: number; cx: number; cz: number; ext: number };
 };
 
+/** One leg/route summary of a case study, verbatim from case_studies.json. */
+export type CaseRouteStats = {
+  duration_s?: number;
+  duration_min?: number;
+  direct_sun_s?: number;
+  direct_sun_min?: number;
+  distance_m?: number;
+};
+/** data/scenarios/case_studies.json `cases[]` (zill.routing.case_studies; only the fields the Film reads) */
+export type CaseStudyJson = {
+  id: string;
+  label?: string;
+  persona?: string;
+  city: string;
+  date?: string;
+  date_id: string;
+  depart: string;
+  depart_iso?: string;
+  origin: { name: string; lat: number; lon: number; node?: number };
+  dest: { name: string; lat: number; lon: number; node?: number };
+  turnaround?: string;
+  mode: "walk" | "cycle" | "scooter" | "run";
+  pace?: { speed_m_s?: number; min_per_km?: number };
+  preference: "shade" | "sun";
+  route_shape?: string;
+  fastest?: CaseRouteStats;
+  best?: CaseRouteStats;
+  delta?: {
+    added_time_min?: number;
+    sun_saved_min?: number;
+    sun_saved_pct?: number;
+    sun_gained_min?: number;
+    sun_gained_pct?: number;
+  };
+  wellbeing?: { uv_index?: number | null; uv_band?: string; sun_altitude_deg?: number };
+  per_shift?: { assumption?: string; trips?: number; is_assumption?: boolean; sun_saved_min?: number };
+};
+/** a case study + the key of its route set (drawn from /api/route at load; null if unreachable) */
+export type CaseStudy = { c: CaseStudyJson; routeKey: string | null };
+
 export type FilmData = {
   meta: CityMeta;
   hero: HeroScenario;
@@ -188,6 +228,8 @@ export type FilmData = {
   /** preset dates per city id (for the sun clock when the Film switches city) */
   cityDates: Record<string, Record<string, string>>;
   facts: Facts | null;
+  /** short cut "Case studies" (public/film-data/case_studies.json), Dubai cases first */
+  cases: CaseStudy[];
 };
 
 // ---------------------------------------------------------------------------------------------
@@ -225,7 +267,8 @@ export type OverlayItem =
   | { kind: "privacy"; opacity: number; progress: number }
   | { kind: "costs"; opacity: number; progress: number }
   | { kind: "accuracy"; opacity: number; progress: number }
-  | { kind: "pricing"; opacity: number };
+  | { kind: "pricing"; opacity: number }
+  | { kind: "casestudy"; opacity: number; index: number; progress: number };
 
 export type HudState = {
   sunS: number;
@@ -289,6 +332,8 @@ export type ChapterDef = {
   fn: ChapterFn;
   /** docs/SPEAKER_NOTES.md chapter number of this chapter's notes (written before the renumbering) */
   notes?: number;
+  /** presenter cue when the chapter has no SPEAKER_NOTES section (or to replace it in the short cut) */
+  cue?: string;
   /** seconds of continuous camera/sun blend from the previous chapter's end (0 = cut) */
   blendIn?: number;
   /** a soft ink dip across the boundary into this chapter (seconds, total) */

@@ -14,12 +14,14 @@ const BASE = arg("base", "http://localhost:3000")!;
 const TIMES = arg("times", "20,165")!.split(",").map(Number);
 const OUT = resolve(arg("out", join(__dirname, "..", "..", "docs", "qa", "flicker"))!);
 const DT = 0.02;
+/** /film (6-minute cut, default) or /film2 (full film) */
+const PATH = arg("path", "/film")!;
 
 async function main() {
   mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch({ args: ["--use-angle=d3d11", "--ignore-gpu-blocklist"] });
   const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
-  await page.goto(`${BASE}/film?qa=1&t=${TIMES[0]}`);
+  await page.goto(`${BASE}${PATH}?qa=1&t=${TIMES[0]}`);
   await page.waitForFunction(() => (window as unknown as { __zillFrameReady?: boolean }).__zillFrameReady === true, undefined, { timeout: 180_000 });
   const report: Record<string, number> = {};
   for (const t of TIMES) {

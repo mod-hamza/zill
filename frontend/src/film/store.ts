@@ -2,7 +2,7 @@
 // The single frame loop (FilmWorld, inside the canvas) advances t while autoplaying or jumping and
 // publishes the evaluated frame for the DOM overlays.
 import { create } from "zustand";
-import { CHAPTER_STARTS, TOTAL_S } from "./master";
+import { CHAPTER_STARTS, TOTAL_S, type Cut } from "./master";
 import type { FrameState } from "./types";
 
 export const SPEED_MIN = 0.85;
@@ -23,6 +23,8 @@ type FilmStore = {
   showElapsed: boolean;
   presenter: boolean;
   qa: boolean;
+  /** which cut is playing (master.setCut has been called with it) */
+  cut: Cut;
   /** set when t changed by scroll/keys so the controller does not echo it back */
   source: "scroll" | "loop" | "init";
   setT: (t: number, source?: FilmStore["source"]) => void;
@@ -48,6 +50,7 @@ export const useFilm = create<FilmStore>((set, get) => ({
   showElapsed: false,
   presenter: false,
   qa: false,
+  cut: "short",
   source: "init",
   setT: (t, source = "scroll") => set({ t: clampT(t), source, jump: source === "scroll" ? null : get().jump }),
   setPlaying: (playing) => set({ playing, jump: playing ? null : get().jump }),
