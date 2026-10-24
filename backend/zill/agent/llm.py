@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 import time
 import uuid
@@ -26,7 +27,8 @@ PROBE_TIMEOUT_S = 4.0
 CALL_TIMEOUT_S = 30.0
 AVAIL_CACHE_S = 60.0
 RETRIES = 2
-RATE_WAIT_MAX_S = 20.0  # longest single wait when every model is rate-limited
+RATE_WAIT_MAX_S = float(os.environ.get("ZILL_LLM_RATE_WAIT_MAX_S", "45"))  # longest wait, all throttled
+RATE_WAITS = 4  # waits before giving up when every model stays rate-limited
 COOLDOWN_S = 30.0
 USER_AGENT = "Zill-hackathon-prototype/0.1"
 _THINK = re.compile(r"<think>.*?</think>", re.S)
@@ -475,13 +477,18 @@ class LLMClient:
         if retries and throttled and len(throttled) == len(candidates):
             # every model is throttled: wait once for the soonest bucket (bounded), then retry it
             wait = min(throttled)
-            if wait <= RATE_WAIT_MAX_S:
+            best = candidates[throttled.index(wait)]
+            for _ in range(RATE_WAITS):
+                if wait > RATE_WAIT_MAX_S:
+                    break
                 self._sleep(wait)
-                best = candidates[throttled.index(wait)]
                 try:
                     return self._once(ep, best, messages, tools, temperature, sid, True)
                 except Exception as exc:
                     last = exc
+                    if classify(exc) != "rate":
+                        break
+                    wait = _retry_after(exc)
         if last is not None and classify(last) in ("auth", "rate"):
             raise LLMError(f"{ep.name}: {classify(last)} ({_describe(last)})") from None
         raise LLMError(f"{ep.name}: call failed ({_describe(last)})") from None
