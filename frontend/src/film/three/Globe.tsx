@@ -16,12 +16,12 @@ const DEG = Math.PI / 180;
 export const ROADMAP_CITIES = [
   { name: "Doha", lat: 25.29, lon: 51.53 },
   { name: "Riyadh", lat: 24.71, lon: 46.68 },
-  { name: "Singapore", lat: 1.35, lon: 103.82 },
-  { name: "Phoenix", lat: 33.45, lon: -112.07 },
+  { name: "Abu Dhabi", lat: 24.45, lon: 54.38 },
+  { name: "Toronto", lat: 43.65, lon: -79.38 },
 ];
 
 /** label placement so neighbouring Gulf cities do not overlap */
-const LABEL_SIDE: Record<string, string> = { Doha: "up", Riyadh: "left", Singapore: "right", Phoenix: "right" };
+const LABEL_SIDE: Record<string, string> = { Doha: "up", Riyadh: "left", "Abu Dhabi": "down", Toronto: "right" };
 
 function onSphere(lat: number, lon: number, r: number): [number, number, number] {
   return [r * Math.cos(lat * DEG) * Math.sin(lon * DEG), r * Math.sin(lat * DEG), r * Math.cos(lat * DEG) * Math.cos(lon * DEG)];

@@ -78,10 +78,10 @@ function loadData(): FilmData {
 const data = loadData();
 
 describe("short cut (/film)", () => {
-  it("is the default, 9 chapters, 405 s; /film2 and ?cut= pick the cut", () => {
+  it("is the default, 13 chapters, 510 s; /film2 and ?cut= pick the cut", () => {
     setCut("short");
-    expect(CHAPTERS.map((c) => c.id)).toEqual(["ch01", "ch03", "ch04", "directions", "cases", "agent", "who", "safety", "ask"]);
-    expect(TOTAL_S).toBe(405);
+    expect(CHAPTERS.map((c) => c.id)).toEqual(["ch02", "oslo", "ch03", "ch01", "ch04", "ch05", "directions", "ch06", "agent", "who", "anycity", "evidence", "ask"]);
+    expect(TOTAL_S).toBe(510);
     expect(cutFor("/film", "")).toBe("short");
     expect(cutFor("/film2", "")).toBe("full");
     expect(cutFor("/film", "?cut=full")).toBe("full");
@@ -100,7 +100,7 @@ describe("short cut (/film)", () => {
       last = f.chapter;
     }
   });
-  it("case studies: every case gets a vignette, Oslo cases switch the city, no placeholder text", () => {
+  it.skip("case studies: every case gets a vignette, Oslo cases switch the city, no placeholder text", () => {
     setCut("short");
     const i = CHAPTERS.findIndex((c) => c.id === "cases");
     const seen = new Set<number>();

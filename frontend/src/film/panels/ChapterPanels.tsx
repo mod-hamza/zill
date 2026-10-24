@@ -237,15 +237,12 @@ function Vignette({ o, data }: { o: Extract<OverlayItem, { kind: "vignette" }>; 
 // screen. Company names are example TARGET customers only, never partners or clients. Market
 // figures: only the two sourced ones (docs/pitch/GAMMA_PROMPT.md); no other market size is shown.
 export const REVENUE: [segment: string, pain: string, surface: string, price: string][] = [
-  ["Delivery & quick-commerce fleets", "Rider heat stress, incidents, lost productivity (example targets: Talabat, Noon)", "Heat-aware routing API, fleet dashboard", "~$1 per active rider / month"],
-  ["Hotels & tourism boards", "Guests avoid walking in the heat", "Concierge widget, white-label", "~$99 per property / month"],
-  ["Outdoor-worker employers", "Heat illness; UAE midday-break compliance", "Crew shift planner", "~$49 per site / month"],
-  ["Municipalities & city planners", "Where to plant trees or add shade", "Planning analytics (B2G)", "~$15,000 city licence / year"],
-  ["Cold and dark cities", "Short winter days, low mood", "Sun mode + city partnership", "~$15,000 city licence / year"],
-  ["Corporate well-being & insurers", "Daylight-poor winters, employee well-being", "Daylight-walks programme + reports", "~$12 per employee / year"],
-  ["Running clubs & sports", "Training in heat; winter daylight", "Shade runs and sunny runs for club routes", "Club or event partnership"],
-  ["Schools, elderly care, events", "Safe walking and waiting in heat or cold", "Shade and sun plans for sites and venues", "Per site or per event"],
-  ["Individuals", "Comfort, heat, daylight", "Free app, no ads", "Free · premium ~$2.99 / month"],
+  ["Delivery fleets", "Rider heat stress and downtime (example targets: Talabat, Careem, Deliveroo)", "Heat-optimised rider routing + rest stops", "~$1 per rider / month"],
+  ["Hospitality & concierge", "Guests avoid walking in the heat (the skit)", "Guest concierge integration", "~$99 per hotel / month"],
+  ["Enterprise & construction", "Occupational health in summer restrictions", "Crew shift planner", "~$49 per site / month"],
+  ["Nordic & northern municipalities", "Short winter days, urban well-being", "Sun mode + city licence", "~$15,000 per city / year"],
+  ["Developers", "Travel, mobility and fitness apps", "Routing API", "Pay per call"],
+  ["Individuals", "Comfort, heat, daylight", "Free app, no ads", "Free"],
 ];
 export const MARKET_SOURCED =
   "Sourced: 70,000+ delivery riders in Dubai (Dubai RTA) · 18.72 million international overnight visitors in 2024 (Dubai DET via WAM)";

@@ -23,7 +23,6 @@ import { ch10 } from "./chapters/ch10";
 import { safety } from "./chapters/safety";
 import { ch11 } from "./chapters/ch11";
 import { ch12 } from "./chapters/ch12";
-import { cases, CASES_DUR } from "./chapters/cases";
 import { whopays } from "./chapters/whopays";
 import type { ChapterFn } from "./types";
 
@@ -54,17 +53,25 @@ export function window_(fn: ChapterFn, designDur: number, from: number, to: numb
   return (t, data) => fn((from + t * (to - from)) / designDur, data);
 }
 
-/** The pitch cut (served at /film), paced to docs/pitch/SCRIPT.md. */
+/** The pitch cut (served at /film): 510 s, from the end of the skit (1:30) to 10:00 of the pitch script. */
 export const SHORT_CHAPTERS: ChapterDef[] = [
-  { id: "ch01", title: "Zill & Shams.", dur_s: 25, fn: window_(ch01, 40, 2, 40), notes: 1, cue: "A shade router and a sun router, from one engine." },
-  { id: "ch03", title: "Shade moves.", dur_s: 30, fn: window_(ch03, 55, 0.5, 55), dipIn: 2.2, notes: 3, cue: "The core insight: a shade map is only true for one minute." },
-  { id: "ch04", title: "A city, built in seconds.", dur_s: 35, fn: window_(ch04, 90, 3, 80), dipIn: 2.2, notes: 4, cue: "Open data in, a city's shade out. Cached build replay." },
-  { id: "directions", title: "Two directions.", dur_s: 40, fn: directions, dipIn: 2.2, notes: 13, cue: "Same trip, same minute: shade mode and sun mode." },
-  { id: "cases", title: "Case studies.", dur_s: CASES_DUR, fn: cases, dipIn: 2.2, cue: "Four customers, one number each, all from the engine." },
-  { id: "agent", title: "An agent, not a map.", dur_s: 45, fn: window_(ch08, 50, 0, 50), dipIn: 2.2, notes: 8, cue: "Plans with real tools, checks its own numbers, replans, asks before acting." },
-  { id: "who", title: "Who pays.", dur_s: 40, fn: whopays, dipIn: 2.2, cue: "Free for people, no ads; B2B pays. Prices are hypotheses." },
-  { id: "safety", title: "Safe and cheap to run.", dur_s: 35, fn: safety, dipIn: 2.2, notes: 15, cue: "No accounts, no location stored; one small server." },
-  { id: "ask", title: "Try it.", dur_s: 20, fn: window_(ch12, 35, 0, 35), dipIn: 2.2, notes: 12, cue: "Hand over to the live demo: press A." },
+  // Phase 1, problem (pitch clock 1:30-3:00). The film starts when the skit ends.
+  { id: "ch02", title: "The problem.", dur_s: 45, fn: window_(ch02, 46, 0, 46), notes: 2, cue: "Abhay: maps plan around time; nobody plans around the sun. 70,000+ riders, 18.7M visitors." },
+  { id: "oslo", title: "Not just heat.", dur_s: 15, fn: window_(oslo, 56, 6, 40), dipIn: 1.6, notes: 14, cue: "Hamza: dark winters. Oslo has under 6 hours of daylight in December." },
+  { id: "ch03", title: "Shade moves.", dur_s: 15, fn: window_(ch03, 44, 8, 40), dipIn: 1.6, notes: 3, cue: "Sun and shadow change every minute, so static lists fail." },
+  { id: "ch01", title: "Zill & Shams.", dur_s: 15, fn: window_(ch01, 36, 14, 36), dipIn: 1.6, notes: 1, cue: "Introducing Zill & Shams: shade when you need it, sun when you want it." },
+  // Phase 2, technical feasibility (3:00-6:00)
+  { id: "ch04", title: "A city, built in seconds.", dur_s: 35, fn: window_(ch04, 64, 2, 64), dipIn: 2, notes: 4, cue: "Hamza: OpenStreetMap to a 3D city. 8,602 buildings, 7,659 street segments, 744 trees." },
+  { id: "ch05", title: "The shade engine.", dur_s: 25, fn: window_(ch05, 66, 16, 66), blendIn: 0, notes: 5, cue: "Exact sun position; shadow rays every 10 minutes across every walking edge." },
+  { id: "directions", title: "Two directions.", dur_s: 25, fn: window_(directions, 50, 0, 50), dipIn: 2, notes: 13, cue: "Abhay: Shade mode and Sun mode, one cost function flipped." },
+  { id: "ch06", title: "The route.", dur_s: 35, fn: window_(ch06, 120, 50, 120), blendIn: 3, notes: 6, cue: "Burj Park to Business Bay Metro, 15:30 summer: 6.2 min less sun (40%) for 2.2 min more walking." },
+  { id: "agent", title: "An agent, not a map.", dur_s: 60, fn: window_(ch08, 50, 0, 50), dipIn: 2, notes: 8, cue: "Hamza: plans with tools, a verifier checks every number, re-routes on the fly." },
+  // Phase 3, managerial model (6:00-9:00)
+  { id: "who", title: "Who pays.", dur_s: 75, fn: window_(whopays, 40, 0, 40), dipIn: 2, cue: "Abhay: B2B SaaS. Fleets per rider, hotels per property, sites, city licences, routing API." },
+  { id: "anycity", title: "Go to market.", dur_s: 60, fn: window_(ch11, 32, 0, 32), blendIn: 3, notes: 11, cue: "Hamza: Dubai pilots, then the GCC, then winter cities. A new city is an automated build from open data." },
+  { id: "evidence", title: "Built and working.", dur_s: 45, fn: window_(ch10, 44, 0, 44), blendIn: 3, notes: 10, cue: "Abhay: concept to live app, engine and agent within the hackathon." },
+  // Phase 4, close (9:00-10:00)
+  { id: "ask", title: "The ask.", dur_s: 60, fn: window_(ch12, 35, 0, 35), dipIn: 2, notes: 12, cue: "Seed investment and pilot introductions. Maps gave us direction; Zill & Shams gives climate-intelligent movement." },
 ];
 
 export type Cut = "short" | "full";
