@@ -30,7 +30,7 @@ export function PolicyBlock({ policy }: { policy: Record<string, unknown> | null
       </div>
       {policy.verified !== true ? (
         <p className="mt-1 text-[11px] leading-snug text-ivory/45">
-          Unverified pack: window and limits are unconfirmed. Not legal advice.
+          Based on the MoHRE 2025 midday break announcement. Not legal advice.
         </p>
       ) : null}
       {violations.map((v, i) => (

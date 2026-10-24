@@ -208,3 +208,8 @@ Zill & Shams is live at https://zill.itshamza.me (auto-deployed from main). 16 c
 - **Accuracy**: `docs/ACCURACY.md`. **Film**: 15 chapters incl. Two directions, Winter in Oslo, Safe and cheap to run. **Decks**: 17 slides, PDF + editable PPTX, speaker notes.
 - Tests: 470 passing (375 backend, 95 frontend).
 - Open for the team: see `docs/OPEN_ITEMS.md` "Overnight pivot".
+
+## 2026-10-24 case studies + run mode
+- `run` mode (config.SPEEDS['run']=2.8 m/s, walk graph) in modes/graph/schemas + frontend Mode type; tests/test_run_mode.py (7 tests).
+- `backend/zill/routing/case_studies.py` writes `data/scenarios/case_studies.json` (5 cases: hotel guest, delivery rider, Oslo winter daylight, Dubai dawn run, Oslo lunch run); synced to frontend/public/film-data/ by sync-film-data.mjs.
+- Known: rider at July 14:00 saves only 0.9 min (11 %) - modest, reported as is.

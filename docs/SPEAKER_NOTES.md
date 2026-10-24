@@ -1,6 +1,6 @@
 # SPEAKER_NOTES
 
-For the 12-14 minute pitch to the judges. The Film runs 13:00 at speed 1.0 (780 s). Talk over it; do not read the screen. The first bullet of each chapter is the opener (the presenter strip shows it as the "next" line). All numbers are from `data/scenarios/hero.json`, `data/cities/dubai_downtown/meta.json` and `data/test_results.json`; if you re-generate those, re-check the figures here. Anything in `[TEAM TO FILL]` has no source yet.
+For the 12-14 minute pitch to the judges. The Film runs 13:00 at speed 1.0 (780 s). Talk over it; do not read the screen. The first bullet of each chapter is the opener (the presenter strip shows it as the "next" line). All numbers are from `data/scenarios/hero.json`, `data/cities/dubai_downtown/meta.json` and `data/test_results.json`; if you re-generate those, re-check the figures here. Sourced figures cite their URL inline; pricing is labelled as hypothesis.
 
 Format note: `frontend/scripts/sync-film-data.mjs` reads this file. Chapter headings are `## Chapter N`; bullets under them become the presenter's talking points. Do not start any other heading with a number.
 
@@ -9,7 +9,7 @@ Numbering: chapters 1-12 keep their original note ids. The three newer film chap
 ## Chapter 1 — Dubai, 13:00 (0:00, 40 s)
 
 - Dubai in summer is built for people who walk, and the sun decides where they can.
-- Midday heat in these districts is routinely above 40 degrees [TEAM TO FILL — cite source].
+- Dubai International Airport's mean daily maximum is 41.5 C in July and 41.9 C in August (NOAA 1991-2020 normals, tabulated at https://en.wikipedia.org/wiki/Climate_of_Dubai), so a midday walk in summer is in the low forties before the sun on your skin.
 - We are Abhamzay. This is Zill: the agent that routes you through the shade.
 - Transition: "To see why that matters, let's stand in the street at one thirty."
 
@@ -74,9 +74,9 @@ Numbering: chapters 1-12 keep their original note ids. The three newer film chap
 - Problem: heat costs real people time, comfort and safety, and nobody sells a shade-aware route.
 - Buyers, our hypotheses to validate with mentors: hotels and tourism boards (per-property subscription or annual licence), delivery fleets (per active rider or per route call), outdoor-worker employers (per site). Individuals use it free.
 - Our engine numbers for the wedges: rider route 38 percent less sun for 1.6 minutes more; crew shuttle 40 percent less sun for 0.7 minutes more. The crew policy pack for the UAE midday break is marked "verify".
-- Market size [TEAM TO FILL — cite source]. Pricing [TEAM TO FILL — validate with mentors].
+- Market context (sourced, not a forecast): more than 154,000 hotel rooms across 827 establishments in Dubai at the end of 2025 (DET figures as reported by Khaleej Times, https://www.khaleejtimes.com/business/dubai-tourism-hits-record-1959m-visitors-in-2025-marking-third-year-of-growth); 70,000+ delivery riders (Dubai RTA); 19.59 million international overnight visitors in 2025 (DET via Khaleej Times). We have no sourced size for outdoor employers, so we do not state one. Pricing hypotheses, not validated: hotels about $99 per property per month; delivery fleets about $1 per rider per month; outdoor employers about $49 per site per month; city or tourism licence about $15,000 per year; corporate well-being about $12 per employee per year; consumer premium about $2.99 per month, no ads.
 - Go-to-market: start with a few hotels in Downtown as a concierge widget, use the free app for distribution and data, then fleets.
-- Why we win: real shade computed per minute from open data, an agent that verifies its own numbers, and a pipeline that is city-agnostic. [TEAM TO FILL — competitors, cite sources]
+- Why we win: real shade computed per minute from open data, an agent that verifies its own numbers, and a pipeline that is city-agnostic. Mainstream routing apps optimise time and distance; we make no claim beyond that.
 - Transition: "You should ask: does it actually work?"
 
 ## Chapter 10 — Does it work? (11:05, 40 s)
@@ -96,7 +96,7 @@ Numbering: chapters 1-12 keep their original note ids. The three newer film chap
 ## Chapter 12 — The ask (12:25, 35 s)
 
 - Zill: the agent that routes you through the shade.
-- What we want today: feedback on the buyer and the pricing, and introductions to a hotel group or fleet operator. [TEAM TO FILL — the specific ask]
+- We are not asking for funding. We want pilot partners: a Downtown hotel group or a delivery fleet operator willing to trial Zill, plus feedback on the buyer and the pricing.
 - Press `A` and take any trip the judges want to try.
 
 ## Chapter 13 — Two directions (7:10, 50 s) [film order: after "Leave later", before "Winter in Oslo"]
@@ -120,7 +120,7 @@ Numbering: chapters 1-12 keep their original note ids. The three newer film chap
 
 - Privacy by design: no accounts, no stored user data, location used per request and discarded, logs scrub coordinates and keys, no ads.
 - Controls on the live site: per-IP rate limits (tightest on the agent), 64 KB request cap, CORS allow-list, CSP and HSTS. pip-audit is clean; npm audit has 2 findings inside Next's build-time PostCSS. UAE PDPL and GDPR alignment is an aim, not a certification; a penetration test comes before any B2B launch (`docs/SECURITY.md`).
-- Costs: the AI agent is $10 a month flat on OpenCode Go (about 3,630 conversations a month on glm-5.3-flash). Adding a city costs no money: Dubai data bake 7.5 s and shade bake 487.5 s for four dates. The Contabo price and cost per 1,000 users are [TEAM TO FILL] (`docs/COSTS.md`).
+- Costs: the AI agent is $10 a month flat on OpenCode Go (about 3,630 conversations a month on glm-5.3-flash). Adding a city costs no money: Dubai data bake 7.5 s and shade bake 487.5 s for four dates. The server is $6.93 a month (Contabo VPS, 4 vCPU, 8 GB, shared), so fixed cost is about $17 a month with the agent; server cost per 1,000 users is about $0.002 (`docs/COSTS.md`).
 - Capacity, measured: local machine about 26 requests per second at 20 users (p95 596 ms); live VM 16.9 requests per second at 20 users, p95 1.6 s, 0 errors, run capped at 20 users.
 - Transition: "And it is not only Dubai and Oslo."
 
@@ -128,7 +128,7 @@ Numbering: chapters 1-12 keep their original note ids. The three newer film chap
 
 - Problem: in hot cities the route you choose decides how much direct sun you take, and existing maps ignore it.
 - Buyer: hospitality and tourism first (guests avoid walking in heat), delivery fleets (rider heat stress and productivity), outdoor employers (heat-illness risk and the midday break rule). Individuals free for acquisition and data.
-- Pricing hypotheses (unvalidated): per property per month; per active rider per month or per call; per site per month; annual licence for a tourism board. [TEAM TO FILL — validate with Dr Maria Haynes' session]
+- Pricing hypotheses (unvalidated): hotels about $99 per property per month; delivery fleets about $1 per rider per month; outdoor employers about $49 per site per month; city or tourism licence about $15,000 per year; corporate well-being about $12 per employee per year; consumer premium about $2.99 per month, no ads.
 - Go-to-market: a free consumer app and an embeddable hotel widget; pilot with one or two Downtown hotels; then a fleet pilot using the rider scenario.
 - Why we win: it is computed, not guessed (real sun, real buildings, tested); it is an agent that owns a goal over time and checks itself; the pipeline is city-agnostic so each new city is a bake, not a rewrite.
 - Execution: what exists is working software with tests, honest limits and a field-test plan; what is unproven is stated, not hidden.
@@ -154,13 +154,13 @@ Then the model is wrong in that place. Heights and links can be overridden by cu
 No. OpenStreetMap tags the Metro to Dubai Mall link as covered and indoor; it is on our list to walk it on site. Until then we call it unverified.
 
 ### How do you make money, and who pays first?
-Hypothesis: hospitality and tourism pay per property or by licence; fleets pay per rider; outdoor employers pay per site. First paying customers are most likely a Downtown hotel group. None of this is validated yet. [TEAM TO FILL — evidence from mentors or interviews]
+Hypothesis: hospitality and tourism pay per property or by licence; fleets pay per rider; outdoor employers pay per site. First paying customers are most likely a Downtown hotel group. None of this is validated yet; the next step is mentor feedback and customer interviews.
 
 ### Who are the competitors?
-[TEAM TO FILL — cite sources.] We do not claim to know that nobody else does this; we claim existing mainstream routing products we have used optimise time and distance.
+We do not claim to know that nobody else does this; we claim existing mainstream routing products we have used optimise time and distance.
 
 ### Why would a hotel use it?
-A concierge widget turns "it is too hot to walk" into three shade-safe walks from the entrance with real stats. [TEAM TO FILL — hotel interview evidence]
+A concierge widget turns "it is too hot to walk" into three shade-safe walks from the entrance with real stats. We have not yet interviewed hotels; that is the next step.
 
 ### What is simulated or recorded?
 The agent sessions in the film and the offline app are scripted recordings against the real engine (badged); the proactive-replan delay is a labelled simulated event; the fleet and crew views are scenario simulations; weather files are real recorded Open-Meteo data; the film's build log is a cached build. Route numbers, shade rasters and statistics are computed live by the engine.

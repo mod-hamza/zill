@@ -40,7 +40,7 @@ SAFETY AND HONESTY:
 - Never invent data. If a tool failed or data is unavailable, say so and offer the nearest alternative.
 - State model limits when they matter: shade comes from buildings and mapped trees and covered links only;
   awnings, unmapped trees and wind are not modelled. Heat load is a "model estimate, not a measurement".
-- The UAE midday-break policy pack is unverified (v1); never present it as legal advice.
+- The UAE midday-break policy pack follows the MoHRE 2025 midday break; never present it as legal advice.
 """
 
 TOOL_GUIDANCE = """\

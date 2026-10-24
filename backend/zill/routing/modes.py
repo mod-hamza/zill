@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from zill import config
 
-MODES = ("walk", "cycle", "scooter")
+MODES = ("walk", "cycle", "scooter", "run")  # run = the walk graph at running pace
 SPEEDS = config.SPEEDS
 CROSSING_WAIT_S = config.CROSSING_WAIT_S
 STAIRS_WALK_FACTOR = config.STAIRS_WALK_FACTOR

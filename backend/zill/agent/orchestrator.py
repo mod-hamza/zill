@@ -275,7 +275,7 @@ class Agent:
         if s.autonomy == 1:
             template += " Advisor mode: I only suggest, nothing is committed."
         if plan is not None and plan.get("policy_acknowledged"):
-            template += " Note: this conflicts with the midday break policy pack (v1, unverified); please review it before committing."
+            template += " Note: this conflicts with the midday break policy pack (MoHRE 2025 pack); please review it before committing."
         res = s.store.resolve(template)
         if res.unresolved:  # defensive: never ship a raw {{token}}
             template, source = template_message(persona, s.store, plan, rec, s.user_text), "template"

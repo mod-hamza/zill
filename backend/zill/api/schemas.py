@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-Mode = Literal["walk", "cycle", "scooter"]
+Mode = Literal["walk", "cycle", "scooter", "run"]
 Preference = Literal["shade", "sun"]
 PREFERENCE_DESC = "shade = least direct sun (default); sun = most direct sun / daylight (well-being)"
 

@@ -114,7 +114,7 @@ Measured 2026-10-23 on the dev laptop (24 logical cores, RTX 4070 Laptop GPU) wh
 | Route triple | p50 21.2, p95 68.8, max 101.2 ms | 300 ms | same |
 | Departure, 19 rows | 38.3 ms | 3 s | same |
 | Scene frame time (high / medium / low) | p95 12.2 / 11.2 / 10.1 ms; 114 / 125 / 140 fps; 135-162 draw calls | 60 fps | `docs/qa/phase6/perf.json` (App, vsync off, ANGLE D3D11) |
-| Film chapters 4-6 p95 frame time | [TEAM TO FILL, measure with `/film?debug` after the film is final] | 60 fps | see OPEN_ITEMS |
+| Film chapters 4-6 p95 frame time | not yet measured | 60 fps | see OPEN_ITEMS |
 
 Reproduce: `cd backend && .venv/Scripts/python.exe -m zill.routing.bench --n 100`.
 

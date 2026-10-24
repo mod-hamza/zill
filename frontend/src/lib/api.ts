@@ -77,7 +77,7 @@ export type ShadeStep = {
 };
 export type ShadeIndex = { date: string; date_id: string; steps: ShadeStep[] };
 
-export type Mode = "walk" | "cycle" | "scooter";
+export type Mode = "walk" | "cycle" | "scooter" | "run";
 
 export type RouteStats = {
   distance_m: number;

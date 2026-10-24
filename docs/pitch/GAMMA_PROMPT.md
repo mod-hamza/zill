@@ -102,15 +102,15 @@ a certification; pen-test before B2B launch.
 SLIDE 13: Who pays
 Table: delivery fleets (targets Talabat, Deliveroo, Careem); hotels and tourism boards; outdoor-work employers; cities and
 city planners (B2G planning analytics: where to plant trees or add shade); schools, elderly care, events, real estate;
-corporate well-being and insurers. Prices are hypotheses, none quoted.
+corporate well-being and insurers. Pricing hypotheses (not validated): hotels ~$99 per property per month; fleets ~$1 per rider per month; outdoor employers ~$49 per site per month; city licence ~$15,000 per year; corporate well-being ~$12 per employee per year; consumer premium ~$2.99 per month, no ads.
 
 SLIDE 14: Freemium. No ads.
 No ads because ads would put location into an ad pipeline. Free app; optional premium (saved routes, day plans); B2B and
 B2G subscriptions as main revenue; pay-per-route API.
 
 SLIDE 15: Costs to run
-Server [TEAM TO FILL, Contabo price]; AI agent $10/month flat (OpenCode Go; about 3,630 conversations on glm-5.3-flash);
-add a city $0 (Dubai data bake 7.5 s, shade bake 487.5 s); per 1,000 users [TEAM TO FILL]. Source: docs/COSTS.md.
+Server $6.93/month (Contabo VPS, 4 vCPU, 8 GB, shared); AI agent $10/month flat (OpenCode Go; about 3,630 conversations on glm-5.3-flash);
+add a city $0 (Dubai data bake 7.5 s, shade bake 487.5 s); per 1,000 users about $0.002 of server. Source: docs/COSTS.md.
 
 SLIDE 16: How many users
 Market (sourced): 70,000+ Dubai delivery riders; 18.72 million visitors in 2024. Capacity (measured): local machine 26.4

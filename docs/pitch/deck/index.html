@@ -319,15 +319,15 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
     <table class="tbl" style="margin-top:26px">
       <thead><tr><th>Segment</th><th>What they get</th><th>How they pay</th></tr></thead>
       <tbody>
-        <tr><td>Delivery fleets<span class=sub>targets such as Talabat, Deliveroo, Careem</span></td><td>Heat-aware routes and shift pacing for riders</td><td style="color:var(--brass)">Per rider per month</td></tr>
-        <tr><td>Hotels and tourism boards</td><td>“Walk there in the shade, or in the sun” guest concierge</td><td style="color:var(--brass)">Per hotel per month</td></tr>
-        <tr><td>Employers of outdoor workers</td><td>Shift planner that respects the midday break</td><td style="color:var(--brass)">Per site per month</td></tr>
-        <tr><td>Cities and city planners<span class=sub>B2G planning analytics</span></td><td>Where to plant trees or add shade, from the same engine</td><td style="color:var(--brass)">City licence</td></tr>
+        <tr><td>Delivery fleets<span class=sub>targets such as Talabat, Deliveroo, Careem</span></td><td>Heat-aware routes and shift pacing for riders</td><td style="color:var(--brass)">Per rider per month<span class=sub>pricing hypothesis: ~$1</span></td></tr>
+        <tr><td>Hotels and tourism boards</td><td>“Walk there in the shade, or in the sun” guest concierge</td><td style="color:var(--brass)">Per hotel per month<span class=sub>pricing hypothesis: ~$99 per property</span></td></tr>
+        <tr><td>Employers of outdoor workers</td><td>Shift planner that respects the midday break</td><td style="color:var(--brass)">Per site per month<span class=sub>pricing hypothesis: ~$49</span></td></tr>
+        <tr><td>Cities and city planners<span class=sub>B2G planning analytics</span></td><td>Where to plant trees or add shade, from the same engine</td><td style="color:var(--brass)">City licence<span class=sub>pricing hypothesis: ~$15,000 per year</span></td></tr>
         <tr><td>Schools, elderly care, events, real estate</td><td>Shaded routes and outdoor-time planning; shade and sun reports for sites and venues</td><td style="color:var(--brass)">Per site subscription</td></tr>
-        <tr><td>Corporate well-being and insurers</td><td>Daylight-walk programmes for staff</td><td style="color:var(--brass)">Per employee per year</td></tr>
+        <tr><td>Corporate well-being and insurers</td><td>Daylight-walk programmes for staff</td><td style="color:var(--brass)">Per employee per year<span class=sub>pricing hypothesis: ~$12</span></td></tr>
       </tbody>
     </table>
-    <p class="small" style="margin-top:18px;font-size:20px">Prices are hypotheses we are validating; none is quoted here.</p>
+    <p class="small" style="margin-top:18px;font-size:20px">Prices shown are our pricing hypotheses, not validated quotes. Consumer premium: ~$2.99 per month, no ads.</p>
   </div>
   <div class="foot"><span><b>Zill &amp; Shams</b></span><span>13</span></div>
 </section>
@@ -355,13 +355,13 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
     <div class="label">15 · Costs to run</div>
     <h2 style="margin-top:28px">Cheap to run, cheap to add a city.</h2>
     <div style="margin-top:40px;display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
-      <div class="col" style="min-height:430px"><div class="label">Server</div><div class="num" style="font-size:36px;margin:24px 0 14px;color:var(--ember);white-space:nowrap">[TEAM TO FILL]</div><p style="font-size:25px">Contabo plan price. The VM is shared with other apps, so Zill’s share is a fraction.</p></div>
+      <div class="col" style="min-height:430px"><div class="label">Server</div><div class="num" style="font-size:36px;margin:24px 0 14px;color:var(--ember);white-space:nowrap">$6.93</div><p style="font-size:25px">per month: Contabo VPS, 4 vCPU, 8 GB. The VM is shared with other apps, so Zill’s share is a fraction. Total fixed cost about $17 per month with the agent.</p></div>
       <div class="col" style="min-height:430px"><div class="label">AI agent</div><div class="num" style="font-size:80px;margin-top:14px">$10</div><p style="font-size:25px">per month flat on OpenCode Go: about 3,630 conversations on glm-5.3-flash, about 56 on the strongest model, kimi-k3.</p></div>
       <div class="col" style="min-height:430px"><div class="label">Add a city</div><div class="num" style="font-size:80px;margin-top:14px">$0</div><p style="font-size:25px">Open data is free. Measured: Dubai data bake 7.5 s, shade bake 487.5 s for four dates. Oslo took about 29 minutes, mostly waiting on Overpass.</p></div>
-      <div class="col" style="min-height:430px"><div class="label">Per 1,000 users</div><div class="num" style="font-size:36px;margin:24px 0 14px;color:var(--ember);white-space:nowrap">[TEAM TO FILL]</div><p style="font-size:25px">Server share is plan price × 0.0003, assuming 20 requests per visit.</p></div>
+      <div class="col" style="min-height:430px"><div class="label">Per 1,000 users</div><div class="num" style="font-size:36px;margin:24px 0 14px;color:var(--ember);white-space:nowrap">≈ $0.002</div><p style="font-size:25px">of server per 1,000 users: plan price × 0.0003, assuming 20 requests per visit.</p></div>
     </div>
   </div>
-  <div class="fn">Source: docs/COSTS.md. Token counts use characters ÷ 4 on the scripted planner, so output tokens are a lower bound. Bake timings were measured on a dev laptop, not the VM. Per-token API prices and Open-Meteo commercial pricing are [TEAM TO FILL].</div>
+  <div class="fn">Source: docs/COSTS.md. Token counts use characters ÷ 4 on the scripted planner, so output tokens are a lower bound. Bake timings were measured on a dev laptop, not the VM. Per-token API prices are not used (flat subscription). Open-Meteo’s free tier is non-commercial, so a paid plan is needed before B2B revenue.</div>
   <div class="foot"><span><b>Zill &amp; Shams</b></span><span>15</span></div>
 </section>
 
@@ -383,7 +383,7 @@ ul.pts li .n{font-family:'Fraunces',serif;font-size:26px;color:var(--brass);font
           <tr><td style="font-size:26px">Live VM</td><td>10</td><td>10.4</td><td>1.0 s</td><td>0</td></tr>
           <tr><td style="font-size:26px">Live VM</td><td>20</td><td>16.9</td><td>1.6 s</td><td>0</td></tr>
         </tbody></table>
-        <p class="small" style="margin-top:18px;font-size:19px">One API worker saturates near 26 requests per second on this machine. The live run (capped at 20 concurrent users, 48 s) did not reach its limit, and its latency includes the network round trip. VM CPU count: <span class="tbd">[TEAM TO FILL]</span>.</p>
+        <p class="small" style="margin-top:18px;font-size:19px">One API worker saturates near 26 requests per second on this machine. The live run (capped at 20 concurrent users, 48 s) did not reach its limit, and its latency includes the network round trip. VM: 4 vCPU, 8 GB.</p>
       </div>
     </div>
   </div>

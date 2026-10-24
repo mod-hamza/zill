@@ -1,7 +1,7 @@
 """Representative (synthetic) weather profiles, clearly labelled (PRD 9).
 
 Used only when neither live nor recorded data exist. Values are a smooth diurnal curve around
-approximate monthly Dubai highs/lows: NOT a measurement. Every profile carries
+monthly Dubai low/high normals (humidity and wind approximate): NOT a measurement. Every profile carries
 `synthetic_representative: true` and a `basis` string, and the UI must show it as such.
 """
 
@@ -12,20 +12,21 @@ from datetime import date
 from typing import Any
 
 # month -> (daily min C, daily max C, afternoon RH %, dawn RH %, mean wind m/s)
-# Approximate climatology, [TEAM TO FILL - cite source] (listed in docs/OPEN_ITEMS.md).
+# Daily min/max: Dubai International Airport 1991-2020 normals (NOAA, tabulated at
+# https://en.wikipedia.org/wiki/Climate_of_Dubai). Humidity and wind are approximate, not sourced.
 _CLIMATE = {
-    1: (14, 24, 50, 80, 3.5),
-    2: (15, 25, 48, 80, 3.8),
-    3: (18, 29, 45, 78, 4.0),
-    4: (22, 34, 38, 72, 4.2),
-    5: (26, 39, 35, 70, 4.2),
-    6: (29, 41, 40, 74, 4.2),
-    7: (31, 42, 45, 78, 4.0),
-    8: (31, 42, 48, 80, 3.8),
-    9: (28, 40, 48, 80, 3.6),
-    10: (24, 36, 45, 80, 3.4),
-    11: (19, 31, 48, 80, 3.2),
-    12: (16, 26, 50, 80, 3.2),
+    1: (15.3, 24.4, 50, 80, 3.5),
+    2: (16.4, 26.1, 48, 80, 3.8),
+    3: (18.6, 28.9, 45, 78, 4.0),
+    4: (22.3, 33.7, 38, 72, 4.2),
+    5: (26.1, 38.2, 35, 70, 4.2),
+    6: (28.0, 40.0, 40, 74, 4.2),
+    7: (31.2, 41.5, 45, 78, 4.0),
+    8: (31.5, 41.9, 48, 80, 3.8),
+    9: (28.9, 39.5, 48, 80, 3.6),
+    10: (25.4, 35.9, 45, 80, 3.4),
+    11: (21.1, 30.7, 48, 80, 3.2),
+    12: (17.4, 26.5, 50, 80, 3.2),
 }
 
 
@@ -73,9 +74,10 @@ def representative_day(day: date, lat: float, lon: float, tz: str) -> dict[str, 
         "synthetic_representative": True,
         "basis": (
             f"Representative {day.strftime('%B')} profile for Dubai: smooth diurnal curve between "
-            f"approximate climatological low {tmin} C and high {tmax} C; apparent temperature by the "
+            f"climatological (1991-2020 normal) low {tmin} C and high {tmax} C; apparent temperature by the "
             "BoM formula; UV is a "
-            "clear-sky estimate from solar altitude. Not a measurement. [TEAM TO FILL - cite source]"
+            "clear-sky estimate from solar altitude. Not a measurement. Low/high are 1991-2020 NOAA normals "
+            "for Dubai International Airport; humidity and wind are approximate."
         ),
         "uv_basis": "clear_sky_estimate",
         "hourly": rows,

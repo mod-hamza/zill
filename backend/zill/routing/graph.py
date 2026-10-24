@@ -91,7 +91,7 @@ class GraphArrays:
             cls=cls_codes,
             cls_name=cls_names,
             stairs=stairs,
-            allowed={"walk": walk, "cycle": cyc, "scooter": sco},
+            allowed={"walk": walk, "cycle": cyc, "scooter": sco, "run": walk},
             name=list(ed.get("name", [None] * n)),
             highway=list(ed.get("highway", [""] * n)),
             geom=list(ed.get("geom", [[] for _ in range(n)])),
@@ -122,7 +122,7 @@ class GraphArrays:
         crowd = np.array([config.CROWD.get(M.CLS_NAMES[int(c)], 1.0) for c in self.cls], dtype=float)
         comfort = np.array([config.COMFORT.get(M.CLS_NAMES[int(c)], 1.0) for c in self.cls], dtype=float)
         t = self.length / speed * crowd
-        if mode == "walk":
+        if mode in ("walk", "run"):
             t = np.where(self.stairs, t / config.STAIRS_WALK_FACTOR, t)
         wait = np.where(self.crossing, config.CROSSING_WAIT_S[mode], 0.0)
         node_ids = np.unique(src) if src.size else np.array([], dtype=np.int64)

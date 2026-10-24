@@ -271,3 +271,7 @@ Note for the frontend: handle 429 by honouring `Retry-After`. Other streams: kee
 - Client normalises sun-mode `/api/route` responses: `coolest := sunniest` (`lib/api.ts normaliseRoute`); `result.preference` drives labels. `Routes` (three/) gains optional `bestColor` prop (default brass); all other three/ props unchanged.
 - `/app` URL flags: `city=<id>`, `pref=shade|sun`, `ask=<one-line journey>`, `sel=sunniest|best` (alias of coolest), plus the existing ones. `useCity.load(id?)` switches cities (default `?city=` or `dubai_downtown`); `state/switchCity.ts`. `useSun` gains `tz`, `presets`, `dayKind`, `setCity`. `lib/sun.ts` functions take an optional `tz` (default Asia/Dubai).
 - `lib/busy.ts fetchRetrying`: 429 + Retry-After → wait and retry (≤3), `useBusy` drives the notice.
+
+### Overnight additions: run mode + case studies
+- `mode` accepts `"run"` on /api/route, /api/departure, /api/plan: walk graph at config.SPEEDS['run'] (2.8 m/s).
+- `data/scenarios/case_studies.json` (copied to `/film-data/case_studies.json`): `{generated_at, procedure, filters, cases: [{id, label, persona, city, date, depart, origin, dest, mode, preference, route_shape, fastest{duration_min, direct_sun_min, distance_m, edges|legs}, best{...}, delta{added_time_min, sun_saved_min|sun_gained_min}, wellbeing{uv_index, sun_altitude_deg, daylight_window, weather_label}, method, per_shift?}]}`.

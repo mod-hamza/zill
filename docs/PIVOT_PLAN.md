@@ -2,7 +2,7 @@
 
 Status: **questions answered 2026-10-23, awaiting final go-ahead**. Decisions: name **Zill & Shams**
 (Arabic: shade & sun); sun mode framed as **daylight and well-being**, vitamin D only with care; market figures
-**researched with sources** ([TEAM TO FILL] only where no source exists); **no ask slide** (it is a hackathon). Nothing is recoded yet. After you approve this plan and answer the open
+**researched with sources** (claims without a source were dropped); **no ask slide** (it is a hackathon). Nothing is recoded yet. After you approve this plan and answer the open
 questions, I make (1) a Gamma prompt and (2) a PowerPoint deck. The code changes in section 6 are for a
 later overnight session.
 
@@ -55,7 +55,7 @@ directions. The name stays in one config file, so changing it is a one-line chan
 4. **Real company names.** Talabat, Deliveroo and Careem appear as **target customers**, never as
    partners or clients, unless that is true.
 5. **Market numbers.** No invented statistics. Either I research real figures with sources (question 3),
-   or they stay as visible `[TEAM TO FILL]` tags.
+   or they are dropped.
 
 ## 4. Business case (the core of the deck)
 

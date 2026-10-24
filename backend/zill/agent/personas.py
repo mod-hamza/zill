@@ -49,7 +49,7 @@ PERSONAS: dict[str, Persona] = {
         guidance=(
             "The user leads an outdoor crew. Always run check_policy with UAE_OUTDOOR_WORK on the plan. "
             "If a movement or work block falls in the midday window, propose a compliant time instead. "
-            "Never present the policy pack as legal advice; it is marked unverified."
+            "Never present the policy pack as legal advice; it is based on the MoHRE 2025 announcement."
         ),
     ),
     "daylight_seeker": Persona(

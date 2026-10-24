@@ -88,7 +88,7 @@ terminated by Caddy. The page headers come from Next itself.
 We aim to align with the UAE Federal PDPL (Decree-Law 45 of 2021) and the GDPR (relevant for the Oslo and EU
 audience) by design: data minimisation (nothing stored), purpose limitation (location used only to compute the
 requested route), no profiling, no third-party trackers, no ads. A legal review, a privacy notice page and a data
-processing agreement template for B2B customers are `[TEAM TO FILL]` before any paid launch. Free text sent to the
+processing agreement template for B2B customers are planned before any paid launch. Free text sent to the
 LLM provider leaves our server; that provider is a processor and its terms must be reviewed.
 
 ## 5. What's next

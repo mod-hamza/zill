@@ -1,7 +1,7 @@
 # Costs (Zill & Shams)
 
 Every figure is either measured (method stated) or labelled as an assumption. Prices we could not verify are
-`[TEAM TO FILL]`. Measured 2026-10-23; VPS price added 2026-10-24 (team).
+stated as not priced. Measured 2026-10-23; VPS price added 2026-10-24 (team).
 
 ## 1. Fixed cost: the VPS
 
@@ -10,7 +10,7 @@ Every figure is either measured (method stated) or labelled as an assumption. Pr
 - Domain: itshamza.me already owned; `zill.` is a subdomain, so marginal cost is zero.
 - TLS: Caddy automatic certificates, free.
 - Map, building and tree data: OpenStreetMap (ODbL, free; attribution required). Weather: Open-Meteo (free tier, non-commercial;
-  a commercial plan is `[TEAM TO FILL — Open-Meteo commercial pricing]` before B2B revenue).
+  a paid commercial plan (API Standard, 1M calls per month; price shown at checkout, not published) is needed before B2B revenue; source https://open-meteo.com/en/pricing, which lists the free tier as non-commercial, 300,000 calls per month).
 
 ## 2. LLM cost per agent conversation
 
@@ -63,12 +63,11 @@ is hit, then calls fail (the provider fallback in `docs/LLM.md` moves to the nex
 
 **Reading:** a demo or pilot on Go with `glm-5.3-flash` or `deepseek-v4.1-flash` covers thousands of
 conversations per month for $10. The strongest model on the plan (`kimi-k3`) covers only about 56. A B2B product
-needs either Go Plus with a flash model for routine turns, or per-token API pricing:
-`[TEAM TO FILL — per-token prices from the chosen provider]`.
+needs either Go Plus with a flash model for routine turns, or per-token API pricing, which we have not priced because we run on the flat subscription.
 
 ### Price under Voke (current default)
 
-`[TEAM TO FILL — Voke per-token prices]`. With the measured 30,300 input and about 600 output tokens per
+Not priced: we run on the flat OpenCode Go subscription, not per token. With the measured 30,300 input and about 600 output tokens per
 conversation: cost = 30,300 x price_in + 600 x price_out (times roughly 1.5 to 3 for a real model's longer output).
 
 ## 3. Cost to add a city
@@ -84,7 +83,7 @@ Measured from existing logs (dev machine, Intel i7-13700HX; not the VM):
 - **Disk:** Dubai is 39 MB (29 MB of shade PNGs).
 - **Money:** open data is free; Overpass is a shared service with fair-use limits (no cost, but no SLA). Realistic
   elapsed time to add a city: under one hour of unattended compute plus a few hours to check results (height data
-  quality, landmark POIs). A person-time estimate for QA is `[TEAM TO FILL]`.
+  quality, landmark POIs). We have not measured person-time for QA.
 
 ## 4. Capacity and cost per 1,000 users
 
@@ -130,7 +129,7 @@ Raw results: `data/raw/logs/loadtest-local.json`, `data/raw/logs/loadtest-live.j
   are served by Caddy and Next, not counted here.
 - LLM: 100 conversations. On Go with `glm-5.3-flash` that is inside a single month's quota (about 3,630 conversations),
   so marginal cost is $0 and the fixed cost is $10 per month. On `kimi-k3` it would exceed the Go quota after 56.
-  Per-token pricing alternative: 100 x (30,300 x price_in + 600 x price_out) = `[TEAM TO FILL]`.
+  Per-token pricing alternative: 100 x (30,300 x price_in + 600 x price_out); not priced, since we use the flat subscription.
 - Total fixed cost today: $6.93 (VPS, shared) + $10 (OpenCode Go) = **about $17 per month**, which covers
   thousands of visits under the assumptions above. Per 1,000 users that is about $0.002 of server plus $0 of LLM
   inside the Go quota.

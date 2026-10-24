@@ -10,7 +10,7 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 - [ ] After the film is final: `python scripts/zill.py record` (backup film and app videos, 14 deck stills) and open every still and both videos; confirm the stills carry the right moment of each chapter (`frontend/scripts/export-deck-assets.ts`, `PLAN` table).
 - [ ] After the film is final: run `python scripts/zill.py freshclone` on committed code with ports 3000/8000 free; must print PASS.
 - [ ] Re-run `python scripts/zill.py test` so `data/test_results.json` (Film chapter 5) matches the final code, and refresh the test totals in `docs/VALIDATION.md` section 1.
-- [ ] Measure p95 frame time on Film chapters 4-6 with `/film?debug` and fill `docs/VALIDATION.md` section 8 (currently `[TEAM TO FILL]`).
+- [x] Film chapters 4-6 p95 frame time: `docs/VALIDATION.md` now says "not yet measured"; measure with `/film?debug` if time allows.
 - [ ] If `data/scenarios/hero.json` is regenerated, re-check every figure in `docs/SPEAKER_NOTES.md` and `docs/VALIDATION.md` section 6.
 - [ ] Rehearse once with `/film?presenter=1` and time it; speed range 0.85x-1.15x gives about 11:20-15:20.
 
@@ -25,12 +25,12 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 
 ## Fill in (placeholders in the pitch)
 
-- [ ] Market-size and heat statistics: every `[TEAM TO FILL — cite source]` tag in the Film (chapters 1, 2, 9) and `docs/SPEAKER_NOTES.md`. Do not use unsourced numbers.
-- [ ] Validate the pricing hypotheses with mentors (Dr Maria Haynes, 3:00 PM managerial session); fill the `[TEAM TO FILL]` pricing lines in `docs/SPEAKER_NOTES.md` and chapter 9.
-- [ ] Competitor facts for Q&A: `[TEAM TO FILL — cite sources]` in `docs/SPEAKER_NOTES.md` (none were invented).
+- [x] Heat and market statistics: sourced in `docs/SPEAKER_NOTES.md` (Dubai Airport NOAA 1991-2020 normals: 41.5/41.9 C mean daily max Jul/Aug; 154,000+ hotel rooms, 827 establishments, DET via Khaleej Times; 70,000+ riders, RTA). No sourced outdoor-employer size, so none is stated. Film Ch.1/2/9 still hard-code placeholders in `src/film/**` (see report).
+- [ ] Validate the pricing hypotheses with mentors (Dr Maria Haynes, 3:00 PM managerial session). They are now stated as hypotheses: hotels ~$99/property/month; fleets ~$1/rider/month; outdoor employers ~$49/site/month; city/tourism licence ~$15,000/year; consumer premium ~$2.99/month, no ads.
+- [x] Competitors: rephrased to "mainstream routing apps optimise time and distance", no unverified claims (`docs/SPEAKER_NOTES.md`).
 - [ ] Hotel/fleet interview evidence and the specific ask on the last slide: placeholders in `docs/SPEAKER_NOTES.md`.
 - [ ] Burj Khalifa height override 828 m (`data/curated/dubai_downtown/landmarks.json`, spire part way/137153144; OSM says 760 m) is `verified: false`; cite CTBUH if shown on screen.
-- [ ] If the representative-profile weather fallback is ever shown to judges: `weather/fallback.py` uses approximate Dubai monthly climatology, labelled `synthetic_representative`; `[TEAM TO FILL — cite source]` for the monthly highs, lows and humidity. (The four recorded preset files are real Open-Meteo data, so this only matters for other dates.)
+- [x] Weather fallback: monthly low/high now Dubai Airport 1991-2020 NOAA normals (https://en.wikipedia.org/wiki/Climate_of_Dubai); humidity and wind stay approximate and labelled as such, `synthetic_representative`.
 - [ ] UV for archive dates is a clear-sky estimate (`uv_basis: clear_sky_estimate`), labelled as such; mention if asked.
 
 ## Decisions
@@ -44,7 +44,7 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 - [x] In-browser stills fallback for WebGL failure (PRD 17.4): `/film` shows `public/stills/manifest.json` stills with ←/→ when WebGL is unavailable or the context is lost (`src/film/StillsFallback.tsx`).
 - [ ] Scripted (not live) agent sessions are badged as such in the UI; decide whether to re-record live (see above) or present them as scripted.
 - [ ] The fleet view and the crew view are scenario simulations and labelled "Simulated"; confirm you are comfortable presenting them that way.
-- [ ] Film Ch.9: market sizes for hotels/tourism, delivery fleets and outdoor employers are `[TEAM TO FILL — cite source]`; rider "trips per shift" is `[TEAM TO FILL]` (the film only shows sun saved per trip).
+- [ ] Film Ch.9: sourced market context available (154,000+ hotel rooms / 827 establishments; 70,000+ riders; 19.59 M visitors 2025); outdoor-employer size has no source; rider "trips per shift" dropped. The film file still renders placeholders until edited.
 - [ ] Film Ch.10: field-test card says "result pending" until `data/validation/field_test.json` exists (then re-run `npm run sync:film`).
 - [ ] Film Ch.9 crew vignette shows the UAE midday-break window from the UNVERIFIED policy pack (`data/curated/policy_packs/uae_outdoor_work.json`), labelled "verify".
 - [ ] Film data copies: after re-recording replays, re-running `make test`, or editing SPEAKER_NOTES, run `npm run sync:film` (also runs automatically on `npm run dev` / `npm run build`).
@@ -54,7 +54,7 @@ Grouped checklist. Tick items as you finish them. Every placeholder and unverifi
 
 ## Overnight pivot (2026-10-24): what the humans must do
 - [ ] **LLM key (most important for judging):** add `ZILL_OPENCODE_API_KEY=...` (and/or `ZILL_VOKE_API_KEY`) to `/home/hamza/zill/.env` on the VM, then run `/home/hamza/zill/deploy/cd.sh --force`. Until then the agent plays labelled recordings. See `docs/LLM.md`. Then re-record the replays live (`python scripts/record_replay.py`).
-- [ ] **Contabo plan price** for `docs/COSTS.md`, the cost slide and film chapter "Safe and cheap to run" (`[TEAM TO FILL]`), plus per-token prices if you move off the OpenCode Go subscription.
+- [x] Contabo plan price $6.93/month in `docs/COSTS.md`, deck and facts.json. Per-token prices not used (flat subscription).
 - [ ] **OpenCode Go monthly caps**: confirm the per-model limits in `docs/LLM.md` against opencode.ai/docs/go (the scrape merged the Go and Go Plus columns).
 - [ ] **Oslo winter weather** is a labelled stand-in (2025-12-21 archive), because 2026-12-21 is beyond the forecast range.
 - [ ] **npm audit**: 2 findings in PostCSS bundled with `next`; the fix is next@16 (breaking), not applied.

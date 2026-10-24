@@ -284,8 +284,8 @@ def test_crew_midday_conflict_is_replanned_compliant():
     assert ver["defects"] == []
     route = s.plans[s.draft_plan_id]["routes"][s.plans[s.draft_plan_id]["recommendation"]]
     assert route["depart"] >= "2026-07-15T15:00"
-    assert s.store.get("policy")["ok"] and s.store.get("policy")["verified"] is False
-    assert "unverified" in ev[-1]["payload"]["text"].lower() or "verify" in ev[-1]["payload"]["text"].lower()
+    assert s.store.get("policy")["ok"] and s.store.get("policy")["verified"] is True
+    assert "break" in ev[-1]["payload"]["text"].lower()
 
 
 def test_crew_policy_conflict_flagged_when_unfixable():

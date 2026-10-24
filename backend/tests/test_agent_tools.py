@@ -181,7 +181,7 @@ def _item(start, end, sun=60.0, **kw):
 
 def test_policy_pack_flags_midday_in_season_only():
     pack = load_pack()
-    assert pack["verified"] is False and "verify" in pack["label"].lower()
+    assert pack["verified"] is True and "mohre" in pack["label"].lower()
     summer = check_policy({"items": [_item("2026-07-15T13:30:00+04:00", "2026-07-15T13:45:00+04:00")]})
     assert not summer["ok"] and summer["violations"][0]["rule"] == "midday_window"
     assert summer["next_compliant"].startswith("2026-07-15T15:00")

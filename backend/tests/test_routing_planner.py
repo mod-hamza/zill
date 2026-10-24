@@ -114,7 +114,7 @@ def test_crew_policy_conflict_and_shift_window(synth_ctx):
     stops = [_stop(synth_ctx, 0, "shady_park", 30), _stop(synth_ctx, 1, "mid_cafe", 30)]
     t0 = synth_ctx.at("summer", "13:00")  # inside the 12:30-15:00 midday window in July
     res = planner.plan(synth_ctx, "walk", "crew", _start(synth_ctx), stops, t0, "summer")
-    assert res["policy"] is not None and res["policy"]["verified"] is False
+    assert res["policy"] is not None and res["policy"]["verified"] is True
     assert res["policy"]["count"] >= 1 and any(i["kind"] == "work" for i in res["items"])
     shift = (synth_ctx.at("summer", "08:00"), synth_ctx.at("summer", "16:30"))
     best = planner.plan(synth_ctx, "walk", "crew", _start(synth_ctx), stops, t0, "summer", shift_window=shift)
